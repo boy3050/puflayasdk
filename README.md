@@ -15,6 +15,7 @@
 	PfuSdk.OnShow(() => {
 
 	});
+	
 	//监听切换到后台
 	PfuSdk.OnHide(() => {
 
@@ -81,6 +82,7 @@
   
     base64.min.js 
     md5-min.js
+    
     依赖库在sdklibrary文件夹下
 
   库添加规范和顺序
