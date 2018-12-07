@@ -36,7 +36,7 @@
 	 PfuSdk.ShowBanner();
 	 PfuSdk.HideBanner();
 	 
-   4   分享
+   4   分享 (SDK初始化已包含右上角分享监听，不要再去设置右上角监听)
    
    	 单纯分享
 	 PfuSdk.Share(this);
