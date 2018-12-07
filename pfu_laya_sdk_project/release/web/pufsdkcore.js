@@ -410,12 +410,15 @@ var PFU;
                     this._rewardedVideoAd.onError(function(err) {
                         console.log("Create AD:" + err);
                         if (_this._playCallback) _this._playCallback.call(_this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                        _this._playCallback = null;
                     });
                     this._rewardedVideoAd.onClose(function(res) {
                         if (res && res.isEnded || res === undefined) {
-                            _this._playCallback.call(_this._playService, PfuSdk.SUCCESS);
+                            if (_this._playCallback) _this._playCallback.call(_this._playService, PfuSdk.SUCCESS);
+                            _this._playCallback = null;
                         } else {
-                            _this._playCallback.call(_this._playService, PfuSdk.FAIL);
+                            if (_this._playCallback) _this._playCallback.call(_this._playService, PfuSdk.FAIL);
+                            _this._playCallback = null;
                         }
                     });
                 }
@@ -451,14 +454,17 @@ var PFU;
                     this._rewardedVideoAd.show().catch(function(err) {
                         _this._rewardedVideoAd.load().then(function() {
                             return _this._rewardedVideoAd.show().catch(function(err) {
-                                _this._playCallback.call(_this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                                if (_this._playCallback) _this._playCallback.call(_this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                                _this._playCallback = null;
                             });
                         }).catch(function(err) {
-                            _this._playCallback.call(_this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                            if (_this._playCallback) _this._playCallback.call(_this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                            _this._playCallback = null;
                         });
                     });
                 } else {
-                    this._playCallback.call(this._playService, PfuSdk.FAIL);
+                    if (this._playCallback) this._playCallback.call(this._playService, PfuSdk.FAIL);
+                    this._playCallback = null;
                 }
             } else {
                 this.PlayNewVideo(adunit);
@@ -474,22 +480,27 @@ var PFU;
                     video.onLoad(function() {});
                     video.onError(function(err) {
                         console.log("video Ad = NULL");
-                        _this._playCallback.call(_this._playService, PfuSdk.FAIL);
+                        if (_this._playCallback) _this._playCallback.call(_this._playService, PfuSdk.FAIL);
+                        _this._playCallback = null;
                     });
                     video.onClose(function(res) {
                         if (res && res.isEnded || res === undefined) {
-                            _this._playCallback.call(_this._playService, PfuSdk.SUCCESS);
+                            if (_this._playCallback) _this._playCallback.call(_this._playService, PfuSdk.SUCCESS);
+                            _this._playCallback = null;
                         } else {
-                            _this._playCallback.call(_this._playService, PfuSdk.FAIL);
+                            if (_this._playCallback) _this._playCallback.call(_this._playService, PfuSdk.FAIL);
+                            _this._playCallback = null;
                         }
                     });
                     this._rewardedVideoAd.show().catch(function(err) {
                         _this._rewardedVideoAd.load().then(function() {
                             return _this._rewardedVideoAd.show().catch(function(err) {
-                                _this._playCallback.call(_this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                                if (_this._playCallback) _this._playCallback.call(_this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                                _this._playCallback = null;
                             });
                         }).catch(function(err) {
-                            _this._playCallback.call(_this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                            if (_this._playCallback) _this._playCallback.call(_this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                            _this._playCallback = null;
                         });
                     });
                 }

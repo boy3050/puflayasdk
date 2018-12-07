@@ -53,6 +53,7 @@
                         console.log("Create AD:" + err);
                         if (this._playCallback)
                             this._playCallback.call(this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                        this._playCallback = null;
                     });
 
                     this._rewardedVideoAd.onClose(res => {
@@ -60,11 +61,16 @@
                         // 小于 2.1.0 的基础库版本，res 是一个 undefined
                         if (res && res.isEnded || res === undefined) {
                             // 正常播放结束，可以下发游戏奖励
-                            this._playCallback.call(this._playService, PfuSdk.SUCCESS);
+                            if (this._playCallback)
+                                this._playCallback.call(this._playService, PfuSdk.SUCCESS);
+                            this._playCallback = null;
                         }
                         else {
+
                             // 播放中途退出，不下发游戏奖励
-                            this._playCallback.call(this._playService, PfuSdk.FAIL);
+                            if (this._playCallback)
+                                this._playCallback.call(this._playService, PfuSdk.FAIL);
+                            this._playCallback = null;
                         }
                     });
                 }
@@ -112,16 +118,22 @@
                             this._rewardedVideoAd.load()
                                 .then(
                                 () => this._rewardedVideoAd.show().catch(err => {
-                                    this._playCallback.call(this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                                    if (this._playCallback)
+                                        this._playCallback.call(this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                                    this._playCallback = null;
                                 })
                                 )
                                 .catch(err => {
-                                    this._playCallback.call(this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                                    if (this._playCallback)
+                                        this._playCallback.call(this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                                    this._playCallback = null;
                                 });
                         })
                 }
                 else {
-                    this._playCallback.call(this._playService, PfuSdk.FAIL);
+                    if (this._playCallback)
+                        this._playCallback.call(this._playService, PfuSdk.FAIL);
+                    this._playCallback = null;
                 }
             }
             else {
@@ -140,7 +152,9 @@
                     });
                     video.onError(err => {
                         console.log("video Ad = NULL");
-                        this._playCallback.call(this._playService, PfuSdk.FAIL);
+                        if (this._playCallback)
+                            this._playCallback.call(this._playService, PfuSdk.FAIL);
+                        this._playCallback = null;
                     });
 
                     video.onClose(res => {
@@ -148,11 +162,15 @@
                         // 小于 2.1.0 的基础库版本，res 是一个 undefined
                         if (res && res.isEnded || res === undefined) {
                             // 正常播放结束，可以下发游戏奖励
-                            this._playCallback.call(this._playService, PfuSdk.SUCCESS);
+                            if (this._playCallback)
+                                this._playCallback.call(this._playService, PfuSdk.SUCCESS);
+                            this._playCallback = null;
                         }
                         else {
                             // 播放中途退出，不下发游戏奖励
-                            this._playCallback.call(this._playService, PfuSdk.FAIL);
+                            if (this._playCallback)
+                                this._playCallback.call(this._playService, PfuSdk.FAIL);
+                            this._playCallback = null;
                         }
                     });
 
@@ -161,11 +179,15 @@
                             this._rewardedVideoAd.load()
                                 .then(
                                 () => this._rewardedVideoAd.show().catch(err => {
-                                    this._playCallback.call(this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                                    if (this._playCallback)
+                                        this._playCallback.call(this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                                    this._playCallback = null;
                                 })
                                 )
                                 .catch(err => {
-                                    this._playCallback.call(this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                                    if (this._playCallback)
+                                        this._playCallback.call(this._playService, PfuSdk.VIDEO_SHOW_FAIL);
+                                    this._playCallback = null;
                                 });
                         })
                 }
