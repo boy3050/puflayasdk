@@ -27,10 +27,12 @@
 	PfuSdk.HideMoreGameList();
 	
    3   显示Banner
+   
 	 PfuSdk.ShowBanner();
 	 PfuSdk.HideBanner();
 	 
    4   分享
+   
    	 单纯分享
 	 PfuSdk.Share(this);
 	 激励分享
@@ -39,10 +41,25 @@
                 //给予奖励
             }
             else {
+                //错误描述 此处用游戏自己的UI显示错误
+                console.log(desc);
+		
+            }
+        });
+
+   5   激励视频
+   
+   	//激励视频
+        PfuSdk.Video(this, (type, desc) => {
+            if (PfuSdk.SUCCESS == type) {
+                //给予奖励
+            }
+            else {
                 //错误描述
                 console.log(desc);
             }
         });
+
 
 **添加规范**
 
@@ -66,8 +83,7 @@
     base64.min.js 
     md5-min.js
     依赖库在sdklibrary文件夹下
-    
-  
+
   库添加规范和顺序
   
     Laya核心库->sdk依赖库->sdk核心库->sdkUI库
