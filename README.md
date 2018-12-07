@@ -25,7 +25,7 @@
    	PfuSdk.ShowMoreGameList();
 	PfuSdk.HideMoreGameList();
 	
-   3   显示Banner
+   3   显示/隐藏 Banner
    
 	 PfuSdk.ShowBanner();
 	 PfuSdk.HideBanner();
@@ -46,7 +46,7 @@
             }
         });
 
-   5   激励视频
+   5   激励视频 (此API包含最新的SDK激励视频规则规范，调用前后不要再去写分享等机制)
    
    	//激励视频
         PfuSdk.Video(this, (type, desc) => {
@@ -182,11 +182,6 @@
       OnHide(callback: Function);
 
       /**
-       * 视频是否为强制分享(可做UI上变化判定) 0.0.4 删除
-       */
-      //IsVideoForceShare(): boolean;
-
-      /**
        * 分享 无回调
        */
       Share(handle: any, qureyPos?: number,addQurey?:string);
@@ -261,10 +256,10 @@
        * 随机显示公众号
        */
       ShowRandomGeneralAd();
-    /**
-    * 视频前分享(复选框开关) 0.0.4清除
-    */
-      //IsPfuSdkVideoShare():boolean;
+    	/**
+    	* 视频前分享(复选框开关)
+    	*/
+      IsPfuSdkVideoShare():boolean;
 
       /*
       *	跳转盒子复活功能 
