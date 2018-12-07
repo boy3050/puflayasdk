@@ -72,6 +72,7 @@
     
     
   三 开放API说明:
+  
     interface PfuSdk {
       //判定分享回调 视频回调等 成功状态
       SUCCESS;
