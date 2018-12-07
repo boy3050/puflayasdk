@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="244,97" extention="Button" designImageOffsetY="-682" designImageAlpha="37">
+  <controller name="button" pages="0,up,1,down,2,over,3,selectedOver" selected="0">
+    <action type="play_transition" fromPage="" toPage="1" transition="toSmall"/>
+    <action type="play_transition" fromPage="1" toPage="" transition="toNormal"/>
+  </controller>
+  <displayList>
+    <image id="n1" name="anniu_1" src="10sdc6" xy="0,0" pivot="0.5,0.5" size="244,97">
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <text id="n6_9cpo" name="title" xy="-21,23" pivot="0.5,0.5" size="295,51" font="方正粗圆简体" fontSize="40" color="#772a00" align="center" vAlign="middle" ubb="true" autoSize="none" text="20元购买">
+      <relation target="n1" sidePair="center-center,middle-middle"/>
+    </text>
+  </displayList>
+  <Button/>
+  <transition name="toSmall">
+    <item time="0" type="Scale" target="n1" tween="true" startValue="1,1" endValue="0.8,0.8" duration="2"/>
+    <item time="0" type="Scale" target="n6_9cpo" tween="true" startValue="1,1" endValue="0.8,0.8" duration="2"/>
+  </transition>
+  <transition name="toNormal">
+    <item time="0" type="Scale" target="n1" tween="true" startValue="0.8,0.8" endValue="1.1,1.1" duration="4"/>
+    <item time="0" type="Scale" target="n6_9cpo" tween="true" startValue="1,1" endValue="1.1,1.1" duration="4"/>
+    <item time="4" type="Scale" target="n6_9cpo" tween="true" startValue="1.1,1.1" endValue="0.9,0.9" duration="1"/>
+    <item time="4" type="Scale" target="n1" tween="true" startValue="1.1,1.1" endValue="0.9,0.9" duration="1"/>
+    <item time="5" type="Scale" target="n1" tween="true" startValue="0.9,0.9" endValue="1,1" duration="2"/>
+    <item time="5" type="Scale" target="n6_9cpo" tween="true" startValue="0.9,0.9" endValue="1,1" duration="2"/>
+    <item time="7" type="Scale" target="n1" tween="true" startValue="1,1"/>
+  </transition>
+  <transition name="tishi">
+    <item time="0" type="Scale" target="n1" tween="true" startValue="1,1" endValue="1.3,1.3" duration="8"/>
+    <item time="0" type="Scale" target="n6_9cpo" tween="true" startValue="1,1" endValue="1.3,1.3" duration="8"/>
+    <item time="8" type="Rotation" target="n6_9cpo" tween="true" startValue="0" endValue="4" duration="2"/>
+    <item time="8" type="Rotation" target="n1" tween="true" startValue="0" endValue="4" duration="2"/>
+    <item time="8" type="Scale" target="n1" tween="true" startValue="1.3,1.3" endValue="1.3,1.3" duration="14"/>
+    <item time="8" type="Scale" target="n6_9cpo" tween="true" startValue="1.3,1.3" endValue="1.3,1.3" duration="14"/>
+    <item time="10" type="Rotation" target="n1" tween="true" startValue="4" endValue="-4" duration="2"/>
+    <item time="10" type="Rotation" target="n6_9cpo" tween="true" startValue="4" endValue="-4" duration="2"/>
+    <item time="12" type="Rotation" target="n1" tween="true" startValue="-4" endValue="4" duration="2"/>
+    <item time="12" type="Rotation" target="n6_9cpo" tween="true" startValue="-4" endValue="4" duration="2"/>
+    <item time="14" type="Rotation" target="n1" tween="true" startValue="4" endValue="-4" duration="2"/>
+    <item time="14" type="Rotation" target="n6_9cpo" tween="true" startValue="4" endValue="-4" duration="2"/>
+    <item time="16" type="Rotation" target="n6_9cpo" tween="true" startValue="-4" endValue="4" duration="2"/>
+    <item time="16" type="Rotation" target="n1" tween="true" startValue="-4" endValue="4" duration="2"/>
+    <item time="18" type="Rotation" target="n1" tween="true" startValue="4" endValue="-4" duration="2"/>
+    <item time="18" type="Rotation" target="n6_9cpo" tween="true" startValue="4" endValue="-4" duration="2"/>
+    <item time="20" type="Rotation" target="n6_9cpo" tween="true" startValue="-4" endValue="0" duration="2"/>
+    <item time="20" type="Rotation" target="n1" tween="true" startValue="-4" endValue="0" duration="2"/>
+    <item time="22" type="Rotation" target="n6_9cpo" tween="true" startValue="0" endValue="0" duration="5" ease="Circ.Out"/>
+    <item time="22" type="Rotation" target="n1" tween="true" startValue="0" endValue="0" duration="5" ease="Circ.Out"/>
+    <item time="22" type="Scale" target="n6_9cpo" tween="true" startValue="1.3,1.3" endValue="1,1" duration="5"/>
+    <item time="22" type="Scale" target="n1" tween="true" startValue="1.3,1.3" endValue="1,1" duration="5"/>
+    <item time="48" type="Rotation" target="n6_9cpo" value="0"/>
+    <item time="48" type="Rotation" target="n1" value="0"/>
+  </transition>
+</component>

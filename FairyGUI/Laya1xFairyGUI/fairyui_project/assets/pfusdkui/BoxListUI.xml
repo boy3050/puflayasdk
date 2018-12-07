@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,1334" designImage="ui://xcy52l6510sdca">
+  <displayList>
+    <graph id="n10_sded" name="n10" xy="0,-233" size="750,1800" type="rect" lineSize="0"/>
+    <image id="n2_wmv0" name="n2" src="10sdc2" fileName="切图/kp/Img_bg_1.png" xy="0,0" size="750,1334" locked="true"/>
+    <image id="n1_wmv0" name="n1" src="10sdc3" fileName="切图/kp/Img_bg_2.png" xy="0,0" size="750,104" locked="true"/>
+    <text id="n3_wmv0" name="n3" xy="276,24" size="201,56" locked="true" font="方正粗圆简体" fontSize="45" text="5588游戏"/>
+    <list id="n7_wmv0" name="List_game" xy="0,407" size="750,927" locked="true" overflow="scroll" defaultItem="ui://xcy52l6510sdc4" autoClearItems="true"/>
+    <component id="n8_wmv0" name="Btn_close" src="10sdc7" fileName="组件/按钮/BtnClose.xml" xy="30,21"/>
+    <list id="n9_smaj" name="Img_banner" xy="0,106" size="750,300" locked="true" layout="row" overflow="scroll" scroll="horizontal" scrollBarFlags="2" defaultItem="ui://xcy52l6510sdc9"/>
+  </displayList>
+</component>

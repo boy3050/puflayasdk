@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,179">
+  <displayList>
+    <image id="n0_f90n" name="n0" src="10sdc3" fileName="切图/kp/Img_bg_2.png" xy="0,0" size="750,179"/>
+    <image id="n7_wmv0" name="n7" src="10sdc2" fileName="切图/kp/Img_bg_1.png" xy="0,177" size="750,2"/>
+    <text id="n3_f90n" name="Text_name" xy="160,27" size="231,46" font="FZCuYuan-M03S" fontSize="30" vAlign="middle" autoSize="none" text="小猪跑酷"/>
+    <text id="n4_f90n" name="Text_message" xy="160,73" size="394,71" font="FZCuYuan-M03S" fontSize="26" color="#7d7d7d" vAlign="middle" autoSize="none" text="化身猪猪侠，在游戏里面斗智斗勇!"/>
+    <loader id="n8_wmv0" name="icon" xy="19,27" size="125,125" fill="scale"/>
+    <text id="n9_wmv0" name="1" xy="478,27" size="100,46" font="FZCuYuan-M03S" fontSize="24" vAlign="middle" autoSize="none" text="人在玩"/>
+    <text id="n10_wmv0" name="Text_name2" xy="281,27" size="198,46" font="FZCuYuan-M03S" fontSize="24" color="#ff6420" align="right" vAlign="middle" autoSize="none" text="5000万"/>
+    <component id="n12_wmv0" name="btn_start" src="10sdc5" fileName="组件/按钮/Btn_HS_DAN_2.xml" xy="564,51" size="169,76">
+      <Button title="开始" titleFontSize="32"/>
+    </component>
+  </displayList>
+</component>

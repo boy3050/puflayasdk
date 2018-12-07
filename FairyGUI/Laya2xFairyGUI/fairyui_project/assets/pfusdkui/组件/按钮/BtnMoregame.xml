@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="131,78" extention="Button" designImageOffsetY="-682" designImageAlpha="37">
+  <controller name="button" pages="0,up,1,down,2,over,3,selectedOver" selected="0">
+    <action type="play_transition" fromPage="" toPage="1" transition="toSmall"/>
+    <action type="play_transition" fromPage="1" toPage="" transition="toNormal"/>
+  </controller>
+  <displayList>
+    <loader id="n2_mva0" name="icon" xy="40,24" pivot="0.5,0.5" size="50,30" autoSize="true"/>
+  </displayList>
+  <Button/>
+  <transition name="toSmall"/>
+  <transition name="toNormal"/>
+</component>

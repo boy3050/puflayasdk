@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,1334" opaque="false">
+  <displayList>
+    <image id="n0_10sdc" name="list_moregamebg" src="10sdcc" fileName="切图/主界面/Img_zjmdt.png" xy="25,1161" size="709,164" group="n3_10sdc" visible="false"/>
+    <list id="n1_10sdc" name="list_moregame" xy="0,1179" size="750,130" group="n3_10sdc" layout="row" overflow="scroll" scroll="horizontal" colGap="14" defaultItem="ui://xcy52l656o1rci" align="center" vAlign="middle" autoClearItems="true">
+      <item url="ui://5fhlcwqajmohib1"/>
+      <item url="ui://5fhlcwqajmohib1"/>
+      <item url="ui://5fhlcwqajmohib1"/>
+      <item url="ui://5fhlcwqajmohib1"/>
+      <item url="ui://5fhlcwqajmohib1"/>
+    </list>
+    <image id="n2_10sdc" name="list_moregameStr" src="10sdcd" fileName="切图/主界面/Img_hy.png" xy="318,1126" size="113,25" group="n3_10sdc" visible="false"/>
+    <group id="n3_10sdc" name="boxList" xy="0,1126" size="750,200" advanced="true"/>
+    <component id="n7_10sdc" name="Btn_MoreGameLeft" src="10sdcg" fileName="组件/按钮/BtnMoregame.xml" xy="2,767"/>
+    <component id="n8_10sdc" name="Btn_MoreGameRight" src="10sdcg" fileName="组件/按钮/BtnMoregame.xml" xy="618,767"/>
+  </displayList>
+</component>

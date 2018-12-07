@@ -1,0 +1,11 @@
+index.html中
+分为三块 core
+         fairyUI
+         layaGUI
+
+例如copy index.html中其中一份到文本， 使用替换工具 祛除html标记，将<script src="换成 %CDIR% ,去掉"></script 祛除空格回车 使其变为一行.
+正则替换换行符 公式:[^。”！？]\n
+
+正确的bat文件 内容:
+SET CDIR=%~dp0release\web\
+uglifyjs %CDIR%js/Pfusdk/UI/LayaGui/SceneMatchingLayaUtils.js %CDIR%js/Pfusdk/UI/LayaGui/PfuSdkLayaUI.js %CDIR%js/Pfusdk/UI/LayaGui/ui/layaUI.max.all.js %CDIR%js/Pfusdk/UI/LayaGui/FirstSceneBoxUI.js %CDIR%js/Pfusdk/UI/LayaGui/MoreGameUI.js %CDIR%js/Pfusdk/UI/LayaGui/PfuBannerUI.js -o %CDIR%pufsdklayagui.min.js

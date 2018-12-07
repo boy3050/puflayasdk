@@ -1,0 +1,9 @@
+<res>
+   <item name="comp/Btn_gdyx.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0" scale="0"/>
+   <item name="comp/Btn_xclose.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0" scale="0"/>
+   <item name="comp/Img_bg_1.png" type="Image" compress="0" pack="2" quality="80" props="" picType="0" scale="0"/>
+   <item name="comp/Img_bg_2.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0" scale="0"/>
+   <item name="comp/Img_hy.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0" scale="0"/>
+   <item name="comp/Img_zjmdt.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0" scale="0"/>
+   <item name="comp/anniu_1.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0" scale="0"/>
+</res>

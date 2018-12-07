@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,1334" opaque="false">
+  <displayList>
+    <loader id="n0_gaau" name="loader" xy="374,1332" pivot="0.5,1" anchor="true" size="750,210" align="center" vAlign="bottom" fill="scaleMatchWidth">
+      <relation target="" sidePair="bottom-bottom,center-center"/>
+    </loader>
+  </displayList>
+</component>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,300">
+  <displayList>
+    <loader id="n10_smaj" name="icon" xy="0,0" size="750,300" fill="scale"/>
+  </displayList>
+</component>

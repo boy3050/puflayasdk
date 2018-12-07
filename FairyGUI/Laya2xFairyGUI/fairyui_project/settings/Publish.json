@@ -1,0 +1,16 @@
+{
+	"binaryFormat":true,
+	"codeGeneration":{
+		"classNamePrefix":"UI_",
+		"codePath":"X:\\3D_wxgame_lian\\项目规范总目录\\程序\\pfu_laya_sdk\\pfu_laya_sdk_project\\src\\Pfusdk\\UI\\FairyGui\\bean",
+		"codeType":"TS",
+		"getMemberByName":false,
+		"ignoreNoname":false,
+		"memberNamePrefix":"m_",
+		"packageName":""
+	},
+	"compressDesc":false,
+	"fileExtension":"bin",
+	"packageCount":2,
+	"path":"X:\\3D_wxgame_lian\\项目规范总目录\\程序\\pfu_laya_sdk\\LayaFairyGUI2.x\\pfu_laya2x_sdk_project\\bin\\PfusdkRes\\UI\\fairygui"
+}
