@@ -1,6 +1,6 @@
 **初始化流程**
 
-   1   必要初始化代码
+   1   必要代码和初始化
 	
 	//SDK初始化
 	PfuSdk.InitConfig(this, () => {
@@ -10,14 +10,15 @@
 	    PFU.UI.PfuSdkLayaUI.CreateUI();
 	});
 	
+	/** 此处注意一下 wx.onShow  wx.onHide 已经封装在SDK中 禁止在其他地方定义**/
 	//监听切换到前台
-        PfuSdk.OnShow(() => {
+	PfuSdk.OnShow(() => {
 
-        });
-        //监听切换到后台
-        PfuSdk.OnHide(() => {
+	});
+	//监听切换到后台
+	PfuSdk.OnHide(() => {
 
-        });
+	});
 	
    2   显示/隐藏 更多游戏 和 交叉推广
    
