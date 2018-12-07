@@ -1,3 +1,7 @@
+** pfusdkLaya1xDemo pfusdkLaya2xDemo 不定时去更新，所以库不保证最新
+** pfu_laya_sdk_project保持和Release版本同步
+
+
 **初始化流程**
 
    1   必要代码和初始化
