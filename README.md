@@ -1,12 +1,56 @@
 # puflayasdk
 
+**初始化流程**
+
+   1   必要初始化代码
+	
+	//SDK初始化
+	PfuSdk.InitConfig(this, () => {
+	    //FairyGUI创建
+	    //PFU.UI.PfuSdkFairyUI.CreateUI();
+	    //LayaGUI创建
+	    PFU.UI.PfuSdkLayaUI.CreateUI();
+	});
+	
+	//监听切换到前台
+        PfuSdk.OnShow(() => {
+
+        });
+        //监听切换到后台
+        PfuSdk.OnHide(() => {
+
+        });
+	
+   2   显示/隐藏 更多游戏 和 交叉推广
+   
+   	PfuSdk.ShowMoreGameList();
+	PfuSdk.HideMoreGameList();
+	
+   3   显示Banner
+	 PfuSdk.ShowBanner();
+	 PfuSdk.HideBanner();
+	 
+   4   分享
+   	 单纯分享
+	 PfuSdk.Share(this);
+	 激励分享
+	 PfuSdk.ShareAward(this, (type, desc) => {
+            if (PfuSdk.SUCCESS == type) {
+                //给予奖励
+            }
+            else {
+                //错误描述
+                console.log(desc);
+            }
+        });
+
 **添加规范**
 
 下载Release
 
 一 SDK部署位置 [/SDK核心]
 
-	PfusdkRes文件夹放入Laya工程bin目录(确保必须在此目录，排除不用的UI库)
+	PfusdkRes文件夹放入Laya工程bin目录(确保必须在此目录，排除不用的UI库资源)
 
 	core文件夹放入Laya工程bin/libs 目录 (UI类库需要自行排除)
       使用LayaUI保留 pufsdkcore.js 和 pufsdklayagui.js
@@ -18,12 +62,14 @@
  
  
   添加依赖库 
+  
     base64.min.js 
     md5-min.js
     依赖库在sdklibrary文件夹下
     
   
   库添加规范和顺序
+  
     Laya核心库->sdk依赖库->sdk核心库->sdkUI库
     
  二 pfuSdkConfig配置说明
