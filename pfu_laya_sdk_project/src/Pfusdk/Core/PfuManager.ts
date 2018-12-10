@@ -199,12 +199,17 @@
                                     let data: PfuMoreGameData = this._moregame.adverts[i];
 
                                     if (Laya.Browser.onAndroid) {
-                                        if ((data.boxId == undefined || data.boxId == "") && (data.link == undefined || data.link == ""))  {
+                                        if ((data.boxId == undefined || data.boxId == "" || !PfuBoxList.GetInstance().IsMoreGameDataBeAppIdList(data.boxId)) && (data.link == undefined || data.link == ""))  {
                                             continue;
                                         }
                                     }
                                     else  {
-                                        if ((data.wxid == undefined || data.wxid == "") && (data.link == undefined || data.link == ""))  {
+                                        if ((data.wxid == undefined || data.wxid == "" || !PfuBoxList.GetInstance().IsMoreGameDataBeAppIdList(data.wxid)) && (data.link == undefined || data.link == ""))  {
+                                            if(!PfuBoxList.GetInstance().IsMoreGameDataBeAppIdList(data.wxid))
+                                            {
+                                                console.log("more:" + data.wxid);
+                                            }
+
                                             continue;
                                         }
                                     }
