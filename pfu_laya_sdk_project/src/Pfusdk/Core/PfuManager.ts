@@ -313,6 +313,10 @@
 
             let query = PfuPlatformManager.GetInstance().GetShareQuery((qureyPos) ? qureyPos : -999, addQurey);
             console.log("query:" + query);
+            if (!this.IsWegameTestMode()) {
+                query += "&shareImage="+share.shareLink;
+            }
+            
             PfuPlatformManager.GetInstance().StatisticsMsg2201(PlatformStatisticsType.shareGame, share.shareLink);
 
             WeChatUtils.GetInstance().ShareGroupAppMessageImage(isShareGroup, fun, str, imgUrl, query);

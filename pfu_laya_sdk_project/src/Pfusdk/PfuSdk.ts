@@ -11,7 +11,7 @@ class PfuSdk {
     public static get GetParamComplete() { return PFU.PfuManager.GetInstance().GetParamComplete; }
     public static get GetBoxListComplete() { return PFU.PfuManager.GetInstance().GetBoxListComplete; }
 
-    private static sdk_ver = "0.0.6.0";
+    private static sdk_ver = "0.0.6.1";
 
     public static SHOW_TYPE_ALL = 0;//更多游戏，BosList都显示
     public static SHOW_TYPE_MOREGAME = 1;//只显示更多游戏
