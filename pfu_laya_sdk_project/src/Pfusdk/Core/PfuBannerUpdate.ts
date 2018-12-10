@@ -69,6 +69,7 @@ namespace PFU {
             }
 
             this._timeCount += 1;
+            //console.log(PfuGlobal.GetOLParam().pfuSdkRefresh + "" + this._timeCount+"");
             if (this._timeCount > PfuGlobal.GetOLParam().pfuSdkRefresh) {
                 //刷新
                 this.RefreshBanner();
@@ -98,23 +99,15 @@ namespace PFU {
 
         private RefreshBanner() {
             this._isCreateBanner = false;
-            // if (PfuGlobal.GetOLParam().ad_banner == PfuSwitch.OFF) {
-            //     this.RefreshPfuBanner();
-            //     this._isCreateBanner = true;
-            //     this._isLastCtrAction = true;
-            // }
-            // else
-            {
-                //刷新Banner
-
-                if (PfuGlobal.IsReadyBanner()) {
-                    PfuGlobal.RefreshBanner(() => {
-                        this._isCreateBanner = true;
-                        //刷新按照最后一次设置控制显示和隐藏
-                        this._isLastCtrAction = true;
-                    });
-                }
+            //刷新Banner
+            if (PfuGlobal.IsReadyBanner()) {
+                PfuGlobal.RefreshBanner(() => {
+                    this._isCreateBanner = true;
+                    //刷新按照最后一次设置控制显示和隐藏
+                    this._isLastCtrAction = true;
+                });
             }
+
         }
 
         public GetPfuBannerImgUrl(): string {
@@ -134,9 +127,18 @@ namespace PFU {
             });
         }
 
+        private _firstShowBanner = true;
+
         public CallShow() {
-            this._isLastCtrAction = true;
-            this._isLastShow = true;
+            if (this._firstShowBanner) {
+                this._isLastCtrAction = true;
+                this._isLastShow = true;
+                this._firstShowBanner = false;
+            }
+            else  {
+                this._isLastShow = true;
+                this.RefreshBanner()
+            }
         }
         public CallHide() {
             this._isLastCtrAction = true;
