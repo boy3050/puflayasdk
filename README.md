@@ -2,6 +2,24 @@
 
 ** pfu_laya_sdk_project保持和Release版本同步
 
+** 初次对接，在微信开发者工具中的game.json 要配置 navigateToMiniProgramAppIdList 参数 如下:
+
+       "navigateToMiniProgramAppIdList": [
+	    "wx3e33fef689f472b1",
+	    "wx7505f4985abb17ce",
+	    "wx716b36314be3fe89",
+	    "wx8b25b991dcc6edf6",
+	    "wx99e08aff982f8dde",
+	    "wx3b33f72ee2ec7bc1",
+	    "wx989199f7dc0e3a50",
+	    "wxbbbef0244fa4d4e4",
+	    "wx87fe1890ea1384a5",
+	    "wxa0eee1fe564aa730"
+       ]
+       此处只能留10个ID， 将sdk中pfusdkconfig文件里的navigateToMiniAppId 内容copy过来，优先删除自己的。
+       接着从底部开始删除(保留10个)。 最后自己游戏的sdk配置文件可跳转列表与这个10个保持一致。
+
+
 
 **初始化流程**
 
