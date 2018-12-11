@@ -117,6 +117,11 @@ namespace PFU {
                 return;
             }
 
+            if(this._tempRefreshBannerData.count > PfuManager.GetInstance().OLParam.pfuSdkBannerCount)
+            {
+                return;
+            }
+
             this._timeCount += 1;
             //console.log(PfuGlobal.GetOLParam().pfuSdkRefresh + "" + this._timeCount+"");
             if (this._timeCount > PfuGlobal.GetOLParam().pfuSdkRefresh) {
@@ -149,6 +154,7 @@ namespace PFU {
         private RefreshBanner() {
             this._timeCount = 0;
             this._isCreateBanner = false;
+            this._tempShowBannerTime = Date.now();
             //刷新Banner
             if (PfuGlobal.IsReadyBanner()) {
                 PfuGlobal.RefreshBanner(() => {
@@ -183,7 +189,7 @@ namespace PFU {
 
         public CallShow() {
             this._isLastShow = true;
-            if (this._firstShowBanner || this._tempRefreshBannerData.count >= PfuManager.GetInstance().OLParam.pfuSdkBannerCount) {
+            if (this._firstShowBanner || this._tempRefreshBannerData.count > PfuManager.GetInstance().OLParam.pfuSdkBannerCount) {
                 this.ShowBAction();
             }
             else {
@@ -227,7 +233,7 @@ namespace PFU {
             //         this._onPfuSetBannerVisible.call(this._refreshBannerHandle, true);
             //     }
             // } else 
-            this._tempShowBannerTime = Date.now();
+            
             {
                 PfuGlobal.ShowBanner();
             }

@@ -4,6 +4,19 @@
         private static focusCallback: any = null;
         private static focusHandler: Function = null;
 
+        private static _addDialogCallback: Function = null;
+        private static _addDialogHandle: any = null;
+        public static SetOnDialog(handle: any, callBack: Function)  {
+            this._addDialogHandle = handle;
+            this._addDialogCallback = callBack;
+        }
+
+        
+        public static ShowDialog(desc: string)  {
+            if (this._addDialogCallback)  {
+                this._addDialogCallback.call(this._addDialogHandle, desc);
+            }
+        }
 
         //轮播闪屏广告
         public static ShowNextSplashAd() {
@@ -69,8 +82,8 @@
          * @param service 回调对象
          * @param fun 回调函数
          */
-        public static ShowIncentive(service: any, fun: Function,adunit?:string) {
-            WeChatIncentiveAd.GetInstance().Show(service, fun,adunit);
+        public static ShowIncentive(service: any, fun: Function, adunit?: string) {
+            WeChatIncentiveAd.GetInstance().Show(service, fun, adunit);
         }
         //获取在线参数
         public static GetOLParam(): PFU.PfuOLParamData {
@@ -94,7 +107,7 @@
          * @param isShareGroup
          * @param fun (type:number,desc:string)
          */
-        public static PfuShareGroupNext(handler: any, fun: Function, isAward: boolean, qureyPos?: number,addQurey?:string) {
+        public static PfuShareGroupNext(handler: any, fun: Function, isAward: boolean, qureyPos?: number, addQurey?: string) {
 
             // let stamp: number = Date.now();
             // PfuManager.GetInstance().PfuShareNext(false, "", fun, qureyPos);
@@ -117,7 +130,7 @@
             //         this.SetFocusHandler(null, null);
             //     });
             // }
-            this._shareHandle(handler,fun,isAward,false,qureyPos,addQurey);
+            this._shareHandle(handler, fun, isAward, false, qureyPos, addQurey);
         }
 
         /**
@@ -125,18 +138,18 @@
          * @param isShareGroup
          * @param fun (type:number,desc:string)
          */
-        public static PfuShareVideo(handler: any, fun: Function, isAward: boolean, qureyPos?: number,addQurey?:string) {
-            this._shareHandle(handler,fun,isAward,true,qureyPos,addQurey);
+        public static PfuShareVideo(handler: any, fun: Function, isAward: boolean, qureyPos?: number, addQurey?: string) {
+            this._shareHandle(handler, fun, isAward, true, qureyPos, addQurey);
         }
 
-        private static _shareHandle(handler: any, fun: Function, isAward: boolean, isVideo, qureyPos?: number,addQurey?:string)  {
+        private static _shareHandle(handler: any, fun: Function, isAward: boolean, isVideo, qureyPos?: number, addQurey?: string) {
             let stamp: number = Date.now();
-            PfuManager.GetInstance().PfuShareNext(false, "", fun, qureyPos,addQurey);
+            PfuManager.GetInstance().PfuShareNext(false, "", fun, qureyPos, addQurey);
 
             if (isAward && !PfuManager.GetInstance().IsWegameTestMode()) {
                 this.SetFocusHandler(this, (time) => {
                     //let max =  parseInt(this.GetOLParam().pfuSdkShareTime) + (1000 * PfuManager.GetInstance().GetShareTimeMax());
-                    let max =  parseInt(this.GetOLParam().pfuSdkShareTime);
+                    let max = parseInt(this.GetOLParam().pfuSdkShareTime);
                     if (time - stamp >= max) {
                         console.log("分享成功");
                         fun.call(handler, PfuSdk.SUCCESS, "");
@@ -215,5 +228,7 @@
         public static GetTopUrl() {
             return PfuManager.GetInstance().GetTopUrl();
         }
+
+
     }
 }

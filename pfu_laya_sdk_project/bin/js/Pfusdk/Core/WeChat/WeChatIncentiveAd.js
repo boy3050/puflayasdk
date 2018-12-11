@@ -12,22 +12,6 @@ var PFU;
         };
         WeChatIncentiveAd.prototype.Create = function (adId) {
             var _this = this;
-            if (adId == "0") {
-                //从记录中获取，记录中也没有 则 return
-                var curVer = PFU.LocalSaveUtils.GetItem(WeChatIncentiveAd.SAVE_INCENTIVE_KEY);
-                if (curVer == null || curVer == "") {
-                    return;
-                }
-                else {
-                    adId = adId;
-                }
-            }
-            else {
-                PFU.LocalSaveUtils.SaveItem(WeChatIncentiveAd.SAVE_INCENTIVE_KEY, adId);
-            }
-            if (adId == "0") {
-                return;
-            }
             this._adId = adId;
             if (PFU.WeChatUtils.GetInstance().IsWeGame()) {
                 if (typeof wx.createBannerAd === 'function') {

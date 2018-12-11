@@ -14,6 +14,8 @@ var pfusdkui;
             fairygui.UIObjectFactory.setPackageItemExtension(pfusdkui.UI_MoreGameUI.URL, pfusdkui.UI_MoreGameUI);
             fairygui.UIObjectFactory.setPackageItemExtension(pfusdkui.UI_BtnMoregame.URL, pfusdkui.UI_BtnMoregame);
             fairygui.UIObjectFactory.setPackageItemExtension(pfusdkui.UI_List_GameChild.URL, pfusdkui.UI_List_GameChild);
+            fairygui.UIObjectFactory.setPackageItemExtension(pfusdkui.UI_SdkDialogUI.URL, pfusdkui.UI_SdkDialogUI);
+            fairygui.UIObjectFactory.setPackageItemExtension(pfusdkui.UI_DialogCom.URL, pfusdkui.UI_DialogCom);
         };
         return pfusdkuiBinder;
     }());

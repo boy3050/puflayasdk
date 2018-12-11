@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="1836,56">
+  <displayList>
+    <graph id="n4_jkoh" name="n4" xy="0,0" pivot="0.5,0.5" size="1836,55" alpha="0.7" type="rect" lineSize="0" fillColor="#ff000000"/>
+    <text id="n5_jkoh" name="tiptext" xy="789,13" pivot="0.5,0.5" size="257,36" fontSize="28" color="#ffffff" align="center" text="分享失败成功提示语"/>
+  </displayList>
+</component>

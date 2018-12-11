@@ -44,6 +44,7 @@ var PFU;
         WeChatUtils.prototype.OnShareAppMessage = function (fun, titleStr, imageUrl) {
             if (this.IsWeGame()) {
                 wx.onShareAppMessage(function () {
+                    fun();
                     return {
                         title: titleStr,
                         imageUrl: imageUrl,

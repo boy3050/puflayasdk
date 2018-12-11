@@ -19,6 +19,8 @@
     <component id="10sdcg" name="BtnMoregame.xml" path="/组件/按钮/"/>
     <image id="10sdch" name="Btn_gdyx.png" path="/组件/按钮/按钮/"/>
     <component id="6o1rci" name="List_GameChild.xml" path="/组件/" exported="true"/>
+    <component id="jkohcj" name="SdkDialogUI.xml" path="/" exported="true"/>
+    <component id="jkohck" name="DialogCom.xml" path="/组件/" exported="true"/>
   </resources>
   <publish name="pfusdkui" genCode="true"/>
 </packageDescription>

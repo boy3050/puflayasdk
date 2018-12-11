@@ -38,6 +38,9 @@ var PFU;
                 bannerWindow.InitWindow(pfusdkui.UI_PfuBannerUI.createInstance());
                 var firstSceneBoxWindow = new PFU.UI.FirstSceneBoxWindow();
                 firstSceneBoxWindow.InitWindow(pfusdkui.UI_BoxListUI.createInstance());
+                var sdkDialogWindow = new PFU.UI.SdkDialogWindow();
+                sdkDialogWindow.InitWindow(pfusdkui.UI_SdkDialogUI.createInstance());
+                this._sdkDialogWindow = sdkDialogWindow;
                 PFU.PfuMoreGameUpdate.GetInstance().SetCtrlMoreGameUI(this, function(isShow, type) {
                     if (isShow) {
                         moreGameWindow.Show(type);
@@ -48,6 +51,7 @@ var PFU;
             };
             return PfuSdkFairyUI;
         }();
+        PfuSdkFairyUI._sdkDialogWindow = null;
         UI.PfuSdkFairyUI = PfuSdkFairyUI;
     })(UI = PFU.UI || (PFU.UI = {}));
 })(PFU || (PFU = {}));
@@ -112,6 +116,8 @@ var pfusdkui;
             fairygui.UIObjectFactory.setPackageItemExtension(pfusdkui.UI_MoreGameUI.URL, pfusdkui.UI_MoreGameUI);
             fairygui.UIObjectFactory.setPackageItemExtension(pfusdkui.UI_BtnMoregame.URL, pfusdkui.UI_BtnMoregame);
             fairygui.UIObjectFactory.setPackageItemExtension(pfusdkui.UI_List_GameChild.URL, pfusdkui.UI_List_GameChild);
+            fairygui.UIObjectFactory.setPackageItemExtension(pfusdkui.UI_SdkDialogUI.URL, pfusdkui.UI_SdkDialogUI);
+            fairygui.UIObjectFactory.setPackageItemExtension(pfusdkui.UI_DialogCom.URL, pfusdkui.UI_DialogCom);
         };
         return pfusdkuiBinder;
     }();
@@ -393,6 +399,36 @@ var __extends = this && this.__extends || function(d, b) {
 var pfusdkui;
 
 (function(pfusdkui) {
+    var UI_DialogCom = function(_super) {
+        __extends(UI_DialogCom, _super);
+        function UI_DialogCom() {
+            return _super.call(this) || this;
+        }
+        UI_DialogCom.createInstance = function() {
+            return fairygui.UIPackage.createObject("pfusdkui", "DialogCom");
+        };
+        UI_DialogCom.prototype.constructFromXML = function(xml) {
+            _super.prototype.constructFromXML.call(this, xml);
+            this.m_n4 = this.getChildAt(0);
+            this.m_tiptext = this.getChildAt(1);
+        };
+        return UI_DialogCom;
+    }(fairygui.GComponent);
+    UI_DialogCom.URL = "ui://xcy52l65jkohck";
+    pfusdkui.UI_DialogCom = UI_DialogCom;
+})(pfusdkui || (pfusdkui = {}));
+
+var __extends = this && this.__extends || function(d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() {
+        this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+
+var pfusdkui;
+
+(function(pfusdkui) {
     var UI_PfuBannerUI = function(_super) {
         __extends(UI_PfuBannerUI, _super);
         function UI_PfuBannerUI() {
@@ -409,6 +445,35 @@ var pfusdkui;
     }(fairygui.GComponent);
     UI_PfuBannerUI.URL = "ui://xcy52l6510sdc0";
     pfusdkui.UI_PfuBannerUI = UI_PfuBannerUI;
+})(pfusdkui || (pfusdkui = {}));
+
+var __extends = this && this.__extends || function(d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() {
+        this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+
+var pfusdkui;
+
+(function(pfusdkui) {
+    var UI_SdkDialogUI = function(_super) {
+        __extends(UI_SdkDialogUI, _super);
+        function UI_SdkDialogUI() {
+            return _super.call(this) || this;
+        }
+        UI_SdkDialogUI.createInstance = function() {
+            return fairygui.UIPackage.createObject("pfusdkui", "SdkDialogUI");
+        };
+        UI_SdkDialogUI.prototype.constructFromXML = function(xml) {
+            _super.prototype.constructFromXML.call(this, xml);
+            this.m_n0 = this.getChildAt(0);
+        };
+        return UI_SdkDialogUI;
+    }(fairygui.GComponent);
+    UI_SdkDialogUI.URL = "ui://xcy52l65jkohcj";
+    pfusdkui.UI_SdkDialogUI = UI_SdkDialogUI;
 })(pfusdkui || (pfusdkui = {}));
 
 var PFU;
@@ -569,6 +634,11 @@ var PFU;
                 if (this._isCreateMoreGameListBar) {
                     this.UpdateMoreGameListMove();
                 }
+                if (this._isCreateSideMoreGameBtn && PFU.PfuMoreGameUpdate.GetInstance().isSetMoreGameOffsetY) {
+                    this._fui.m_Btn_MoreGameLeft.setXY(this._fui.m_Btn_MoreGameLeft.x, this._fui.m_Btn_MoreGameLeft.y + PFU.PfuMoreGameUpdate.GetInstance().moreGameOffsetY);
+                    this._fui.m_Btn_MoreGameRight.setXY(this._fui.m_Btn_MoreGameRight.x, this._fui.m_Btn_MoreGameRight.y + PFU.PfuMoreGameUpdate.GetInstance().moreGameOffsetY);
+                    PFU.PfuMoreGameUpdate.GetInstance().EndMoreGameUIOffsetY();
+                }
             };
             MoreGameWindow.prototype.CreateSideMoreGameBtn = function() {
                 var _this = this;
@@ -668,6 +738,49 @@ var PFU;
             return MoreGameWindow;
         }(UI.WindowBase);
         UI.MoreGameWindow = MoreGameWindow;
+    })(UI = PFU.UI || (PFU.UI = {}));
+})(PFU || (PFU = {}));
+
+var __extends = this && this.__extends || function(d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() {
+        this.constructor = d;
+    }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+
+var PFU;
+
+(function(PFU) {
+    var UI;
+    (function(UI) {
+        var SdkDialogWindow = function(_super) {
+            __extends(SdkDialogWindow, _super);
+            function SdkDialogWindow() {
+                var _this = _super !== null && _super.apply(this, arguments) || this;
+                _this._isCreatePfuBanner = false;
+                return _this;
+            }
+            SdkDialogWindow.prototype.InitWindow = function(fui) {
+                this._fui = fui;
+                _super.prototype.InitWindow.call(this, fui);
+            };
+            SdkDialogWindow.prototype.OnStart = function() {
+                PFU.PfuGlobal.SetOnDialog(this, this.OnAddDialog);
+            };
+            SdkDialogWindow.prototype.OnUpdate = function() {};
+            SdkDialogWindow.prototype.OnAddDialog = function(desc) {
+                var dialog = pfusdkui.UI_DialogCom.createInstance();
+                dialog.m_tiptext.text = "" + desc;
+                dialog.center();
+                this._fui.addChild(dialog);
+                Laya.timer.once(2e3, this, function() {
+                    dialog.dispose();
+                });
+            };
+            return SdkDialogWindow;
+        }(UI.WindowBase);
+        UI.SdkDialogWindow = SdkDialogWindow;
     })(UI = PFU.UI || (PFU.UI = {}));
 })(PFU || (PFU = {}));
 

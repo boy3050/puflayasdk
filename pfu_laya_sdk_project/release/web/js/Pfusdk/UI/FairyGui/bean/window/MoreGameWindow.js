@@ -39,6 +39,11 @@ var PFU;
                 if (this._isCreateMoreGameListBar) {
                     this.UpdateMoreGameListMove();
                 }
+                if (this._isCreateSideMoreGameBtn && PFU.PfuMoreGameUpdate.GetInstance().isSetMoreGameOffsetY) {
+                    this._fui.m_Btn_MoreGameLeft.setXY(this._fui.m_Btn_MoreGameLeft.x, this._fui.m_Btn_MoreGameLeft.y + PFU.PfuMoreGameUpdate.GetInstance().moreGameOffsetY);
+                    this._fui.m_Btn_MoreGameRight.setXY(this._fui.m_Btn_MoreGameRight.x, this._fui.m_Btn_MoreGameRight.y + PFU.PfuMoreGameUpdate.GetInstance().moreGameOffsetY);
+                    PFU.PfuMoreGameUpdate.GetInstance().EndMoreGameUIOffsetY();
+                }
             };
             MoreGameWindow.prototype.CreateSideMoreGameBtn = function () {
                 var _this = this;

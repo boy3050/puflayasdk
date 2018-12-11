@@ -9,8 +9,12 @@ var PFU;
             this._isLastShow = true;
             this._indexLeft = 0;
             this._indexRight = 0;
+            //设置moreGameUI层级动作
             this.isSetLayerAction = false;
+            //设置moreGameUI层级数值
             this.layerNum = 0;
+            this.isSetMoreGameOffsetY = false;
+            this.moreGameOffsetY = 0;
             this._indexLeft = 0;
             this._indexRight = 0;
             Laya.timer.loop(10000, this, this.UpdateMoreGame);
@@ -105,6 +109,13 @@ var PFU;
         };
         PfuMoreGameUpdate.prototype.EndSetMoreGameUI = function () {
             this.isSetLayerAction = false;
+        };
+        PfuMoreGameUpdate.prototype.SetMoreGameUIOffsetY = function (offsetY) {
+            this.isSetMoreGameOffsetY = true;
+            this.moreGameOffsetY = offsetY;
+        };
+        PfuMoreGameUpdate.prototype.EndMoreGameUIOffsetY = function () {
+            this.isSetMoreGameOffsetY = false;
         };
         return PfuMoreGameUpdate;
     }());

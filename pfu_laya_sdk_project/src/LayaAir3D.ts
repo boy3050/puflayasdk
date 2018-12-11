@@ -39,9 +39,17 @@ class LayaAir3D {
         PfuSdk.InitConfig(this, () => {
 
             //FairyGUI创建
-            //PFU.UI.PfuSdkFairyUI.CreateUI();
+            PFU.UI.PfuSdkFairyUI.CreateUI();
             //LayaGUI创建
-            PFU.UI.PfuSdkLayaUI.CreateUI();
+            //PFU.UI.PfuSdkLayaUI.CreateUI();
+            for (let i = 0; i < 10; i++) {
+                Laya.timer.once(1000 + (i * 1000), this, () => {
+                    //PFU.UI.PfuSdkFairyUI.OnAddDialog("显示Dialog把@@@");
+                    PFU.PfuGlobal.ShowDialog("显示Dia");
+                });
+            }
+
+
         });
 
         //监听切换到前台

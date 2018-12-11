@@ -57,3 +57,20 @@ module ui {
 
     }
 }
+
+module ui {
+    export class SdkDialogUIUI extends View {
+		public dialogtext:laya.display.Text;
+
+        public static  uiView:any ={"type":"View","props":{"width":750,"mouseThrough":true,"height":1334},"child":[{"type":"Image","props":{"y":639,"x":-543,"width":1836,"skin":"comp/img_box_1.png","sizeGrid":"33,28,19,28","height":55}},{"type":"Text","props":{"y":666,"x":377,"width":750,"var":"dialogtext","valign":"middle","text":"示111语","pivotY":27,"pivotX":375,"name":"dialogtext","height":55,"fontSize":28,"align":"center"}}]};
+        constructor(){ super()}
+        createChildren():void {
+        			View.regComponent("Text",laya.display.Text);
+
+            super.createChildren();
+            this.createView(ui.SdkDialogUIUI.uiView);
+
+        }
+
+    }
+}

@@ -42,7 +42,7 @@ var PfuSdk = (function () {
         });
     };
     PfuSdk.CallOnShow = function (args) {
-        PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
+        PFU.PfuPlatformManager.GetInstance().OnShow(args);
         PFU.PfuGlobal.Focus();
         if (this._showCallBack) {
             this._showCallBack();
@@ -52,6 +52,7 @@ var PfuSdk = (function () {
      * 主动投中APP切换到后台
      */
     PfuSdk.CallOnHide = function () {
+        PFU.PfuPlatformManager.GetInstance().OnHide();
         if (this._hideCallBack) {
             this._hideCallBack();
         }
@@ -100,7 +101,14 @@ var PfuSdk = (function () {
      * @param qureyPos
      */
     PfuSdk.ShareAward = function (handle, fun, qureyPos, addQurey) {
-        PFU.PfuGlobal.PfuShareGroupNext(handle, fun, true, qureyPos, addQurey);
+        PFU.PfuGlobal.PfuShareGroupNext(handle, function (type, desc) {
+            if (type == PfuSdk.SUCCESS) {
+            }
+            else {
+                PFU.PfuGlobal.ShowDialog(desc);
+            }
+            fun.call(handle, desc);
+        }, true, qureyPos, addQurey);
     };
     /**
      * 播放视频
@@ -111,24 +119,42 @@ var PfuSdk = (function () {
      */
     PfuSdk.Video = function (handle, fun, adunit, isForceShare) {
         var _this = this;
-        if (this._sdkVideoShareFinish && PFU.PfuManager.GetInstance().IsPfuSdkVideoShare()) {
+        var pfuSdkVideoShare = PfuSdk.GetOLParamInt("pfuSdkVideoShare");
+        if (this._sdkVideoShareFinish && pfuSdkVideoShare != 0) {
+            //2分享后视频 ;1-分享成功后视频;0-直接看视频 .审核模式下全部是直接看视频
             if (isForceShare == undefined || isForceShare == void 0 || isForceShare) {
-                PFU.PfuGlobal.PfuShareVideo(this, function (type, desc) {
-                    if (type == PfuSdk.SUCCESS) {
-                        _this._sdkVideoShareFinish = false;
-                        _this.PlayVideo(handle, fun, true, adunit);
-                    }
-                    else {
-                        fun.call(handle, type, desc);
-                    }
-                }, true);
+                //分享成功后视频播放
+                if (pfuSdkVideoShare == 1) {
+                    PFU.PfuGlobal.PfuShareVideo(this, function (type, desc) {
+                        if (type == PfuSdk.SUCCESS) {
+                            //this._sdkVideoShareFinish = false;
+                            _this.PlayVideo(handle, fun, true, adunit);
+                        }
+                        else {
+                            fun.call(handle, type, desc);
+                            PFU.PfuGlobal.ShowDialog(desc);
+                        }
+                    }, true);
+                }
+                else {
+                    //pfuSdkVideoShare = 2 分享后直接视频
+                    PFU.PfuGlobal.PfuShareVideo(this, function (type, desc) {
+                        if (type == PfuSdk.SUCCESS) {
+                        }
+                        else {
+                            PFU.PfuGlobal.ShowDialog(desc);
+                        }
+                        _this.PlayVideo(handle, fun, false, adunit);
+                    }, true);
+                }
             }
             else {
                 this.PlayVideo(handle, fun, false, adunit);
             }
-            return;
         }
-        this.PlayVideo(handle, fun, false, adunit);
+        else {
+            this.PlayVideo(handle, fun, false, adunit);
+        }
     };
     PfuSdk.PlayVideo = function (handle, fun, shareIn, adunit) {
         var _this = this;
@@ -159,12 +185,14 @@ var PfuSdk = (function () {
                 else {
                     tip = "暂时没有可播放的视频了";
                     fun.call(handle, type, tip);
+                    PFU.PfuGlobal.ShowDialog(tip);
                 }
             }
             else {
                 console.log("video fail");
                 tip = "观看完整视频才会获得奖励";
                 fun.call(handle, type, tip);
+                PFU.PfuGlobal.ShowDialog(tip);
             }
         }, adunit);
     };
@@ -272,12 +300,19 @@ var PfuSdk = (function () {
     PfuSdk.SetMoreGameUILayer = function (layernum) {
         PFU.PfuMoreGameUpdate.GetInstance().SetMoreGameUILayer(layernum);
     };
+    /**
+     * 设置更多游戏按钮Y偏移
+     * @param offset
+     */
+    PfuSdk.SetMoreGameUIOffsetY = function (offset) {
+        PFU.PfuMoreGameUpdate.GetInstance().SetMoreGameUIOffsetY(offset);
+    };
     return PfuSdk;
 }());
 PfuSdk.SUCCESS = 0; //success
 PfuSdk.FAIL = 1; //fail
 PfuSdk.VIDEO_SHOW_FAIL = 2;
-PfuSdk.sdk_ver = "0.0.5.9";
+PfuSdk.sdk_ver = "0.0.6.5";
 PfuSdk.SHOW_TYPE_ALL = 0; //更多游戏，BosList都显示
 PfuSdk.SHOW_TYPE_MOREGAME = 1; //只显示更多游戏
 PfuSdk.SHOW_TYPE_BOXLIST = 2; //只显示底部盒子列表

@@ -3,6 +3,15 @@ var PFU;
     var PfuGlobal = (function () {
         function PfuGlobal() {
         }
+        PfuGlobal.SetOnDialog = function (handle, callBack) {
+            this._addDialogHandle = handle;
+            this._addDialogCallback = callBack;
+        };
+        PfuGlobal.ShowDialog = function (desc) {
+            if (this._addDialogCallback) {
+                this._addDialogCallback.call(this._addDialogHandle, desc);
+            }
+        };
         //轮播闪屏广告
         PfuGlobal.ShowNextSplashAd = function () {
             PFU.PfuManager.GetInstance().ShowNextSplashAd();
@@ -187,6 +196,8 @@ var PFU;
     }());
     PfuGlobal.focusCallback = null;
     PfuGlobal.focusHandler = null;
+    PfuGlobal._addDialogCallback = null;
+    PfuGlobal._addDialogHandle = null;
     PFU.PfuGlobal = PfuGlobal;
 })(PFU || (PFU = {}));
 //# sourceMappingURL=PfuGlobal.js.map

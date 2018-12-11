@@ -1,6 +1,7 @@
 // 程序入口
 var LayaAir3D = (function () {
     function LayaAir3D() {
+        var _this = this;
         Laya.MiniAdpter.init(true);
         //初始化引擎
         Laya3D.init(720, 1280, true);
@@ -30,9 +31,15 @@ var LayaAir3D = (function () {
         //SDK初始化
         PfuSdk.InitConfig(this, function () {
             //FairyGUI创建
-            //PFU.UI.PfuSdkFairyUI.CreateUI();
+            PFU.UI.PfuSdkFairyUI.CreateUI();
             //LayaGUI创建
-            PFU.UI.PfuSdkLayaUI.CreateUI();
+            //PFU.UI.PfuSdkLayaUI.CreateUI();
+            for (var i = 0; i < 10; i++) {
+                Laya.timer.once(1000 + (i * 1000), _this, function () {
+                    //PFU.UI.PfuSdkFairyUI.OnAddDialog("显示Dialog把@@@");
+                    PFU.PfuGlobal.ShowDialog("显示Dia");
+                });
+            }
         });
         //监听切换到前台
         PfuSdk.OnShow(function () {

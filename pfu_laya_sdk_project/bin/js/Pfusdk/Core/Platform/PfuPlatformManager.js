@@ -12,6 +12,7 @@ var PFU;
             //是否登录pfu平台
             this._isLoginPlatform = false;
             this.SAVE_KEY = "platform_user";
+            this._lastTime = 0;
             this.tempAdId = null;
             this._reconnectCount = 0;
             //#endregion
@@ -51,6 +52,28 @@ var PFU;
                     var data = vs.value;
                     this._platformUserData._userCache.add(vs.key, data);
                 }
+                try {
+                    if (dic.userPlayTime) {
+                        this._platformUserData.userPlayTime = parseInt("" + dic.userPlayTime);
+                    }
+                }
+                catch (e) {
+                    this._platformUserData.userPlayTime = 0;
+                }
+            }
+        };
+        PfuPlatformManager.prototype.OnShow = function (args) {
+            PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
+            this._lastTime = Date.now();
+        };
+        PfuPlatformManager.prototype.OnHide = function () {
+            if (this._lastTime > 0) {
+                //取秒
+                var time = (Date.now() - this._lastTime) / 1000;
+                console.log("本次游戏时长/秒:" + time);
+                this._platformUserData.userPlayTime += time;
+                console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime);
+                this.Save();
             }
         };
         PfuPlatformManager.prototype.Save = function () {
@@ -219,7 +242,7 @@ var PFU;
             request.Channel = PfuPlatformManager.IS_DEBUG ? "jfyd" : "weixin";
             request.ext3 = PfuPlatformManager.IS_DEBUG ? "id" : weToken;
             var srcid = "";
-            var rinviteUid = "";
+            var rinviteUid = 0;
             var options = PFU.WeChatUtils.GetInstance().GetLaunchOptionsSync();
             if (options) {
                 var appid = null;
@@ -251,13 +274,23 @@ var PFU;
                 }
                 var fromUid = query.fromUid;
                 if (fromUid && fromUid != "") {
-                    rinviteUid = fromUid;
+                    try {
+                        rinviteUid = parseInt(fromUid);
+                    }
+                    catch (e) {
+                    }
                 }
             }
             //Debug.Log("srcId=" + srcid);
             request.srcid = srcid;
             request.selfid = appId;
             request.inviteUid = rinviteUid;
+            try {
+                request.onlineTime = this._platformUserData.userPlayTime;
+            }
+            catch (e) {
+                request.onlineTime = 0;
+            }
             var url = this.PackageMsgUrl(1003, request, true);
             this.HttpGet(url, this, function (data) {
                 var respose = data;
@@ -672,6 +705,7 @@ var PFU;
         function PlatformShareUserData() {
             this._notifShareInGames = new PFU.Dictionary();
             this._userCache = new PFU.Dictionary();
+            this.userPlayTime = 0;
         }
         return PlatformShareUserData;
     }());

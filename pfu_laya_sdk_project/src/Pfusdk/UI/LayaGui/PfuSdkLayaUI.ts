@@ -8,7 +8,7 @@ namespace PFU.UI {
         private static _scaleY: number = 1;
         private static _bottomOffset: number = 0;
 
-        public static CustomSpecialUI(scaleX: number, scaleY: number, bottomOffset: number)  {
+        public static CustomSpecialUI(scaleX: number, scaleY: number, bottomOffset: number) {
             this._scaleX = scaleX;
             this._scaleY = scaleY;
             this._bottomOffset = bottomOffset;
@@ -27,14 +27,14 @@ namespace PFU.UI {
 
         private static CreateUIWindow() {
             this.moregameUI = new PFU.UI.MoreGameUI();
-            this.moregameUI.scale(this._scaleX,this._scaleY);
+            this.moregameUI.scale(this._scaleX, this._scaleY);
             Laya.stage.addChild(this.moregameUI);
             this.moregameUI.OnHide();
             this.bannerUI = new PFU.UI.UI_PfuBannerUI();
-            this.bannerUI.scale(this._scaleX,this._scaleY);
+            this.bannerUI.scale(this._scaleX, this._scaleY);
             Laya.stage.addChild(this.bannerUI);
             this.boxWindowUI = new PFU.UI.FirstSceneBoxUI();
-            this.boxWindowUI.scale(this._scaleX,this._scaleY);
+            this.boxWindowUI.scale(this._scaleX, this._scaleY);
             Laya.stage.addChild(this.boxWindowUI);
 
             //设置更多游戏显示开关
@@ -46,6 +46,22 @@ namespace PFU.UI {
                 }
             });
 
+
+            PFU.PfuGlobal.SetOnDialog(this,PfuSdkLayaUI.OnAddDialog)
+
+            
+
+        }
+
+        public static OnAddDialog(desc:string)
+        {
+
+            let dialog: ui.SdkDialogUIUI = new ui.SdkDialogUIUI();
+            dialog.dialogtext.text = "" + desc;
+            Laya.stage.addChildAt(dialog,Laya.stage.numChildren - 1);
+            Laya.timer.once(2000,this,()=>{
+                dialog.removeSelf();
+            });
         }
     }
 }

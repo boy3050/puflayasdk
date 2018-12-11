@@ -11,7 +11,7 @@ class PfuSdk {
     public static get GetParamComplete() { return PFU.PfuManager.GetInstance().GetParamComplete; }
     public static get GetBoxListComplete() { return PFU.PfuManager.GetInstance().GetBoxListComplete; }
 
-    private static sdk_ver = "0.0.6.3";
+    private static sdk_ver = "0.0.6.5";
 
     public static SHOW_TYPE_ALL = 0;//更多游戏，BosList都显示
     public static SHOW_TYPE_MOREGAME = 1;//只显示更多游戏
@@ -122,7 +122,15 @@ class PfuSdk {
      * @param qureyPos 
      */
     public static ShareAward(handle: any, fun: Function, qureyPos?: number, addQurey?: string) {
-        PFU.PfuGlobal.PfuShareGroupNext(handle, fun, true, qureyPos, addQurey);
+        PFU.PfuGlobal.PfuShareGroupNext(handle, (type, desc) => {
+            if (type == PfuSdk.SUCCESS)  {
+
+            }
+            else  {
+                PFU.PfuGlobal.ShowDialog(desc);
+            }
+            fun.call(handle, desc);
+        }, true, qureyPos, addQurey);
     }
 
     private static _sdkVideoShareFinish: boolean = true;
@@ -153,17 +161,18 @@ class PfuSdk {
                         }
                         else {
                             fun.call(handle, type, desc);
+                            PFU.PfuGlobal.ShowDialog(desc);
                         }
                     }, true);
-
-                } else  {
+                } else {
                     //pfuSdkVideoShare = 2 分享后直接视频
                     PFU.PfuGlobal.PfuShareVideo(this, (type, desc) => {
                         if (type == PfuSdk.SUCCESS) {
+
                         } else {
-                            fun.call(handle, type, desc);
+                            PFU.PfuGlobal.ShowDialog(desc);
                         }
-                        this.PlayVideo(handle, fun, true, adunit);
+                        this.PlayVideo(handle, fun, false, adunit);
                     }, true);
                 }
             } else {
@@ -203,11 +212,13 @@ class PfuSdk {
                 else {
                     tip = "暂时没有可播放的视频了";
                     fun.call(handle, type, tip);
+                    PFU.PfuGlobal.ShowDialog(tip);
                 }
             } else {
                 console.log("video fail");
                 tip = "观看完整视频才会获得奖励";
                 fun.call(handle, type, tip);
+                PFU.PfuGlobal.ShowDialog(tip);
             }
 
         }, adunit);
@@ -329,8 +340,7 @@ class PfuSdk {
      * 设置更多游戏按钮Y偏移
      * @param offset 
      */
-    public static SetMoreGameUIOffsetY(offset:number)
-    {
+    public static SetMoreGameUIOffsetY(offset: number) {
         PFU.PfuMoreGameUpdate.GetInstance().SetMoreGameUIOffsetY(offset);
     }
 }

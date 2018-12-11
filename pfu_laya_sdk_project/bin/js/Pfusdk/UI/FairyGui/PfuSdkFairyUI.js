@@ -37,6 +37,9 @@ var PFU;
                 bannerWindow.InitWindow(pfusdkui.UI_PfuBannerUI.createInstance());
                 var firstSceneBoxWindow = new PFU.UI.FirstSceneBoxWindow();
                 firstSceneBoxWindow.InitWindow(pfusdkui.UI_BoxListUI.createInstance());
+                var sdkDialogWindow = new PFU.UI.SdkDialogWindow();
+                sdkDialogWindow.InitWindow(pfusdkui.UI_SdkDialogUI.createInstance());
+                this._sdkDialogWindow = sdkDialogWindow;
                 //设置更多游戏显示开关
                 PFU.PfuMoreGameUpdate.GetInstance().SetCtrlMoreGameUI(this, function (isShow, type) {
                     if (isShow) {
@@ -49,6 +52,7 @@ var PFU;
             };
             return PfuSdkFairyUI;
         }());
+        PfuSdkFairyUI._sdkDialogWindow = null;
         UI.PfuSdkFairyUI = PfuSdkFairyUI;
     })(UI = PFU.UI || (PFU.UI = {}));
 })(PFU || (PFU = {}));

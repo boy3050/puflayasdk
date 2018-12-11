@@ -13,6 +13,8 @@ module pfusdkui {
 			fairygui.UIObjectFactory.setPackageItemExtension(UI_MoreGameUI.URL, UI_MoreGameUI);
 			fairygui.UIObjectFactory.setPackageItemExtension(UI_BtnMoregame.URL, UI_BtnMoregame);
 			fairygui.UIObjectFactory.setPackageItemExtension(UI_List_GameChild.URL, UI_List_GameChild);
+			fairygui.UIObjectFactory.setPackageItemExtension(UI_SdkDialogUI.URL, UI_SdkDialogUI);
+			fairygui.UIObjectFactory.setPackageItemExtension(UI_DialogCom.URL, UI_DialogCom);
 		}
 	}
 }

@@ -20,22 +20,6 @@ var PFU;
         };
         WeChatBannerAd.prototype.Create = function (adId, dir, fun) {
             var _this = this;
-            if (adId == "0") {
-                //从记录中获取，记录中也没有 则 return
-                var curVer = PFU.LocalSaveUtils.GetItem(WeChatBannerAd.SAVE_BEANNER_KEY);
-                if (curVer == null || curVer == "") {
-                    return;
-                }
-                else {
-                    adId = adId;
-                }
-            }
-            else {
-                PFU.LocalSaveUtils.SaveItem(WeChatBannerAd.SAVE_BEANNER_KEY, adId);
-            }
-            if (adId == "0") {
-                return;
-            }
             this._adId = adId;
             this._bannerDir = dir;
             var leftPos = 0;

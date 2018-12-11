@@ -41,6 +41,11 @@ var PFU;
                     }
                     PFU.PfuMoreGameUpdate.GetInstance().EndSetMoreGameUI();
                 }
+                if (this._isCreateSideMoreGameBtn && PFU.PfuMoreGameUpdate.GetInstance().isSetMoreGameOffsetY) {
+                    this.btn_left.y = this.btn_left.y + PFU.PfuMoreGameUpdate.GetInstance().moreGameOffsetY;
+                    this.btn_right.y = this.btn_right.y + PFU.PfuMoreGameUpdate.GetInstance().moreGameOffsetY;
+                    PFU.PfuMoreGameUpdate.GetInstance().EndMoreGameUIOffsetY();
+                }
             };
             MoreGameUI.prototype.OnHide = function () {
                 this.visible = false;

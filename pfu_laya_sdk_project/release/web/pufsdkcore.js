@@ -32,6 +32,7 @@ var PFU;
         WeChatUtils.prototype.OnShareAppMessage = function(fun, titleStr, imageUrl) {
             if (this.IsWeGame()) {
                 wx.onShareAppMessage(function() {
+                    fun();
                     return {
                         title: titleStr,
                         imageUrl: imageUrl
@@ -385,19 +386,6 @@ var PFU;
         };
         WeChatIncentiveAd.prototype.Create = function(adId) {
             var _this = this;
-            if (adId == "0") {
-                var curVer = PFU.LocalSaveUtils.GetItem(WeChatIncentiveAd.SAVE_INCENTIVE_KEY);
-                if (curVer == null || curVer == "") {
-                    return;
-                } else {
-                    adId = adId;
-                }
-            } else {
-                PFU.LocalSaveUtils.SaveItem(WeChatIncentiveAd.SAVE_INCENTIVE_KEY, adId);
-            }
-            if (adId == "0") {
-                return;
-            }
             this._adId = adId;
             if (PFU.WeChatUtils.GetInstance().IsWeGame()) {
                 if (typeof wx.createBannerAd === "function") {
@@ -532,19 +520,6 @@ var PFU;
         };
         WeChatBannerAd.prototype.Create = function(adId, dir, fun) {
             var _this = this;
-            if (adId == "0") {
-                var curVer = PFU.LocalSaveUtils.GetItem(WeChatBannerAd.SAVE_BEANNER_KEY);
-                if (curVer == null || curVer == "") {
-                    return;
-                } else {
-                    adId = adId;
-                }
-            } else {
-                PFU.LocalSaveUtils.SaveItem(WeChatBannerAd.SAVE_BEANNER_KEY, adId);
-            }
-            if (adId == "0") {
-                return;
-            }
             this._adId = adId;
             this._bannerDir = dir;
             var leftPos = 0;
@@ -1169,6 +1144,7 @@ var PFU;
             this._gameId = "";
             this._isLoginPlatform = false;
             this.SAVE_KEY = "platform_user";
+            this._lastTime = 0;
             this.tempAdId = null;
             this._reconnectCount = 0;
         }
@@ -1205,6 +1181,26 @@ var PFU;
                     var data = vs.value;
                     this._platformUserData._userCache.add(vs.key, data);
                 }
+                try {
+                    if (dic.userPlayTime) {
+                        this._platformUserData.userPlayTime = parseInt("" + dic.userPlayTime);
+                    }
+                } catch (e) {
+                    this._platformUserData.userPlayTime = 0;
+                }
+            }
+        };
+        PfuPlatformManager.prototype.OnShow = function(args) {
+            PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
+            this._lastTime = Date.now();
+        };
+        PfuPlatformManager.prototype.OnHide = function() {
+            if (this._lastTime > 0) {
+                var time = (Date.now() - this._lastTime) / 1e3;
+                console.log("本次游戏时长/秒:" + time);
+                this._platformUserData.userPlayTime += time;
+                console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime);
+                this.Save();
             }
         };
         PfuPlatformManager.prototype.Save = function() {
@@ -1346,7 +1342,7 @@ var PFU;
             request.Channel = PfuPlatformManager.IS_DEBUG ? "jfyd" : "weixin";
             request.ext3 = PfuPlatformManager.IS_DEBUG ? "id" : weToken;
             var srcid = "";
-            var rinviteUid = "";
+            var rinviteUid = 0;
             var options = PFU.WeChatUtils.GetInstance().GetLaunchOptionsSync();
             if (options) {
                 var appid = null;
@@ -1376,12 +1372,19 @@ var PFU;
                 }
                 var fromUid = query.fromUid;
                 if (fromUid && fromUid != "") {
-                    rinviteUid = fromUid;
+                    try {
+                        rinviteUid = parseInt(fromUid);
+                    } catch (e) {}
                 }
             }
             request.srcid = srcid;
             request.selfid = appId;
             request.inviteUid = rinviteUid;
+            try {
+                request.onlineTime = this._platformUserData.userPlayTime;
+            } catch (e) {
+                request.onlineTime = 0;
+            }
             var url = this.PackageMsgUrl(1003, request, true);
             this.HttpGet(url, this, function(data) {
                 var respose = data;
@@ -1731,6 +1734,7 @@ var PFU;
         function PlatformShareUserData() {
             this._notifShareInGames = new PFU.Dictionary();
             this._userCache = new PFU.Dictionary();
+            this.userPlayTime = 0;
         }
         return PlatformShareUserData;
     }();
@@ -1911,6 +1915,10 @@ var PFU;
             this.pfuSdkShare2 = "分享失败，请分享到不同的群！";
             this.pfuSdkRefresh = 1e3;
             this.pfuSdkShareCount = 0;
+            this.pfuSdkBannerMin = 30;
+            this.pfuSdkBannerCount = 3;
+            this.pfuSdkPlayTime = 60;
+            this.pfuSdkBannerRelive = 2;
         };
         return PfuOLParamData;
     }();
@@ -1929,6 +1937,8 @@ var PFU;
             this._indexRight = 0;
             this.isSetLayerAction = false;
             this.layerNum = 0;
+            this.isSetMoreGameOffsetY = false;
+            this.moreGameOffsetY = 0;
             this._indexLeft = 0;
             this._indexRight = 0;
             Laya.timer.loop(1e4, this, this.UpdateMoreGame);
@@ -2005,6 +2015,13 @@ var PFU;
         };
         PfuMoreGameUpdate.prototype.EndSetMoreGameUI = function() {
             this.isSetLayerAction = false;
+        };
+        PfuMoreGameUpdate.prototype.SetMoreGameUIOffsetY = function(offsetY) {
+            this.isSetMoreGameOffsetY = true;
+            this.moreGameOffsetY = offsetY;
+        };
+        PfuMoreGameUpdate.prototype.EndMoreGameUIOffsetY = function() {
+            this.isSetMoreGameOffsetY = false;
         };
         return PfuMoreGameUpdate;
     }();
@@ -2097,6 +2114,8 @@ var PFU;
             this.Connect(PFU.PfuConfig.Config.pfuAppId, PFU.PfuConfig.Config.version, PFU.PfuConfig.Config.weChatId, function(type) {
                 if (type == PfuSdk.SUCCESS) {
                     var param = _this.OLParam;
+                    console.info("OL Param Success!");
+                    console.info("Test Mode:" + (param.pfuSdkTestMode == PfuSwitch.ON));
                     if (param.pfuSdkTestMode == PfuSwitch.ON) {
                         param.pfuSdkMoreGame = PfuSwitch.OFF;
                         param.pfuSdkVideoShare = PfuSwitch.OFF;
@@ -2183,14 +2202,9 @@ var PFU;
                         if (this._moregame && this._moregame.adverts) {
                             for (var i = 0; i < this._moregame.adverts.length; i++) {
                                 var data_1 = this._moregame.adverts[i];
-                                if (Laya.Browser.onAndroid) {
-                                    if ((data_1.boxId == undefined || data_1.boxId == "") && (data_1.link == undefined || data_1.link == "")) {
-                                        continue;
-                                    }
-                                } else {
-                                    if ((data_1.wxid == undefined || data_1.wxid == "") && (data_1.link == undefined || data_1.link == "")) {
-                                        continue;
-                                    }
+                                if (this.ExcludeErrorMoreGame(data_1)) {
+                                    console.log("exclude:" + data_1.wxid + "| link" + data_1.link);
+                                    continue;
                                 }
                                 if (PFU.PfuConfig.Config.ui_moreGameType == 1) {
                                     this.moreGameLeft.push(data_1);
@@ -2229,6 +2243,21 @@ var PFU;
                     console.log("prease Mode ErrorCode: k=" + key + "|code=" + childData.code);
                 }
             }
+        };
+        PfuManager.prototype.ExcludeErrorMoreGame = function(data) {
+            var wxId = undefined;
+            if (Laya.Browser.onAndroid) {
+                wxId = data.boxId;
+            } else {
+                wxId = data.wxid;
+            }
+            if ((wxId == undefined || wxId == "") && (data.link == undefined || data.link == "")) {
+                return true;
+            }
+            if ((data.link == undefined || data.link == "") && !PFU.PfuBoxList.GetInstance().IsMoreGameDataBeAppIdList(data.wxid)) {
+                return true;
+            }
+            return false;
         };
         PfuManager.prototype.GetTopUrl = function() {
             if (this._resp != null) {
@@ -2274,6 +2303,9 @@ var PFU;
             }
             var query = PFU.PfuPlatformManager.GetInstance().GetShareQuery(qureyPos ? qureyPos : -999, addQurey);
             console.log("query:" + query);
+            if (!this.IsWegameTestMode()) {
+                query += "&shareImage=" + share.shareLink;
+            }
             PFU.PfuPlatformManager.GetInstance().StatisticsMsg2201(PFU.PlatformStatisticsType.shareGame, share.shareLink);
             PFU.WeChatUtils.GetInstance().ShareGroupAppMessageImage(isShareGroup, fun, str, imgUrl, query);
             this.shareIndex++;
@@ -2486,7 +2518,7 @@ var PFU;
             if (this._wechatparam == null || this._wechatparam.value == null) {
                 return false;
             }
-            return this._wechatparam.value.pfuSdkVideoShare == PfuSwitch.ON;
+            return this._wechatparam.value.pfuSdkVideoShare != PfuSwitch.OFF;
         };
         PfuManager.prototype.SaveShareFinishCount = function() {
             var date = new Date();
@@ -2711,6 +2743,15 @@ var PFU;
 (function(PFU) {
     var PfuGlobal = function() {
         function PfuGlobal() {}
+        PfuGlobal.SetOnDialog = function(handle, callBack) {
+            this._addDialogHandle = handle;
+            this._addDialogCallback = callBack;
+        };
+        PfuGlobal.ShowDialog = function(desc) {
+            if (this._addDialogCallback) {
+                this._addDialogCallback.call(this._addDialogHandle, desc);
+            }
+        };
         PfuGlobal.ShowNextSplashAd = function() {
             PFU.PfuManager.GetInstance().ShowNextSplashAd();
         };
@@ -2816,6 +2857,8 @@ var PFU;
     }();
     PfuGlobal.focusCallback = null;
     PfuGlobal.focusHandler = null;
+    PfuGlobal._addDialogCallback = null;
+    PfuGlobal._addDialogHandle = null;
     PFU.PfuGlobal = PfuGlobal;
 })(PFU || (PFU = {}));
 
@@ -2978,6 +3021,9 @@ var PFU;
             this._isCreateBanner = false;
             this._isLastCtrAction = false;
             this._isLastShow = true;
+            this._tempShowBannerTime = 0;
+            this._firstShowBanner = true;
+            this._tempRefreshBannerData = this.GetData();
             Laya.timer.loop(1e3, this, this.Update);
             Laya.timer.loop(200, this, this.UpdateBannerAction);
         }
@@ -3001,6 +3047,41 @@ var PFU;
                 _this._isCreateBanner = true;
             });
         };
+        PfuBannerUpdate.prototype.IsShareFinishCountNewDay = function() {
+            var data = this._tempRefreshBannerData;
+            if (data.time == 0) {
+                return true;
+            }
+            var date = new Date();
+            var curDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            var curTime = curDay.getTime();
+            if (data.time <= curTime) {
+                return true;
+            }
+            return false;
+        };
+        PfuBannerUpdate.prototype.GetData = function() {
+            var json = Laya.LocalStorage.getJSON("everydayrefreshbannercount");
+            if (json != null && json != "") {
+                this._tempRefreshBannerData = JSON.parse(json);
+                if (this.IsShareFinishCountNewDay()) {
+                    this._tempRefreshBannerData.count = 0;
+                }
+            } else {
+                this._tempRefreshBannerData = new EveryDayRefreshBannerCount();
+                this._tempRefreshBannerData.time = 0;
+                this._tempRefreshBannerData.count = 0;
+            }
+            return this._tempRefreshBannerData;
+        };
+        PfuBannerUpdate.prototype.SaveData = function() {
+            var date = new Date();
+            var curDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            var mt = new Date(curDay.getTime() + 24 * 60 * 60 * 1e3);
+            this._tempRefreshBannerData.time = mt.getTime();
+            this._tempRefreshBannerData.count++;
+            Laya.LocalStorage.setJSON("everydayrefreshbannercount", JSON.stringify(this._tempRefreshBannerData));
+        };
         PfuBannerUpdate.prototype.UpdateBannerAction = function() {
             if (!PfuSdk.GetParamComplete) {
                 return;
@@ -3020,10 +3101,12 @@ var PFU;
             if (!PfuSdk.GetParamComplete) {
                 return;
             }
+            if (this._tempRefreshBannerData.count > PFU.PfuManager.GetInstance().OLParam.pfuSdkBannerCount) {
+                return;
+            }
             this._timeCount += 1;
             if (this._timeCount > PFU.PfuGlobal.GetOLParam().pfuSdkRefresh) {
                 this.RefreshBanner();
-                this._timeCount = 0;
             }
         };
         PfuBannerUpdate.prototype.IsBeBannerImg = function() {
@@ -3046,14 +3129,15 @@ var PFU;
         };
         PfuBannerUpdate.prototype.RefreshBanner = function() {
             var _this = this;
+            this._timeCount = 0;
             this._isCreateBanner = false;
-            {
-                if (PFU.PfuGlobal.IsReadyBanner()) {
-                    PFU.PfuGlobal.RefreshBanner(function() {
-                        _this._isCreateBanner = true;
-                        _this._isLastCtrAction = true;
-                    });
-                }
+            this._tempShowBannerTime = Date.now();
+            if (PFU.PfuGlobal.IsReadyBanner()) {
+                PFU.PfuGlobal.RefreshBanner(function() {
+                    _this._isCreateBanner = true;
+                    _this._isLastCtrAction = true;
+                    _this.SaveData();
+                });
             }
         };
         PfuBannerUpdate.prototype.GetPfuBannerImgUrl = function() {
@@ -3072,8 +3156,21 @@ var PFU;
             });
         };
         PfuBannerUpdate.prototype.CallShow = function() {
-            this._isLastCtrAction = true;
             this._isLastShow = true;
+            if (this._firstShowBanner || this._tempRefreshBannerData.count > PFU.PfuManager.GetInstance().OLParam.pfuSdkBannerCount) {
+                this.ShowBAction();
+            } else {
+                var time = Date.now() - this._tempShowBannerTime;
+                if (time > PFU.PfuManager.GetInstance().OLParam.pfuSdkBannerMin * 1e3) {
+                    this.RefreshBanner();
+                } else {
+                    this.ShowBAction();
+                }
+            }
+        };
+        PfuBannerUpdate.prototype.ShowBAction = function() {
+            this._isLastCtrAction = true;
+            this._firstShowBanner = false;
         };
         PfuBannerUpdate.prototype.CallHide = function() {
             this._isLastCtrAction = true;
@@ -3092,6 +3189,13 @@ var PFU;
         return PfuBannerUpdate;
     }();
     PFU.PfuBannerUpdate = PfuBannerUpdate;
+    var EveryDayRefreshBannerCount = function() {
+        function EveryDayRefreshBannerCount() {
+            this.time = 0;
+            this.count = 0;
+        }
+        return EveryDayRefreshBannerCount;
+    }();
 })(PFU || (PFU = {}));
 
 var PfuSdk = function() {
@@ -3132,13 +3236,14 @@ var PfuSdk = function() {
         });
     };
     PfuSdk.CallOnShow = function(args) {
-        PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
+        PFU.PfuPlatformManager.GetInstance().OnShow(args);
         PFU.PfuGlobal.Focus();
         if (this._showCallBack) {
             this._showCallBack();
         }
     };
     PfuSdk.CallOnHide = function() {
+        PFU.PfuPlatformManager.GetInstance().OnHide();
         if (this._hideCallBack) {
             this._hideCallBack();
         }
@@ -3165,26 +3270,41 @@ var PfuSdk = function() {
         PFU.PfuGlobal.PfuShareGroupNext(handle, function() {}, false, qureyPos, addQurey);
     };
     PfuSdk.ShareAward = function(handle, fun, qureyPos, addQurey) {
-        PFU.PfuGlobal.PfuShareGroupNext(handle, fun, true, qureyPos, addQurey);
+        PFU.PfuGlobal.PfuShareGroupNext(handle, function(type, desc) {
+            if (type == PfuSdk.SUCCESS) {} else {
+                PFU.PfuGlobal.ShowDialog(desc);
+            }
+            fun.call(handle, desc);
+        }, true, qureyPos, addQurey);
     };
     PfuSdk.Video = function(handle, fun, adunit, isForceShare) {
         var _this = this;
-        if (this._sdkVideoShareFinish && PFU.PfuManager.GetInstance().IsPfuSdkVideoShare()) {
+        var pfuSdkVideoShare = PfuSdk.GetOLParamInt("pfuSdkVideoShare");
+        if (this._sdkVideoShareFinish && pfuSdkVideoShare != 0) {
             if (isForceShare == undefined || isForceShare == void 0 || isForceShare) {
-                PFU.PfuGlobal.PfuShareVideo(this, function(type, desc) {
-                    if (type == PfuSdk.SUCCESS) {
-                        _this._sdkVideoShareFinish = false;
-                        _this.PlayVideo(handle, fun, true, adunit);
-                    } else {
-                        fun.call(handle, type, desc);
-                    }
-                }, true);
+                if (pfuSdkVideoShare == 1) {
+                    PFU.PfuGlobal.PfuShareVideo(this, function(type, desc) {
+                        if (type == PfuSdk.SUCCESS) {
+                            _this.PlayVideo(handle, fun, true, adunit);
+                        } else {
+                            fun.call(handle, type, desc);
+                            PFU.PfuGlobal.ShowDialog(desc);
+                        }
+                    }, true);
+                } else {
+                    PFU.PfuGlobal.PfuShareVideo(this, function(type, desc) {
+                        if (type == PfuSdk.SUCCESS) {} else {
+                            PFU.PfuGlobal.ShowDialog(desc);
+                        }
+                        _this.PlayVideo(handle, fun, false, adunit);
+                    }, true);
+                }
             } else {
                 this.PlayVideo(handle, fun, false, adunit);
             }
-            return;
+        } else {
+            this.PlayVideo(handle, fun, false, adunit);
         }
-        this.PlayVideo(handle, fun, false, adunit);
     };
     PfuSdk.PlayVideo = function(handle, fun, shareIn, adunit) {
         var _this = this;
@@ -3213,11 +3333,13 @@ var PfuSdk = function() {
                 } else {
                     tip = "暂时没有可播放的视频了";
                     fun.call(handle, type, tip);
+                    PFU.PfuGlobal.ShowDialog(tip);
                 }
             } else {
                 console.log("video fail");
                 tip = "观看完整视频才会获得奖励";
                 fun.call(handle, type, tip);
+                PFU.PfuGlobal.ShowDialog(tip);
             }
         }, adunit);
     };
@@ -3274,6 +3396,9 @@ var PfuSdk = function() {
     PfuSdk.SetMoreGameUILayer = function(layernum) {
         PFU.PfuMoreGameUpdate.GetInstance().SetMoreGameUILayer(layernum);
     };
+    PfuSdk.SetMoreGameUIOffsetY = function(offset) {
+        PFU.PfuMoreGameUpdate.GetInstance().SetMoreGameUIOffsetY(offset);
+    };
     return PfuSdk;
 }();
 
@@ -3283,7 +3408,7 @@ PfuSdk.FAIL = 1;
 
 PfuSdk.VIDEO_SHOW_FAIL = 2;
 
-PfuSdk.sdk_ver = "0.0.5.9";
+PfuSdk.sdk_ver = "0.0.6.5";
 
 PfuSdk.SHOW_TYPE_ALL = 0;
 

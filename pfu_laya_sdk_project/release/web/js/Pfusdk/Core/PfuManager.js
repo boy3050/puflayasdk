@@ -119,6 +119,8 @@ var PFU;
                     var param = _this.OLParam;
                     //param.kaiping = 2;
                     //param.ad_banner = PfuSwitch.OFF;
+                    console.info("OL Param Success!");
+                    console.info("Test Mode:" + (param.pfuSdkTestMode == PfuSwitch.ON));
                     if (param.pfuSdkTestMode == PfuSwitch.ON) {
                         param.pfuSdkMoreGame = PfuSwitch.OFF;
                         param.pfuSdkVideoShare = PfuSwitch.OFF;
@@ -218,15 +220,9 @@ var PFU;
                             if (this._moregame && this._moregame.adverts) {
                                 for (var i = 0; i < this._moregame.adverts.length; i++) {
                                     var data_1 = this._moregame.adverts[i];
-                                    if (Laya.Browser.onAndroid) {
-                                        if ((data_1.boxId == undefined || data_1.boxId == "") && (data_1.link == undefined || data_1.link == "")) {
-                                            continue;
-                                        }
-                                    }
-                                    else {
-                                        if ((data_1.wxid == undefined || data_1.wxid == "") && (data_1.link == undefined || data_1.link == "")) {
-                                            continue;
-                                        }
+                                    if (this.ExcludeErrorMoreGame(data_1)) {
+                                        console.log("exclude:" + data_1.wxid + "| link" + data_1.link);
+                                        continue;
                                     }
                                     if (PFU.PfuConfig.Config.ui_moreGameType == 1) {
                                         this.moreGameLeft.push(data_1);
@@ -262,6 +258,24 @@ var PFU;
                     console.log("prease Mode ErrorCode: k=" + key + "|code=" + childData.code);
                 }
             }
+        };
+        PfuManager.prototype.ExcludeErrorMoreGame = function (data) {
+            var wxId = undefined;
+            if (Laya.Browser.onAndroid) {
+                wxId = data.boxId;
+            }
+            else {
+                wxId = data.wxid;
+            }
+            //id 和 link都没有 则排除
+            if ((wxId == undefined || wxId == "") && (data.link == undefined || data.link == "")) {
+                return true;
+            }
+            //ID有但是不在列表内，  data.link为空的情况也排除
+            if ((data.link == undefined || data.link == "") && !PFU.PfuBoxList.GetInstance().IsMoreGameDataBeAppIdList(data.wxid)) {
+                return true;
+            }
+            return false;
         };
         PfuManager.prototype.GetTopUrl = function () {
             if (this._resp != null) {
@@ -319,6 +333,9 @@ var PFU;
             }
             var query = PFU.PfuPlatformManager.GetInstance().GetShareQuery((qureyPos) ? qureyPos : -999, addQurey);
             console.log("query:" + query);
+            if (!this.IsWegameTestMode()) {
+                query += "&shareImage=" + share.shareLink;
+            }
             PFU.PfuPlatformManager.GetInstance().StatisticsMsg2201(PFU.PlatformStatisticsType.shareGame, share.shareLink);
             PFU.WeChatUtils.GetInstance().ShareGroupAppMessageImage(isShareGroup, fun, str, imgUrl, query);
             this.shareIndex++;
@@ -592,7 +609,7 @@ var PFU;
             if (this._wechatparam == null || this._wechatparam.value == null) {
                 return false;
             }
-            return this._wechatparam.value.pfuSdkVideoShare == PfuSwitch.ON;
+            return this._wechatparam.value.pfuSdkVideoShare != PfuSwitch.OFF;
         };
         PfuManager.prototype.SaveShareFinishCount = function () {
             //存储当前时间

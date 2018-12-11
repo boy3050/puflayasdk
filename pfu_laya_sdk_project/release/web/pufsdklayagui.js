@@ -84,6 +84,15 @@ var PFU;
                         _this.moregameUI.OnHide();
                     }
                 });
+                PFU.PfuGlobal.SetOnDialog(this, PfuSdkLayaUI.OnAddDialog);
+            };
+            PfuSdkLayaUI.OnAddDialog = function(desc) {
+                var dialog = new ui.SdkDialogUIUI();
+                dialog.dialogtext.text = "" + desc;
+                Laya.stage.addChildAt(dialog, Laya.stage.numChildren - 1);
+                Laya.timer.once(2e3, this, function() {
+                    dialog.removeSelf();
+                });
             };
             return PfuSdkLayaUI;
         }();
@@ -461,6 +470,57 @@ var ui;
     ui.MoreGameUIUI = MoreGameUIUI;
 })(ui || (ui = {}));
 
+(function(ui) {
+    var SdkDialogUIUI = function(_super) {
+        __extends(SdkDialogUIUI, _super);
+        function SdkDialogUIUI() {
+            return _super.call(this) || this;
+        }
+        SdkDialogUIUI.prototype.createChildren = function() {
+            View.regComponent("Text", laya.display.Text);
+            _super.prototype.createChildren.call(this);
+            this.createView(ui.SdkDialogUIUI.uiView);
+        };
+        return SdkDialogUIUI;
+    }(View);
+    SdkDialogUIUI.uiView = {
+        type: "View",
+        props: {
+            width: 750,
+            mouseThrough: true,
+            height: 1334
+        },
+        child: [ {
+            type: "Image",
+            props: {
+                y: 639,
+                x: -543,
+                width: 1836,
+                skin: "comp/img_box_1.png",
+                sizeGrid: "33,28,19,28",
+                height: 55
+            }
+        }, {
+            type: "Text",
+            props: {
+                y: 666,
+                x: 377,
+                width: 750,
+                var: "dialogtext",
+                valign: "middle",
+                text: "示111语",
+                pivotY: 27,
+                pivotX: 375,
+                name: "dialogtext",
+                height: 55,
+                fontSize: 28,
+                align: "center"
+            }
+        } ]
+    };
+    ui.SdkDialogUIUI = SdkDialogUIUI;
+})(ui || (ui = {}));
+
 var __extends = this && this.__extends || function(d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() {
@@ -603,6 +663,11 @@ var PFU;
                         Laya.stage.setChildIndex(this, PFU.PfuMoreGameUpdate.GetInstance().layerNum);
                     }
                     PFU.PfuMoreGameUpdate.GetInstance().EndSetMoreGameUI();
+                }
+                if (this._isCreateSideMoreGameBtn && PFU.PfuMoreGameUpdate.GetInstance().isSetMoreGameOffsetY) {
+                    this.btn_left.y = this.btn_left.y + PFU.PfuMoreGameUpdate.GetInstance().moreGameOffsetY;
+                    this.btn_right.y = this.btn_right.y + PFU.PfuMoreGameUpdate.GetInstance().moreGameOffsetY;
+                    PFU.PfuMoreGameUpdate.GetInstance().EndMoreGameUIOffsetY();
                 }
             };
             MoreGameUI.prototype.OnHide = function() {

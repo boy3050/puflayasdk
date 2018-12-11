@@ -40,6 +40,15 @@ var PFU;
                         _this.moregameUI.OnHide();
                     }
                 });
+                PFU.PfuGlobal.SetOnDialog(this, PfuSdkLayaUI.OnAddDialog);
+            };
+            PfuSdkLayaUI.OnAddDialog = function (desc) {
+                var dialog = new ui.SdkDialogUIUI();
+                dialog.dialogtext.text = "" + desc;
+                Laya.stage.addChildAt(dialog, Laya.stage.numChildren - 1);
+                Laya.timer.once(2000, this, function () {
+                    dialog.removeSelf();
+                });
             };
             return PfuSdkLayaUI;
         }());

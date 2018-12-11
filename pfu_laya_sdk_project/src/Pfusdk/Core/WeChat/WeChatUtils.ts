@@ -58,6 +58,7 @@
         public OnShareAppMessage(fun: Function, titleStr: string, imageUrl: string) {
             if (this.IsWeGame()) {
                 wx.onShareAppMessage(function () {
+                    fun();
                     return {
                         title: titleStr,
                         imageUrl: imageUrl,

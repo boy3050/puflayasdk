@@ -104,7 +104,7 @@ namespace PFU {
 
         private _lastTime = 0;
 
-        public OnShow(args:any) {
+        public OnShow(args: any) {
             PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
             this._lastTime = Date.now();
         }
@@ -312,7 +312,7 @@ namespace PFU {
             request.ext3 = PfuPlatformManager.IS_DEBUG ? "id" : weToken;
 
             let srcid = "";
-            let rinviteUid = "";
+            let rinviteUid = 0;
             let options = WeChatUtils.GetInstance().GetLaunchOptionsSync();
 
             if (options) {
@@ -347,7 +347,12 @@ namespace PFU {
                 }
                 let fromUid = query.fromUid;
                 if (fromUid && fromUid != "") {
-                    rinviteUid = fromUid;
+                    try  {
+                        rinviteUid = parseInt(fromUid);
+                    }
+                    catch (e)  {
+
+                    }
                 }
 
                 // let aid = WeChatUtils.GetInstance().GetAdAid();
@@ -370,12 +375,17 @@ namespace PFU {
                 // }
             }
 
-
-
             //Debug.Log("srcId=" + srcid);
             request.srcid = srcid;
             request.selfid = appId;
             request.inviteUid = rinviteUid;
+            try  {
+                request.onlineTime = this._platformUserData.userPlayTime;
+            }
+            catch (e)  {
+                request.onlineTime = 0;
+            }
+
 
             let url = this.PackageMsgUrl(1003, request, true);
 
