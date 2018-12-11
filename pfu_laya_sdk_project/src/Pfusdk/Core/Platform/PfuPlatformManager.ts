@@ -47,6 +47,10 @@ namespace PFU {
         //是否登录pfu平台
         private _isLoginPlatform: boolean = false;
 
+
+
+
+
         public Init() {
             this._privateKey = PfuConfig.Config.privateKey;;
 
@@ -86,9 +90,37 @@ namespace PFU {
                     let data: Platform_1333_ResData = <Platform_1333_ResData>vs.value;
                     this._platformUserData._userCache.add(vs.key, data);
                 }
+                try {
+                    if (dic.userPlayTime) {
+                        this._platformUserData.userPlayTime = parseInt("" + dic.userPlayTime);
+                    }
+                }
+                catch (e) {
+                    this._platformUserData.userPlayTime = 0;
+                }
 
             }
         }
+
+        private _lastTime = 0;
+
+        public OnShow(args:any) {
+            PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
+            this._lastTime = Date.now();
+        }
+
+        public OnHide() {
+            if (this._lastTime > 0) {
+                //取秒
+                let time = (Date.now() - this._lastTime) / 1000;
+                console.log("本次游戏时长/秒:" + time);
+                this._platformUserData.userPlayTime += time;
+                console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime)
+                this.Save();
+            }
+        }
+
+
         public Save() {
             LocalSaveUtils.SaveJsonObject(this.SAVE_KEY, this._platformUserData);
         }
@@ -808,6 +840,7 @@ namespace PFU {
         public _notifShareInGames: PFU.Dictionary<number, Array<Platform_2000_resp_Data>> = new PFU.Dictionary<number, Array<Platform_2000_resp_Data>>();
         public _userCache: PFU.Dictionary<number, Platform_1333_ResData> = new PFU.Dictionary<number, Platform_1333_ResData>();
 
+        public userPlayTime: number = 0;
 
     }
 

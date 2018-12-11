@@ -80,6 +80,9 @@
                     let param: PFU.PfuOLParamData = this.OLParam;
                     //param.kaiping = 2;
                     //param.ad_banner = PfuSwitch.OFF;
+                    console.info("OL Param Success!");
+                    console.info("Test Mode:" + (param.pfuSdkTestMode == PfuSwitch.ON));
+
                     if (param.pfuSdkTestMode == PfuSwitch.ON) {
                         param.pfuSdkMoreGame = PfuSwitch.OFF;
                         param.pfuSdkVideoShare = PfuSwitch.OFF;
@@ -198,20 +201,10 @@
                                 for (let i = 0; i < this._moregame.adverts.length; i++) {
                                     let data: PfuMoreGameData = this._moregame.adverts[i];
 
-                                    if (Laya.Browser.onAndroid) {
-                                        if ((data.boxId == undefined || data.boxId == "" || !PfuBoxList.GetInstance().IsMoreGameDataBeAppIdList(data.boxId)) && (data.link == undefined || data.link == ""))  {
-                                            continue;
-                                        }
-                                    }
-                                    else  {
-                                        if ((data.wxid == undefined || data.wxid == "" || !PfuBoxList.GetInstance().IsMoreGameDataBeAppIdList(data.wxid)) && (data.link == undefined || data.link == ""))  {
-                                            if(!PfuBoxList.GetInstance().IsMoreGameDataBeAppIdList(data.wxid))
-                                            {
-                                                console.log("more:" + data.wxid);
-                                            }
-
-                                            continue;
-                                        }
+                                    if(this.ExcludeErrorMoreGame(data))
+                                    {
+                                        console.log("exclude:" + data.wxid + "| link" + data.link);
+                                        continue;
                                     }
 
                                     if (PfuConfig.Config.ui_moreGameType == 1) {
@@ -250,6 +243,29 @@
                 }
             }
         }
+
+
+        private ExcludeErrorMoreGame(data: PfuMoreGameData): boolean {
+            let wxId = undefined;
+            if (Laya.Browser.onAndroid) {
+                wxId = data.boxId;
+            } else {
+                wxId = data.wxid
+            }
+            //id 和 link都没有 则排除
+            if ((wxId == undefined || wxId == "") && (data.link == undefined || data.link == "")) {
+                return true;
+            }
+            //ID有但是不在列表内，  data.link为空的情况也排除
+            if( (data.link == undefined || data.link == "") && !PfuBoxList.GetInstance().IsMoreGameDataBeAppIdList(data.wxid))
+            {
+                return true;
+            }
+            
+            return false;
+        }
+
+
 
         public GetTopUrl(): string {
             if (this._resp != null) {
@@ -319,9 +335,9 @@
             let query = PfuPlatformManager.GetInstance().GetShareQuery((qureyPos) ? qureyPos : -999, addQurey);
             console.log("query:" + query);
             if (!this.IsWegameTestMode()) {
-                query += "&shareImage="+share.shareLink;
+                query += "&shareImage=" + share.shareLink;
             }
-            
+
             PfuPlatformManager.GetInstance().StatisticsMsg2201(PlatformStatisticsType.shareGame, share.shareLink);
 
             WeChatUtils.GetInstance().ShareGroupAppMessageImage(isShareGroup, fun, str, imgUrl, query);
@@ -499,7 +515,7 @@
                 isJumpShowImage = true;
             }
 
-            if (isJumpShowImage)  {
+            if (isJumpShowImage) {
                 let url = data.link;
                 WeChatUtils.GetInstance().PreviewImage(this._resp.toppath + url);
                 fun.call(callServer, url);
@@ -676,7 +692,7 @@
             if (this._wechatparam == null || this._wechatparam.value == null) {
                 return false;
             }
-            return this._wechatparam.value.pfuSdkVideoShare == PfuSwitch.ON;
+            return this._wechatparam.value.pfuSdkVideoShare != PfuSwitch.OFF;
         }
 
         // #endregion

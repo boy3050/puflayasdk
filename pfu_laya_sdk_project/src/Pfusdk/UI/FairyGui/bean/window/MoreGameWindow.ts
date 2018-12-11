@@ -22,6 +22,7 @@ namespace PFU.UI {
                 this.CreateSideMoreGameBtn();
                 this._isCreateSideMoreGameBtn = true;
             }
+
             if (PfuConfig.Config && !this._isCreateMoreGameListBar && PfuSdk.GetBoxListComplete) {
                 if (PfuConfig.Config.ui_crossGameListType != -1) {
                     this.CreateMoreGameList();
@@ -31,6 +32,12 @@ namespace PFU.UI {
 
             if (this._isCreateMoreGameListBar) {
                 this.UpdateMoreGameListMove();
+            }
+
+            if (this._isCreateSideMoreGameBtn && PfuMoreGameUpdate.GetInstance().isSetMoreGameOffsetY)  {
+                this._fui.m_Btn_MoreGameLeft.setXY(this._fui.m_Btn_MoreGameLeft.x, this._fui.m_Btn_MoreGameLeft.y + PfuMoreGameUpdate.GetInstance().moreGameOffsetY);
+                this._fui.m_Btn_MoreGameRight.setXY(this._fui.m_Btn_MoreGameRight.x, this._fui.m_Btn_MoreGameRight.y + PfuMoreGameUpdate.GetInstance().moreGameOffsetY);
+                PfuMoreGameUpdate.GetInstance().EndMoreGameUIOffsetY();
             }
         }
 
@@ -71,7 +78,7 @@ namespace PFU.UI {
         }
 
         private RefreshMoreGameVisible() {
-            if (PfuConfig.Config)  {
+            if (PfuConfig.Config) {
                 if (PfuConfig.Config.ui_moreGameType == 1) {
                     this._fui.m_Btn_MoreGameRight.visible = false;
                 }

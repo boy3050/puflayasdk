@@ -26,7 +26,6 @@ namespace PFU.UI {
                 if (PfuConfig.Config.ui_crossGameListType != -1) {
                     this.CreateMoreGameList();
                 }
-
                 this._isCreateMoreGameListBar = true;
             }
 
@@ -35,11 +34,16 @@ namespace PFU.UI {
             }
 
             if (PfuMoreGameUpdate.GetInstance().isSetLayerAction) {
-
-                if (PfuMoreGameUpdate.GetInstance().layerNum >= 0 && PfuMoreGameUpdate.GetInstance().layerNum < Laya.stage.numChildren)  {
+                if (PfuMoreGameUpdate.GetInstance().layerNum >= 0 && PfuMoreGameUpdate.GetInstance().layerNum < Laya.stage.numChildren) {
                     Laya.stage.setChildIndex(this, PfuMoreGameUpdate.GetInstance().layerNum);
                 }
                 PfuMoreGameUpdate.GetInstance().EndSetMoreGameUI();
+            }
+
+            if (this._isCreateSideMoreGameBtn && PfuMoreGameUpdate.GetInstance().isSetMoreGameOffsetY) {
+                this.btn_left.y = this.btn_left.y + PfuMoreGameUpdate.GetInstance().moreGameOffsetY;
+                this.btn_right.y = this.btn_right.y + PfuMoreGameUpdate.GetInstance().moreGameOffsetY;
+                PfuMoreGameUpdate.GetInstance().EndMoreGameUIOffsetY();
             }
         }
         public OnHide() {

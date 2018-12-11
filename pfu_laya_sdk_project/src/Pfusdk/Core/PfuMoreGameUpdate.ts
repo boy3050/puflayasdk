@@ -15,13 +15,20 @@ namespace PFU {
         //最后一次操作是显示还是隐藏
         public _isLastShow = true;
         //moregameType 
-        private _showMoreGameType:number;
+        private _showMoreGameType: number;
 
         private _indexLeft: number = 0;
         private _indexRight: number = 0;
 
         private _changeMoreGameHandle: any;
         private _changeMoreGameFun: Function;
+        //设置moreGameUI层级动作
+        public isSetLayerAction = false;
+        //设置moreGameUI层级数值
+        public layerNum = 0;
+
+        public isSetMoreGameOffsetY = false;
+        public moreGameOffsetY = 0;
 
         constructor() {
             this._indexLeft = 0;
@@ -61,6 +68,7 @@ namespace PFU {
         }
 
 
+
         private moreGameHandle: any;
         private moreGameFun: Function;
 
@@ -80,7 +88,7 @@ namespace PFU {
          */
         private ShowMoreGameUI() {
             if (this.moreGameHandle) {
-                this.moreGameFun.call(this.moreGameHandle, true,this._showMoreGameType);
+                this.moreGameFun.call(this.moreGameHandle, true, this._showMoreGameType);
             }
         }
 
@@ -89,7 +97,7 @@ namespace PFU {
          */
         public HideMoreGameUI() {
             if (this.moreGameHandle) {
-                this.moreGameFun.call(this.moreGameHandle, false,this._showMoreGameType);
+                this.moreGameFun.call(this.moreGameHandle, false, this._showMoreGameType);
             }
         }
 
@@ -118,23 +126,28 @@ namespace PFU {
                         this.HideMoreGameUI();
                     }
 
-
                     this._isLastCtrAction = false;
                 }
             }
         }
 
-        public isSetLayerAction = false;
-        public layerNum = 0;
-        public SetMoreGameUILayer(layernum:number)
-        {
+        public SetMoreGameUILayer(layernum: number)  {
             this.isSetLayerAction = true;
             this.layerNum = layernum;
         }
 
-        public EndSetMoreGameUI()
-        {
+        public EndSetMoreGameUI()  {
             this.isSetLayerAction = false;
+        }
+
+        public SetMoreGameUIOffsetY(offsetY: number)  {
+            this.isSetMoreGameOffsetY = true;
+            this.moreGameOffsetY = offsetY;
+        }
+
+        public EndMoreGameUIOffsetY()
+        {
+            this.isSetMoreGameOffsetY = false;
         }
     }
 }

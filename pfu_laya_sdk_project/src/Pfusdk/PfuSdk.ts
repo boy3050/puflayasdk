@@ -11,7 +11,7 @@ class PfuSdk {
     public static get GetParamComplete() { return PFU.PfuManager.GetInstance().GetParamComplete; }
     public static get GetBoxListComplete() { return PFU.PfuManager.GetInstance().GetBoxListComplete; }
 
-    private static sdk_ver = "0.0.6.2";
+    private static sdk_ver = "0.0.6.3";
 
     public static SHOW_TYPE_ALL = 0;//更多游戏，BosList都显示
     public static SHOW_TYPE_MOREGAME = 1;//只显示更多游戏
@@ -60,7 +60,7 @@ class PfuSdk {
     private static _showCallBack;
     private static _hideCallBack;
     public static CallOnShow(args) {
-        PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
+        PFU.PfuPlatformManager.GetInstance().OnShow(args);
         PFU.PfuGlobal.Focus();
         if (this._showCallBack) {
             this._showCallBack();
@@ -71,6 +71,7 @@ class PfuSdk {
      * 主动投中APP切换到后台
      */
     public static CallOnHide() {
+        PFU.PfuPlatformManager.GetInstance().OnHide();
         if (this._hideCallBack) {
             this._hideCallBack();
         }
@@ -111,8 +112,8 @@ class PfuSdk {
      * @param handle 
      * @param qureyPos 分享参数 
      */
-    public static Share(handle: any, qureyPos?: number,addQurey?:string) {
-        PFU.PfuGlobal.PfuShareGroupNext(handle, () => { }, false, qureyPos,addQurey);
+    public static Share(handle: any, qureyPos?: number, addQurey?: string) {
+        PFU.PfuGlobal.PfuShareGroupNext(handle, () => { }, false, qureyPos, addQurey);
     }
     /**
      * 激励分享
@@ -120,8 +121,8 @@ class PfuSdk {
      * @param fun (type:)
      * @param qureyPos 
      */
-    public static ShareAward(handle: any, fun: Function, qureyPos?: number,addQurey?:string) {
-        PFU.PfuGlobal.PfuShareGroupNext(handle, fun, true, qureyPos,addQurey);
+    public static ShareAward(handle: any, fun: Function, qureyPos?: number, addQurey?: string) {
+        PFU.PfuGlobal.PfuShareGroupNext(handle, fun, true, qureyPos, addQurey);
     }
 
     private static _sdkVideoShareFinish: boolean = true;
@@ -138,27 +139,40 @@ class PfuSdk {
      */
     public static Video(handle: any, fun: Function, adunit?: string, isForceShare?: boolean) {
 
-        if (this._sdkVideoShareFinish && PFU.PfuManager.GetInstance().IsPfuSdkVideoShare()) {
+        let pfuSdkVideoShare = PfuSdk.GetOLParamInt("pfuSdkVideoShare");
 
+        if (this._sdkVideoShareFinish && pfuSdkVideoShare != 0) {
+            //2分享后视频 ;1-分享成功后视频;0-直接看视频 .审核模式下全部是直接看视频
             if (isForceShare == undefined || isForceShare == void 0 || isForceShare) {
-                PFU.PfuGlobal.PfuShareVideo(this, (type, desc) => {
-                    if (type == PfuSdk.SUCCESS) {
-                        this._sdkVideoShareFinish = false;
+                //分享成功后视频播放
+                if (pfuSdkVideoShare == 1) {
+                    PFU.PfuGlobal.PfuShareVideo(this, (type, desc) => {
+                        if (type == PfuSdk.SUCCESS) {
+                            //this._sdkVideoShareFinish = false;
+                            this.PlayVideo(handle, fun, true, adunit);
+                        }
+                        else {
+                            fun.call(handle, type, desc);
+                        }
+                    }, true);
+
+                } else  {
+                    //pfuSdkVideoShare = 2 分享后直接视频
+                    PFU.PfuGlobal.PfuShareVideo(this, (type, desc) => {
+                        if (type == PfuSdk.SUCCESS) {
+                        } else {
+                            fun.call(handle, type, desc);
+                        }
                         this.PlayVideo(handle, fun, true, adunit);
-                    }
-                    else {
-                        fun.call(handle, type, desc);
-                    }
-                }, true);
-            } else  {
+                    }, true);
+                }
+            } else {
                 this.PlayVideo(handle, fun, false, adunit);
             }
-
-
-
-            return;
+        } else {
+            this.PlayVideo(handle, fun, false, adunit);
         }
-        this.PlayVideo(handle, fun, false, adunit);
+
     }
 
     private static PlayVideo(handle: any, fun: Function, shareIn: boolean, adunit?: string) {
@@ -310,5 +324,13 @@ class PfuSdk {
      */
     public static SetMoreGameUILayer(layernum: number) {
         PFU.PfuMoreGameUpdate.GetInstance().SetMoreGameUILayer(layernum);
+    }
+    /**
+     * 设置更多游戏按钮Y偏移
+     * @param offset 
+     */
+    public static SetMoreGameUIOffsetY(offset:number)
+    {
+        PFU.PfuMoreGameUpdate.GetInstance().SetMoreGameUIOffsetY(offset);
     }
 }

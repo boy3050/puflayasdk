@@ -20,24 +20,6 @@
         private static readonly SAVE_INCENTIVE_KEY = "s_incentive_id";
 
         public Create(adId: string) {
-            if (adId == "0") {
-                //从记录中获取，记录中也没有 则 return
-                let curVer = LocalSaveUtils.GetItem(WeChatIncentiveAd.SAVE_INCENTIVE_KEY);
-                if (curVer == null || curVer == "") {
-                    return;
-                }
-                else {
-                    adId = adId;
-                }
-            }
-            else {
-                LocalSaveUtils.SaveItem(WeChatIncentiveAd.SAVE_INCENTIVE_KEY, adId);
-            }
-
-
-            if (adId == "0") {
-                return;
-            }
 
             this._adId = adId;
 

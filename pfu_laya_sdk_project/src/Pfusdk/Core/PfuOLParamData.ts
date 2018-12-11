@@ -44,20 +44,21 @@ namespace PFU {
         //SDK广告刷新时间
         public pfuSdkRefresh;
 
+        //SDKBanner最低刷新时间
+        public pfuSdkBannerMin;
+
+        //SDKBanner最大刷新次数
+        public pfuSdkBannerCount;
+
+        //SDK用户时间长,通过判断用户时长来打开广告分享功能 单位:分钟
+        public pfuSdkPlayTime;
+
+        //通过点击banner复活<实际判断是游戏切到后天再切回来>
+        public pfuSdkBannerRelive;
+
 
         public Init() {
-            //this.ad_banner = PfuSwitch.ON;
-            //this.gift = PfuSwitch.OFF;
-            //this.banner_refresh_time = 180;
-
-            //this.fenxiang_number = 1;
-            //this.revive_video_number = 3;
-
-            //this.fenxiangshiwan = 0;
-
-            //this.buttendelay = PfuSwitch.ON;
-
-
+            
             this.pfuSdkTestMode = PfuSwitch.ON;
 
             this.pfuSdkMoreGame = PfuSwitch.ON;
@@ -73,6 +74,13 @@ namespace PFU {
 
             this.pfuSdkRefresh = 1000;
             this.pfuSdkShareCount = 0;
+
+            this.pfuSdkBannerMin = 30;
+            this.pfuSdkBannerCount = 3;
+
+            this.pfuSdkPlayTime = 60;
+
+            this.pfuSdkBannerRelive = 2;
         }
         //AddCode	
 

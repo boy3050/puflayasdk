@@ -21,6 +21,11 @@ namespace PFU {
         public _isLastCtrAction = false;
         //最后一次操作是显示还是隐藏
         public _isLastShow = true;
+        //临时记录Banner显示时间
+        public _tempShowBannerTime = 0;
+        //临时记录Banner刷新次数
+        public _tempRefreshBannerData:EveryDayRefreshBannerCount;
+
 
         public SetRefreshHandle(handle: any, refreshCallback: Function, onVisible: Function) {
             this._refreshBannerHandle = handle;
@@ -39,8 +44,52 @@ namespace PFU {
             });
         }
         constructor() {
+            this._tempRefreshBannerData = this.GetData();// new EveryDayRefreshBannerCount();//
             Laya.timer.loop(1000, this, this.Update);
             Laya.timer.loop(200, this, this.UpdateBannerAction);
+        }
+
+
+        private IsShareFinishCountNewDay(): boolean {
+            var data: DataTimeCount = this._tempRefreshBannerData;
+            if (data.time == 0) {
+                return true;
+            }
+            var date: Date = new Date();
+            var curDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            let curTime = curDay.getTime();
+            if (data.time <= curTime) {
+                return true;
+            }
+            return false;
+        }
+
+        public GetData(): EveryDayRefreshBannerCount {
+            var json: string = Laya.LocalStorage.getJSON("everydayrefreshbannercount");
+            if (json != null && json != "") {
+                this._tempRefreshBannerData = JSON.parse(json);
+                if(this.IsShareFinishCountNewDay())
+                {
+                    this._tempRefreshBannerData.count = 0;
+                }
+            } else {
+                this._tempRefreshBannerData = new EveryDayRefreshBannerCount();
+                this._tempRefreshBannerData.time = 0;
+                this._tempRefreshBannerData.count = 0;
+            }
+            return this._tempRefreshBannerData;
+        }
+
+        private SaveData() {
+
+            //存储当前时间
+            var date: Date = new Date();
+            var curDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            var mt = new Date(curDay.getTime() + 24 * 60 * 60 * 1000);
+            this._tempRefreshBannerData.time = mt.getTime();
+            this._tempRefreshBannerData.count++;
+
+            Laya.LocalStorage.setJSON("everydayrefreshbannercount",JSON.stringify(this._tempRefreshBannerData));
 
         }
 
@@ -73,7 +122,7 @@ namespace PFU {
             if (this._timeCount > PfuGlobal.GetOLParam().pfuSdkRefresh) {
                 //刷新
                 this.RefreshBanner();
-                this._timeCount = 0;
+
             }
         }
 
@@ -98,6 +147,7 @@ namespace PFU {
         }
 
         private RefreshBanner() {
+            this._timeCount = 0;
             this._isCreateBanner = false;
             //刷新Banner
             if (PfuGlobal.IsReadyBanner()) {
@@ -105,6 +155,8 @@ namespace PFU {
                     this._isCreateBanner = true;
                     //刷新按照最后一次设置控制显示和隐藏
                     this._isLastCtrAction = true;
+
+                    this.SaveData();
                 });
             }
 
@@ -130,16 +182,28 @@ namespace PFU {
         private _firstShowBanner = true;
 
         public CallShow() {
-            if (this._firstShowBanner) {
-                this._isLastCtrAction = true;
-                this._isLastShow = true;
-                this._firstShowBanner = false;
+            this._isLastShow = true;
+            if (this._firstShowBanner || this._tempRefreshBannerData.count >= PfuManager.GetInstance().OLParam.pfuSdkBannerCount) {
+                this.ShowBAction();
             }
-            else  {
-                this._isLastShow = true;
-                this.RefreshBanner()
+            else {
+                let time = Date.now() - this._tempShowBannerTime;
+                if (time > PfuManager.GetInstance().OLParam.pfuSdkBannerMin * 1000) {
+                    this.RefreshBanner();
+                }
+                else {
+                    this.ShowBAction();
+                }
+
+
             }
         }
+        private ShowBAction() {
+            this._isLastCtrAction = true;
+            this._firstShowBanner = false;
+        }
+
+
         public CallHide() {
             this._isLastCtrAction = true;
             this._isLastShow = false;
@@ -163,9 +227,17 @@ namespace PFU {
             //         this._onPfuSetBannerVisible.call(this._refreshBannerHandle, true);
             //     }
             // } else 
+            this._tempShowBannerTime = Date.now();
             {
                 PfuGlobal.ShowBanner();
             }
         }
+    }
+
+    class EveryDayRefreshBannerCount  {
+        //最后一次领取时间
+        public time: number = 0;
+
+        public count: number = 0;
     }
 }
