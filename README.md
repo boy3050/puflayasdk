@@ -16,7 +16,7 @@
 	    "wx87fe1890ea1384a5",
 	    "wxa0eee1fe564aa730"
        ]
-       此处只能留10个ID， 将sdk中pfusdkconfig文件里的navigateToMiniAppId 内容copy过来，优先删除自己的。
+       此处只能留10个ID， 将sdk中pfusdkconfig文件里的navigateToMiniProgramAppIdList 内容copy过来，优先删除自己的。
        接着从底部开始删除(保留10个)。 最后自己游戏的sdk配置文件可跳转列表与这个10个保持一致。
 
 **添加规范**
