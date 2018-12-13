@@ -39,6 +39,17 @@
       TS版本
       pfusdk.d.ts 文件放入Laya工程libs目录
       AS版本
+      
+      **引用特殊规则**
+      	<script src="sdklibrary/base64.min.js" loader='laya'></script>
+	<script src="sdklibrary/md5-min.js" loader='laya'></script>
+	//库核心
+	<script src="core/pufsdkcore.js" loader='laya'></script>
+	//AS版本的js 启动类里 必须 import laya.ui.View
+	<script src='LayaAir3D.max.js' loader='laya'></script>
+	//由于gui初始化就用到了laya.ui.view,没办法就先放在最下面。
+	<script src="core/pufsdklayagui.js" loader='laya'></script>
+      
       PfuSdkHelper.as 放入代码目录引用即可
  
   添加依赖库 
