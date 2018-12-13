@@ -71,7 +71,7 @@ var PFU;
                 //取秒
                 var time = (Date.now() - this._lastTime) / 1000;
                 console.log("本次游戏时长/秒:" + time);
-                this._platformUserData.userPlayTime += time;
+                this._platformUserData.userPlayTime += Math.floor(time);
                 console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime);
                 this.Save();
             }
@@ -128,6 +128,9 @@ var PFU;
             });
         };
         PfuPlatformManager.prototype.GetShareUserList = function (pos) {
+            if (pos == undefined || pos == void 0) {
+                pos == -999;
+            }
             var data = new Array();
             console.log("开始查找用户资料!");
             if (this._platformUserData._notifShareInGames.containsKey(pos)) {
@@ -286,7 +289,7 @@ var PFU;
             request.selfid = appId;
             request.inviteUid = rinviteUid;
             try {
-                request.onlineTime = this._platformUserData.userPlayTime;
+                request.onlineTime = Math.floor(this._platformUserData.userPlayTime);
             }
             catch (e) {
                 request.onlineTime = 0;
@@ -321,10 +324,19 @@ var PFU;
                     }
                 }
                 else {
-                    console.log("pfu 平台登录失败:" + respose.state);
+                    console.log("pfu 平台协议登录失败 state:" + respose.state);
                 }
             }, function () {
-                console.log("pfu 平台登录失败!");
+                //登录两次
+                PfuPlatformManager._loginCount++; //.GetInstance()._loginCount
+                if (PfuPlatformManager._loginCount >= 2) {
+                    console.log("pfu 平台登录失败!");
+                    return;
+                }
+                console.log("pfu 登录失败,平台再次登录 等待500毫秒!");
+                Laya.timer.once(500, _this, function () {
+                    _this.LoginPlatform1003(weToken, appId);
+                });
             });
         };
         /**
@@ -621,6 +633,7 @@ var PFU;
                 if (respose.state == 3) {
                     for (var i = 0; i < respose.infos.length; i++) {
                         _this._platformUserData._userCache.add(respose.infos[i].uid, respose.infos[i]);
+                        _this.Save();
                         fun(respose.infos[i]);
                     }
                     console.log("获取用户数据成功!");
@@ -700,6 +713,7 @@ var PFU;
     PfuPlatformManager.IS_DEBUG_LOG = true;
     //pfu token
     PfuPlatformManager.TOKEN = "";
+    PfuPlatformManager._loginCount = 0;
     PFU.PfuPlatformManager = PfuPlatformManager;
     var PlatformShareUserData = (function () {
         function PlatformShareUserData() {

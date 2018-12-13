@@ -7,10 +7,16 @@ var PFU;
             this._addDialogHandle = handle;
             this._addDialogCallback = callBack;
         };
-        PfuGlobal.ShowDialog = function (desc) {
-            if (this._addDialogCallback) {
-                this._addDialogCallback.call(this._addDialogHandle, desc);
-            }
+        PfuGlobal.ShowDialog = function (desc, fun) {
+            PFU.WeChatUtils.GetInstance().ShowSingleModal("提示", desc, function () {
+                if (fun) {
+                    fun();
+                }
+            });
+            //fun();
+            // if (this._addDialogCallback) {
+            //     this._addDialogCallback.call(this._addDialogHandle, desc);
+            // }
         };
         //轮播闪屏广告
         PfuGlobal.ShowNextSplashAd = function () {

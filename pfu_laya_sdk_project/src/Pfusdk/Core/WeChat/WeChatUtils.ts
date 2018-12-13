@@ -311,18 +311,24 @@
 
 
         public ShowSingleModal(title: string, content: string, fun: Function) {
-            wx.showModal({
-                title: title,
-                content: content,
-                showCancel: false,
-                success: function () {
-                    fun();
-                }
-            });
+            if (this.IsWeGame())  {
+                wx.showModal({
+                    title: title,
+                    content: content,
+                    showCancel: false,
+                    success: function () {
+                        fun();
+                    }
+                });
+            }
+            else
+            {
+                fun();
+            }
         }
 
 
-        public SetUpdateApp()  {
+        public SetUpdateApp() {
             if (!this.IsWeGame()) {
                 return;
             }

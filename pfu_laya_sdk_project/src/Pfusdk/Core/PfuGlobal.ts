@@ -6,16 +6,21 @@
 
         private static _addDialogCallback: Function = null;
         private static _addDialogHandle: any = null;
-        public static SetOnDialog(handle: any, callBack: Function)  {
+        public static SetOnDialog(handle: any, callBack: Function) {
             this._addDialogHandle = handle;
             this._addDialogCallback = callBack;
         }
 
-        
-        public static ShowDialog(desc: string)  {
-            if (this._addDialogCallback)  {
-                this._addDialogCallback.call(this._addDialogHandle, desc);
-            }
+        public static ShowDialog(desc: string, fun?: Function) {
+            PFU.WeChatUtils.GetInstance().ShowSingleModal("提示", desc, () => {
+                if (fun)  {
+                    fun();
+                }
+            });
+            //fun();
+            // if (this._addDialogCallback) {
+            //     this._addDialogCallback.call(this._addDialogHandle, desc);
+            // }
         }
 
         //轮播闪屏广告

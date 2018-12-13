@@ -89,7 +89,9 @@ var PFU;
             PfuSdkLayaUI.OnAddDialog = function(desc) {
                 var dialog = new ui.SdkDialogUIUI();
                 dialog.dialogtext.text = "" + desc;
-                Laya.stage.addChildAt(dialog, Laya.stage.numChildren - 1);
+                dialog.zOrder = 1e7;
+                Laya.stage.addChild(dialog);
+                Laya.stage.updateZOrder();
                 Laya.timer.once(2e3, this, function() {
                     dialog.removeSelf();
                 });
@@ -514,6 +516,7 @@ var ui;
                 name: "dialogtext",
                 height: 55,
                 fontSize: 28,
+                color: "#ffffff",
                 align: "center"
             }
         } ]

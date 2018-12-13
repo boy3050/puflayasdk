@@ -11,7 +11,7 @@ class PfuSdk {
     public static get GetParamComplete() { return PFU.PfuManager.GetInstance().GetParamComplete; }
     public static get GetBoxListComplete() { return PFU.PfuManager.GetInstance().GetBoxListComplete; }
 
-    private static sdk_ver = "0.0.6.5";
+    private static sdk_ver = "0.0.6.7";
 
     public static SHOW_TYPE_ALL = 0;//更多游戏，BosList都显示
     public static SHOW_TYPE_MOREGAME = 1;//只显示更多游戏
@@ -28,16 +28,13 @@ class PfuSdk {
         });
     }
 
-
     public static GetCdnPath() {
         return PFU.PfuConfig.GetCdnPath();
     }
 
-
     public static GetConfig() {
         return PFU.PfuConfig.Config;
     }
-
 
 
     /**
@@ -110,7 +107,7 @@ class PfuSdk {
     /**
      * 分享 无回调
      * @param handle 
-     * @param qureyPos 分享参数 
+     * @param qureyPos 分享参数  1
      */
     public static Share(handle: any, qureyPos?: number, addQurey?: string) {
         PFU.PfuGlobal.PfuShareGroupNext(handle, () => { }, false, qureyPos, addQurey);
@@ -123,13 +120,14 @@ class PfuSdk {
      */
     public static ShareAward(handle: any, fun: Function, qureyPos?: number, addQurey?: string) {
         PFU.PfuGlobal.PfuShareGroupNext(handle, (type, desc) => {
-            if (type == PfuSdk.SUCCESS)  {
-
+            if (type == PfuSdk.SUCCESS) {
+                fun.call(handle, desc);
             }
-            else  {
-                PFU.PfuGlobal.ShowDialog(desc);
+            else {
+                PFU.PfuGlobal.ShowDialog(desc,()=>{
+                    fun.call(handle, desc);
+                });
             }
-            fun.call(handle, desc);
         }, true, qureyPos, addQurey);
     }
 
@@ -160,19 +158,28 @@ class PfuSdk {
                             this.PlayVideo(handle, fun, true, adunit);
                         }
                         else {
-                            fun.call(handle, type, desc);
-                            PFU.PfuGlobal.ShowDialog(desc);
+                            PFU.PfuGlobal.ShowDialog(desc,()=>{
+                                fun.call(handle, type, desc);
+                            });
                         }
                     }, true);
                 } else {
                     //pfuSdkVideoShare = 2 分享后直接视频
                     PFU.PfuGlobal.PfuShareVideo(this, (type, desc) => {
-                        if (type == PfuSdk.SUCCESS) {
+                        // if (type == PfuSdk.SUCCESS) {
 
+                        // } else {
+                        //     PFU.PfuGlobal.ShowDialog(desc);
+                        // }
+                        // this.PlayVideo(handle, fun, false, adunit);
+                        if (type == PfuSdk.SUCCESS) {
+                            this.PlayVideo(handle, fun, false, adunit);
                         } else {
-                            PFU.PfuGlobal.ShowDialog(desc);
+                            PFU.PfuGlobal.ShowDialog(desc,()=>{
+                                this.PlayVideo(handle, fun, false, adunit);
+                            });
+                            //
                         }
-                        this.PlayVideo(handle, fun, false, adunit);
                     }, true);
                 }
             } else {
@@ -211,14 +218,17 @@ class PfuSdk {
                 }
                 else {
                     tip = "暂时没有可播放的视频了";
-                    fun.call(handle, type, tip);
-                    PFU.PfuGlobal.ShowDialog(tip);
+                    
+                    PFU.PfuGlobal.ShowDialog(tip,()=>{
+                        fun.call(handle, type, tip);
+                    });
                 }
             } else {
                 console.log("video fail");
                 tip = "观看完整视频才会获得奖励";
-                fun.call(handle, type, tip);
-                PFU.PfuGlobal.ShowDialog(tip);
+                PFU.PfuGlobal.ShowDialog(tip,()=>{
+                    fun.call(handle, type, tip);
+                });
             }
 
         }, adunit);
@@ -260,19 +270,27 @@ class PfuSdk {
     }
 
     /**
-     * 分享后有用户点击 消息监听
+     * 分享后有用户点击 消息监听 
      * @param handle 
      * @param callback 
      */
-    public static SetPlatformShreUserHandle(handle: any, callback: Function) {
+    public static SetPlatformShareUserHandle(handle: any, callback: Function) {
         PFU.PfuPlatformManager.GetInstance().SetInGameUserHandle(handle, callback);
+    }
+
+    /**
+     * 获取分享用户
+     * @param pos 
+     */
+    public static GetPlatformShareUser(pos?: number)  {
+        return PFU.PfuPlatformManager.GetInstance().GetShareUserList(pos);
     }
 
     /**
      * 清除某个点分享进入的用户信息
      * @param pos 
      */
-    public static ClearPlatformShareUserCache(pos: number) {
+    public static ClearPlatformShareUserCache(pos?: number) {
         PFU.PfuPlatformManager.GetInstance().ClearShareUserList(pos);
     }
 

@@ -147,7 +147,11 @@
             let xhr: Laya.HttpRequest = new Laya.HttpRequest();
             xhr.http.timeout = 10000;//设置超时时间；
             xhr.once(Laya.Event.COMPLETE, this, (e: any) => {
-                let data = JSON.parse(Base64.decode(e));
+
+                let jsonStr = Base64.decode(e);
+                //console.error(jsonStr);
+                let data = JSON.parse(jsonStr);
+
                 this.preaseData(data);
                 callBack(PfuSdk.SUCCESS);
             });
@@ -252,6 +256,13 @@
             } else {
                 wxId = data.wxid
             }
+
+            if(wxId == PfuConfig.Config.weChatId)
+            {
+                return true;
+            }
+
+
             //id 和 link都没有 则排除
             if ((wxId == undefined || wxId == "") && (data.link == undefined || data.link == "")) {
                 return true;
@@ -690,8 +701,10 @@
          */
         public IsPfuSdkVideoShare(): boolean {
             if (this._wechatparam == null || this._wechatparam.value == null) {
+                //console.error("赋值错误");
                 return false;
             }
+            //console.error("IsPfuSdkVideoShare:" + (this._wechatparam.value.pfuSdkVideoShare != PfuSwitch.OFF));
             return this._wechatparam.value.pfuSdkVideoShare != PfuSwitch.OFF;
         }
 

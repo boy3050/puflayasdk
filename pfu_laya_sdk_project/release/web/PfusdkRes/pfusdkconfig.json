@@ -1,14 +1,14 @@
 {
-    "weChatId": "wx9efe37d6a8024bc4",
-    "pfuAppId": "1306144",
-    "version": "0.0.2.8",
-    "cdnPath": "https://txpk.jfydgame.com/zhuzhuxiazhengban/",
-    "bannerId": "adunit-30c586e0e1ff7bd4",
-    "videoId": "adunit-6fd6398d42727034",
-    "privateKey": "bp11lflsecEme9itsb4f",
+  "weChatId": "wxc6abdeaa9e506c8f",
+    "pfuAppId": "1306112",
+    "version": "1.2.6",
+    "cdnPath": "2342134",
+    "bannerId": "adunit-7dc40814631ae063",
+    "videoId": "adunit-cfcecc26d80ff14b",
+    "privateKey": "",
     "pfuShareProtocol": 0,
-    "mtaAppId": "500630637",
-    "mtaEventId": "500630659",
+    "mtaAppId": "",
+    "mtaEventId": "",
     "navigateToMiniAppId": [
         "wx3e33fef689f472b1",
         "wx2d47467291703ec7",
@@ -19,10 +19,9 @@
         "wx3b33f72ee2ec7bc1",
         "wx989199f7dc0e3a50",
         "wxbbbef0244fa4d4e4",
-        "wx87fe1890ea1384a5",
-        "wxa0eee1fe564aa730"
+        "wx87fe1890ea1384a5"
     ],
-    "checkAppUpdate":1,
+    "checkAppUpdate":0,
     "ui_moreGameType":0,
     "ui_crossGameListType":0
 }

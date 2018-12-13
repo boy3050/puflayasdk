@@ -114,7 +114,7 @@ namespace PFU {
                 //取秒
                 let time = (Date.now() - this._lastTime) / 1000;
                 console.log("本次游戏时长/秒:" + time);
-                this._platformUserData.userPlayTime += time;
+                this._platformUserData.userPlayTime += Math.floor(time);
                 console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime)
                 this.Save();
             }
@@ -168,6 +168,7 @@ namespace PFU {
             //Global.StatisticsShareType(StatisticsEventSite.shareInGame);
 
             list.push(data);
+
             let list2 = this._platformUserData._notifShareInGames.get(pos);
             if (PfuPlatformManager.IS_DEBUG_LOG) {
                 console.log("通知UI更新用户头像" + list.length + "|" + list2.length);
@@ -183,7 +184,13 @@ namespace PFU {
 
         }
 
-        public GetShareUserList(pos: number): Array<Platform_1333_ResData> {
+        public GetShareUserList(pos?: number): Array<Platform_1333_ResData> {
+
+            if(pos == undefined || pos == void 0)
+            {
+                pos == -999;
+            }
+
             let data = new Array<Platform_1333_ResData>();
             console.log("开始查找用户资料!");
             if (this._platformUserData._notifShareInGames.containsKey(pos)) {
@@ -303,6 +310,8 @@ namespace PFU {
         }
 
 
+        private static _loginCount = 0;
+
         /**
          * 二 平台登录
          */
@@ -380,7 +389,7 @@ namespace PFU {
             request.selfid = appId;
             request.inviteUid = rinviteUid;
             try  {
-                request.onlineTime = this._platformUserData.userPlayTime;
+                request.onlineTime = Math.floor(this._platformUserData.userPlayTime);
             }
             catch (e)  {
                 request.onlineTime = 0;
@@ -418,12 +427,24 @@ namespace PFU {
                     }
                 }
                 else {
-                    console.log("pfu 平台登录失败:" + respose.state);
+                    console.log("pfu 平台协议登录失败 state:" + respose.state);
                 }
 
 
             }, () => {
-                console.log("pfu 平台登录失败!");
+
+                //登录两次
+                PfuPlatformManager._loginCount++;//.GetInstance()._loginCount
+                if(PfuPlatformManager._loginCount >= 2)
+                {
+                    console.log("pfu 平台登录失败!");
+                    return;
+                }
+                
+                console.log("pfu 登录失败,平台再次登录 等待500毫秒!");
+                Laya.timer.once(500,this,()=>{
+                    this.LoginPlatform1003(weToken,appId);
+                });
             });
         }
 
@@ -769,6 +790,7 @@ namespace PFU {
                 if (respose.state == 3) {
                     for (let i = 0; i < respose.infos.length; i++) {
                         this._platformUserData._userCache.add(respose.infos[i].uid, respose.infos[i]);
+                        this.Save();
                         fun(respose.infos[i]);
                     }
                     console.log("获取用户数据成功!");

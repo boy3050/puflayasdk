@@ -243,14 +243,19 @@ var PFU;
         //AddCode	
         //EndAddCode
         WeChatUtils.prototype.ShowSingleModal = function (title, content, fun) {
-            wx.showModal({
-                title: title,
-                content: content,
-                showCancel: false,
-                success: function () {
-                    fun();
-                }
-            });
+            if (this.IsWeGame()) {
+                wx.showModal({
+                    title: title,
+                    content: content,
+                    showCancel: false,
+                    success: function () {
+                        fun();
+                    }
+                });
+            }
+            else {
+                fun();
+            }
         };
         WeChatUtils.prototype.SetUpdateApp = function () {
             if (!this.IsWeGame()) {

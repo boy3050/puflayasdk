@@ -89,7 +89,7 @@ var PfuSdk = (function () {
     /**
      * 分享 无回调
      * @param handle
-     * @param qureyPos 分享参数
+     * @param qureyPos 分享参数  1
      */
     PfuSdk.Share = function (handle, qureyPos, addQurey) {
         PFU.PfuGlobal.PfuShareGroupNext(handle, function () { }, false, qureyPos, addQurey);
@@ -103,11 +103,13 @@ var PfuSdk = (function () {
     PfuSdk.ShareAward = function (handle, fun, qureyPos, addQurey) {
         PFU.PfuGlobal.PfuShareGroupNext(handle, function (type, desc) {
             if (type == PfuSdk.SUCCESS) {
+                fun.call(handle, desc);
             }
             else {
-                PFU.PfuGlobal.ShowDialog(desc);
+                PFU.PfuGlobal.ShowDialog(desc, function () {
+                    fun.call(handle, desc);
+                });
             }
-            fun.call(handle, desc);
         }, true, qureyPos, addQurey);
     };
     /**
@@ -131,20 +133,28 @@ var PfuSdk = (function () {
                             _this.PlayVideo(handle, fun, true, adunit);
                         }
                         else {
-                            fun.call(handle, type, desc);
-                            PFU.PfuGlobal.ShowDialog(desc);
+                            PFU.PfuGlobal.ShowDialog(desc, function () {
+                                fun.call(handle, type, desc);
+                            });
                         }
                     }, true);
                 }
                 else {
                     //pfuSdkVideoShare = 2 分享后直接视频
                     PFU.PfuGlobal.PfuShareVideo(this, function (type, desc) {
+                        // if (type == PfuSdk.SUCCESS) {
+                        // } else {
+                        //     PFU.PfuGlobal.ShowDialog(desc);
+                        // }
+                        // this.PlayVideo(handle, fun, false, adunit);
                         if (type == PfuSdk.SUCCESS) {
+                            _this.PlayVideo(handle, fun, false, adunit);
                         }
                         else {
-                            PFU.PfuGlobal.ShowDialog(desc);
+                            PFU.PfuGlobal.ShowDialog(desc, function () {
+                                _this.PlayVideo(handle, fun, false, adunit);
+                            });
                         }
-                        _this.PlayVideo(handle, fun, false, adunit);
                     }, true);
                 }
             }
@@ -184,15 +194,17 @@ var PfuSdk = (function () {
                 }
                 else {
                     tip = "暂时没有可播放的视频了";
-                    fun.call(handle, type, tip);
-                    PFU.PfuGlobal.ShowDialog(tip);
+                    PFU.PfuGlobal.ShowDialog(tip, function () {
+                        fun.call(handle, type, tip);
+                    });
                 }
             }
             else {
                 console.log("video fail");
                 tip = "观看完整视频才会获得奖励";
-                fun.call(handle, type, tip);
-                PFU.PfuGlobal.ShowDialog(tip);
+                PFU.PfuGlobal.ShowDialog(tip, function () {
+                    fun.call(handle, type, tip);
+                });
             }
         }, adunit);
     };
@@ -234,8 +246,15 @@ var PfuSdk = (function () {
      * @param handle
      * @param callback
      */
-    PfuSdk.SetPlatformShreUserHandle = function (handle, callback) {
+    PfuSdk.SetPlatformShareUserHandle = function (handle, callback) {
         PFU.PfuPlatformManager.GetInstance().SetInGameUserHandle(handle, callback);
+    };
+    /**
+     * 获取分享用户
+     * @param pos
+     */
+    PfuSdk.GetPlatformShareUser = function (pos) {
+        return PFU.PfuPlatformManager.GetInstance().GetShareUserList(pos);
     };
     /**
      * 清除某个点分享进入的用户信息
@@ -312,7 +331,7 @@ var PfuSdk = (function () {
 PfuSdk.SUCCESS = 0; //success
 PfuSdk.FAIL = 1; //fail
 PfuSdk.VIDEO_SHOW_FAIL = 2;
-PfuSdk.sdk_ver = "0.0.6.5";
+PfuSdk.sdk_ver = "0.0.6.7";
 PfuSdk.SHOW_TYPE_ALL = 0; //更多游戏，BosList都显示
 PfuSdk.SHOW_TYPE_MOREGAME = 1; //只显示更多游戏
 PfuSdk.SHOW_TYPE_BOXLIST = 2; //只显示底部盒子列表

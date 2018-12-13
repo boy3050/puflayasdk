@@ -177,7 +177,9 @@ var PFU;
             var xhr = new Laya.HttpRequest();
             xhr.http.timeout = 10000; //设置超时时间；
             xhr.once(Laya.Event.COMPLETE, this, function (e) {
-                var data = JSON.parse(Base64.decode(e));
+                var jsonStr = Base64.decode(e);
+                //console.error(jsonStr);
+                var data = JSON.parse(jsonStr);
                 _this.preaseData(data);
                 callBack(PfuSdk.SUCCESS);
             });
@@ -266,6 +268,9 @@ var PFU;
             }
             else {
                 wxId = data.wxid;
+            }
+            if (wxId == PFU.PfuConfig.Config.weChatId) {
+                return true;
             }
             //id 和 link都没有 则排除
             if ((wxId == undefined || wxId == "") && (data.link == undefined || data.link == "")) {
@@ -607,8 +612,10 @@ var PFU;
          */
         PfuManager.prototype.IsPfuSdkVideoShare = function () {
             if (this._wechatparam == null || this._wechatparam.value == null) {
+                //console.error("赋值错误");
                 return false;
             }
+            //console.error("IsPfuSdkVideoShare:" + (this._wechatparam.value.pfuSdkVideoShare != PfuSwitch.OFF));
             return this._wechatparam.value.pfuSdkVideoShare != PfuSwitch.OFF;
         };
         PfuManager.prototype.SaveShareFinishCount = function () {
