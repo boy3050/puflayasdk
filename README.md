@@ -22,6 +22,21 @@
 *** 更新说明 *** https://github.com/boy3050/puflayasdk/blob/master/%E6%9B%B4%E6%96%B0%E8%AF%B4%E6%98%8E.md
 
 
+**** 需要添加合法域名 ****
+
+	Request:
+	
+	https://txpk.jfydgame.com
+	https://login.jfydgame.com
+	https://info.jfydgame.com
+	https://wxad.jfydgame.com
+	https://wxhz.jfydgame.com
+	
+	Socket:
+	
+	wss://msg.jfydgame.com
+		
+
 **添加规范**
 
 下载最新的Release x.x.x   https://github.com/boy3050/puflayasdk/releases
