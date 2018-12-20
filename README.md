@@ -27,7 +27,7 @@
 
 ## 更新日志
 
-[点击这里查看版本更新日志](https://github.com/boy3050/puflayasdk/blob/master/updateLog.md)
+[点击这里查看版本更新日志](https://github.com/boy3050/puflayasdk/blob/master/%E6%9B%B4%E6%96%B0%E8%AF%B4%E6%98%8E.md)
 
 
 
