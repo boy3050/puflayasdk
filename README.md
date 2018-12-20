@@ -21,7 +21,7 @@
 
 ## 红包使用
 
-[点击查看红包调用规则](https://github.com/boy3050/puflayasdk/blob/master/RedPacket.md)
+[点击查看红包调用规则](https://github.com/boy3050/puflayasdk/blob/master/pfu_laya_sdk_project/%E7%BA%A2%E5%8C%85%E4%BD%BF%E7%94%A8.md)
 
 
 
