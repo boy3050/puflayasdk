@@ -55,7 +55,8 @@ namespace PFU {
 
         //通过点击banner复活<实际判断是游戏切到后天再切回来>
         public pfuSdkBannerRelive;
-
+        //1-使用红包功能 0-隐藏红包功能 审核模式自动隐藏
+        public pfuSdkRed;
 
         public Init() {
             
@@ -78,9 +79,11 @@ namespace PFU {
             this.pfuSdkBannerMin = 30;
             this.pfuSdkBannerCount = 3;
 
-            this.pfuSdkPlayTime = 60;
+            this.pfuSdkPlayTime = 120 * 60;
 
-            this.pfuSdkBannerRelive = 2;
+            this.pfuSdkBannerRelive = 0;
+
+            this.pfuSdkRed = PfuSwitch.OFF;
         }
         //AddCode	
 

@@ -26,6 +26,7 @@ namespace PFU.UI {
             if (PfuConfig.Config && !this._isCreateMoreGameListBar && PfuSdk.GetBoxListComplete) {
                 if (PfuConfig.Config.ui_crossGameListType != -1) {
                     this.CreateMoreGameList();
+                    this.CreateMoreGameListLeft();
                 }
                 this._isCreateMoreGameListBar = true;
             }
@@ -34,12 +35,24 @@ namespace PFU.UI {
                 this.UpdateMoreGameListMove();
             }
 
-            if (this._isCreateSideMoreGameBtn && PfuMoreGameUpdate.GetInstance().isSetMoreGameOffsetY)  {
+            if (this._isCreateSideMoreGameBtn && PfuMoreGameUpdate.GetInstance().isSetMoreGameOffsetY) {
                 this._fui.m_Btn_MoreGameLeft.setXY(this._fui.m_Btn_MoreGameLeft.x, this._fui.m_Btn_MoreGameLeft.y + PfuMoreGameUpdate.GetInstance().moreGameOffsetY);
                 this._fui.m_Btn_MoreGameRight.setXY(this._fui.m_Btn_MoreGameRight.x, this._fui.m_Btn_MoreGameRight.y + PfuMoreGameUpdate.GetInstance().moreGameOffsetY);
                 PfuMoreGameUpdate.GetInstance().EndMoreGameUIOffsetY();
             }
         }
+
+        public ShowLeft() {
+            if (PfuConfig.Config.ui_crossGameListType != -1){
+                this._fui.m_boxList_left.visible = true;
+            }
+        }
+        public HideLeft()  {
+            if (PfuConfig.Config.ui_crossGameListType != -1)  {
+                this._fui.m_boxList_left.visible = false;
+            }
+        }
+
 
         private CreateSideMoreGameBtn() {
             this._fui.m_Btn_MoreGameLeft.onClick(this, this.ClickMoreGame, [true]);
@@ -88,11 +101,13 @@ namespace PFU.UI {
 
                 if (PfuConfig.Config.ui_crossGameListType == -1) {
                     this._fui.m_boxList.visible = false;
+                    //this._fui.m_boxList_left.visible = false;
                 }
 
                 //是否显示更多游戏 0 关闭 1 开启
                 if (PfuGlobal.GetOLParam().pfuSdkMoreGame == PfuSwitch.OFF || PfuConfig.Config.ui_moreGameType == -1) {
                     this._fui.m_boxList.visible = false;
+                    //this._fui.m_boxList_left.visible = false;
                     this._fui.m_Btn_MoreGameLeft.visible = false;
                     this._fui.m_Btn_MoreGameRight.visible = false;
                 }
@@ -102,6 +117,7 @@ namespace PFU.UI {
         private Refresh() {
             let type = this._isShowType;
             this._fui.m_boxList.visible = true;
+            //this._fui.m_boxList_left.visible = true;
             this._fui.m_Btn_MoreGameRight.visible = true;
             this._fui.m_Btn_MoreGameLeft.visible = true;
             if (!type || type == PfuSdk.SHOW_TYPE_ALL) {
@@ -110,6 +126,7 @@ namespace PFU.UI {
             else {
                 if (type == PfuSdk.SHOW_TYPE_MOREGAME) {
                     this._fui.m_boxList.visible = false;
+                    //this._fui.m_boxList_left.visible = false;
                 }
                 else if (type == PfuSdk.SHOW_TYPE_BOXLIST) {
                     this.HideMoreGameLeftRight();
@@ -184,6 +201,42 @@ namespace PFU.UI {
             }
             let targetx: number = posx;// + (index - curIndex) * this.child_width
             this._fui.m_list_moregame.scrollPane.setPosX(targetx, false);
+        }
+
+        private isLockLeftBtn = false;
+        private isLeftOpen = false;
+        private CreateMoreGameListLeft()  {
+            let list: Array<PfuBoxListData> = PfuBoxList.GetInstance().GetMoreGameListData();
+
+            let count = list.length;
+            if (count > 0) {
+                //this._fui.m_boxList_left.visible = true;
+            }
+            for (let i = 0; i < count; i++) {
+                let boxListData = list[i];
+                let vo: pfusdkui.UI_List_GameChild_left = this._fui.m_list_moregame_left.addItemFromPool(pfusdkui.UI_List_GameChild_left.URL) as pfusdkui.UI_List_GameChild_left;
+                vo.m_icon.icon = boxListData.link;
+                vo.onClick(this, this.OnClickMoreGameListItem, [boxListData]);
+            }
+
+            this._fui.m_btn_left_click.onClick(this, () => {
+                if (this.isLockLeftBtn)  {
+                    return;
+                }
+                this.isLockLeftBtn = true;
+                if (!this.isLeftOpen)  {
+                    this._fui.m_showLift.play(Laya.Handler.create(this, () => {
+                        this.isLockLeftBtn = false;
+                        this.isLeftOpen = true;
+                    }));
+                }
+                else  {
+                    this._fui.m_hideLift.play(Laya.Handler.create(this, () => {
+                        this.isLockLeftBtn = false;
+                        this.isLeftOpen = false;
+                    }));
+                }
+            });
         }
     }
 }

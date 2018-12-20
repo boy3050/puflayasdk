@@ -24,7 +24,7 @@
             this._adId = adId;
 
             if (WeChatUtils.GetInstance().IsWeGame()) {
-                if (typeof wx.createBannerAd === 'function') {
+                if (typeof wx.createRewardedVideoAd === 'function') {
                     this._rewardedVideoAd = wx.createRewardedVideoAd({
                         adUnitId: adId
                     });

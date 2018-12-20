@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,1600">
+  <displayList>
+    <graph id="n8_f4q7" name="n8" xy="0,0" size="750,1600" locked="true" alpha="0.7" type="rect" lineSize="0" fillColor="#ff000000"/>
+    <loader id="n9_f4q7" name="bg_loader" xy="116,452" pivot="0.5,0.5" size="517,695" locked="true" url="ui://xcy52l65f4q7d2"/>
+    <component id="n13_f4q7" name="btn_close" src="f4q7d7" fileName="组件/按钮/redpackageClose.xml" xy="580,471" locked="true"/>
+    <text id="n15_f4q7" name="n15" xy="293,506" size="165,49" fontSize="40" color="#ce8b52" align="center" text="现金红包"/>
+    <text id="n16_f4q7" name="n16" xy="200,657" size="73,39" fontSize="30" color="#f94a05" align="center" text="余额:"/>
+    <text id="n17_f4q7" name="moneyNum" xy="273,616" pivot="0.5,0.5" size="203,93" fontSize="80" color="#f94a05" align="center" text="12.00"/>
+    <text id="n18_f4q7" name="n18" xy="480,657" size="35,39" fontSize="30" color="#f94a05" align="center" text="元"/>
+    <text id="n19_f4q7" name="n19" xy="270,821" size="208,32" fontSize="25" color="#ce8b52" text="红包满20元可提现"/>
+    <text id="n20_f4q7" name="n20" xy="203,1049" size="343,35" fontSize="26" color="#992d27" align="center" text="游戏过程中可能出现现金红包"/>
+    <component id="n21_f4q7" name="btn_tixian" src="f4q7d8" fileName="组件/按钮/red_TiXian.xml" xy="323,963"/>
+  </displayList>
+</component>

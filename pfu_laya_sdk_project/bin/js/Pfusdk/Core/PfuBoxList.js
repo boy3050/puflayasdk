@@ -98,8 +98,8 @@ var PFU;
             if (wxChatId == undefined || wxChatId == "") {
                 return false;
             }
-            for (var i = 0; i < PFU.PfuConfig.Config.navigateToMiniAppId.length; i++) {
-                var appId = PFU.PfuConfig.Config.navigateToMiniAppId[i];
+            for (var i = 0; i < PFU.PfuConfig.Config.navigateToMiniProgramAppIdList.length; i++) {
+                var appId = PFU.PfuConfig.Config.navigateToMiniProgramAppIdList[i];
                 if (appId == wxChatId) {
                     return true;
                 }

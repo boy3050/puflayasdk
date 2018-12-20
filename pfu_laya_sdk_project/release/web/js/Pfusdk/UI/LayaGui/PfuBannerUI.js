@@ -16,6 +16,8 @@ var PFU;
                 _this.visible = false;
                 Laya.timer.frameLoop(1, _this, _this.OnUpdate);
                 UI.SceneMatchingLayaUtils.SetAlignBottom(_this.img_icon);
+                _this.zOrder = PfuSdk.UI_ORDER_MOREGAME;
+                Laya.stage.updateZOrder();
                 return _this;
             }
             UI_PfuBannerUI.prototype.OnUpdate = function () {

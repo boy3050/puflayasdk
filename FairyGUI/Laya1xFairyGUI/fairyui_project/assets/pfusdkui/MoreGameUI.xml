@@ -10,8 +10,37 @@
       <item url="ui://5fhlcwqajmohib1"/>
     </list>
     <image id="n2_10sdc" name="list_moregameStr" src="10sdcd" fileName="切图/主界面/Img_hy.png" xy="318,1126" size="113,25" group="n3_10sdc" visible="false"/>
-    <group id="n3_10sdc" name="boxList" xy="0,1126" size="750,200" advanced="true"/>
+    <group id="n3_10sdc" name="boxList" xy="0,1126" size="750,199" advanced="true" collapsed="true"/>
     <component id="n7_10sdc" name="Btn_MoreGameLeft" src="10sdcg" fileName="组件/按钮/BtnMoregame.xml" xy="2,767"/>
     <component id="n8_10sdc" name="Btn_MoreGameRight" src="10sdcg" fileName="组件/按钮/BtnMoregame.xml" xy="618,767"/>
+    <image id="n10_f4q7" name="n10" src="f4q7dg" fileName="切图/主界面/zx_jt_di.png" xy="-367,249" size="367,400" group="n12_f4q7"/>
+    <component id="n9_f4q7" name="btn_left_click" src="f4q7dj" fileName="组件/boxlist_left_btn.xml" xy="0,395" group="n12_f4q7"/>
+    <list id="n11_f4q7" name="list_moregame_left" xy="-351,252" size="347,393" group="n12_f4q7" layout="flow_vt" overflow="scroll" scroll="horizontal" lineGap="21" colGap="18" lineItemCount="3" defaultItem="ui://xcy52l65f4q7di" align="center" vAlign="middle" autoClearItems="true">
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+    </list>
+    <image id="n13_f4q7" name="n13" src="f4q7dh" fileName="切图/主界面/zx_jiantou.png" xy="15,426" pivot="0.5,0.5" group="n12_f4q7" scale="-1,1"/>
+    <group id="n12_f4q7" name="boxList_left" xy="-367,249" size="418,400" visible="false" advanced="true"/>
   </displayList>
+  <transition name="showLift">
+    <item time="0" type="Scale" target="n13_f4q7" value="-1,1"/>
+    <item time="0" type="XY" target="n12_f4q7" tween="true" startValue="-367,-" endValue="-1,-" duration="12"/>
+    <item time="12" type="Scale" target="n13_f4q7" value="1,1"/>
+  </transition>
+  <transition name="hideLift">
+    <item time="0" type="Scale" target="n13_f4q7" value="1,1"/>
+    <item time="0" type="XY" target="n12_f4q7" tween="true" startValue="-1,-" endValue="-367,-" duration="12"/>
+    <item time="12" type="Scale" target="n13_f4q7" value="-1,1"/>
+  </transition>
 </component>

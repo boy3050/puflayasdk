@@ -9,6 +9,9 @@ namespace PFU.UI {
             Laya.timer.frameLoop(1, this, this.OnUpdate);
             SceneMatchingLayaUtils.SetAlignBottom(this.img_icon);
 
+            this.zOrder = PfuSdk.UI_ORDER_MOREGAME;
+            Laya.stage.updateZOrder();
+
         }
         public OnUpdate() {
             if (!this._isCreatePfuBanner && PfuSdk.GetParamComplete) {
@@ -20,7 +23,7 @@ namespace PFU.UI {
         public Show() {
             //检测在线参数，在线参数收到后 显示UI
             Laya.stage.addChild(this);
-            
+
         }
 
         public Hide() {

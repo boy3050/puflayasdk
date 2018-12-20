@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,1334" opaque="false" designImageOffsetX="-1458" designImageAlpha="97">
+  <displayList>
+    <component id="n31_f4q7" name="btn_redpackageicon" src="f4q7df" fileName="组件/按钮/redpackage_icon.xml" xy="623,889" hideByEditor="true" visible="false"/>
+    <component id="n0_f4q7" name="com_openredpackage" src="f4q7d6" fileName="组件/OpenRedPackage_com.xml" xy="0,-133" hideByEditor="true" visible="false"/>
+    <component id="n8_f4q7" name="com_tixianredpackage" src="f4q7da" fileName="组件/TiXianRedPackage_com.xml" xy="0,-133" hideByEditor="true" visible="false"/>
+    <component id="n22_f4q7" name="com_everyday" src="f4q7de" fileName="组件/everyday_redpackage_com.xml" xy="0,-133" hideByEditor="true" visible="false"/>
+    <component id="n32_h5hm" name="com_awradredpackage" src="h5hmdk" fileName="组件/AwardRedPackage_com.xml" xy="0,-133" hideByEditor="true" visible="false"/>
+  </displayList>
+</component>

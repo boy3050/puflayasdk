@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,1600">
+  <displayList>
+    <graph id="n0_f4q7" name="n0" xy="0,0" size="750,1600" alpha="0.7" type="rect" lineSize="0" fillColor="#ff000000"/>
+    <loader id="n1_f4q7" name="bg_loader" xy="116,452" size="517,695" url="ui://xcy52l65f4q7d0"/>
+    <component id="n2_f4q7" name="btn_red_open" src="f4q7d9" fileName="组件/按钮/btn_red_open.xml" xy="282,760"/>
+    <text id="n3_f4q7" name="n3" xy="299,539" pivot="0.5,0.5" size="151,75" fontSize="63" color="#feffd5" text="恭喜!"/>
+    <text id="n4_f4q7" name="n4" xy="223,657" pivot="0.5,0.5" size="302,42" fontSize="33" color="#fedb6c" align="center" text="你获得一个现金红包"/>
+    <text id="n5_f4q7" name="voidStr" xy="310,714" pivot="0.5,0.5" size="130,32" fontSize="25" color="#fea963" align="center" text="看视频领取"/>
+    <text id="n6_f4q7" name="n6" xy="224,1002" size="302,42" fontSize="33" color="#feffd5" align="center" text="看视频有几率翻倍！"/>
+    <text id="n7_f4q7" name="n7" xy="206,1059" size="343,35" fontSize="26" color="#952b24" align="center" text="游戏过程中可能出现现金红包"/>
+    <component id="n8_f4q7" name="btn_close" src="f4q7d7" fileName="组件/按钮/redpackageClose.xml" xy="580,478"/>
+  </displayList>
+</component>

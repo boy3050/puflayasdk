@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,1600">
+  <displayList>
+    <graph id="n22_f4q7" name="n22" xy="0,0" size="750,1600" alpha="0.7" type="rect" lineSize="0" fillColor="#ff000000"/>
+    <loader id="n23_f4q7" name="bg_loader" xy="57,371" size="635,857" url="ui://xcy52l65f4q7cw"/>
+    <image id="n24_f4q7" name="n24" src="f4q7d4" fileName="切图/红包/meiridenglu.png" xy="161,285"/>
+    <component id="n25_f4q7" name="btn_double_btn" src="f4q7dc" fileName="组件/按钮/red_everyday_double_btn.xml" xy="197,1034" size="356,106"/>
+    <component id="n26_f4q7" name="btn_red_everyday_skip" src="f4q7dd" fileName="组件/按钮/red_everyday_skip.xml" xy="306,1166"/>
+    <list id="n29_f4q7" name="list_sex" xy="109,446" pivot="0.5,0.5" size="531,374" layout="flow_hz" lineGap="14" colGap="72" defaultItem="ui://xcy52l65f4q7db" align="center">
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+    </list>
+    <component id="n30_f4q7" name="seven" src="f4q7db" fileName="组件/red_everyday_child_com.xml" xy="318,824"/>
+  </displayList>
+</component>

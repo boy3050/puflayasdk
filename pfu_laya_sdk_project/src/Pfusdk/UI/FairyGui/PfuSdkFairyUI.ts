@@ -3,6 +3,8 @@ namespace PFU.UI {
 
         private static firstGameBoxWindow;
         private static _sdkDialogWindow: PFU.UI.SdkDialogWindow = null;
+        private static _clickBannerWindow: PFU.UI.ClickBannerWindow = null;
+
 
         public static CreateUI() {
             fairygui.UIConfig.packageFileExtension = "bin";
@@ -16,7 +18,7 @@ namespace PFU.UI {
 
         private static LoadUIData() {
             let fairyG = "@";
-            if (Laya.version.charAt(0) == '2')  {
+            if (Laya.version.charAt(0) == '2') {
                 //2.0FairyGUI图片链接改为下划线
                 fairyG = "_";
             }
@@ -45,12 +47,48 @@ namespace PFU.UI {
             let firstSceneBoxWindow = new PFU.UI.FirstSceneBoxWindow();
             firstSceneBoxWindow.InitWindow(pfusdkui.UI_BoxListUI.createInstance());
 
-
             let sdkDialogWindow = new PFU.UI.SdkDialogWindow();
             sdkDialogWindow.InitWindow(pfusdkui.UI_SdkDialogUI.createInstance());
             this._sdkDialogWindow = sdkDialogWindow;
-           
-            //设置更多游戏显示开关
+
+            let clickBannerWindow = new PFU.UI.ClickBannerWindow();
+            clickBannerWindow.InitWindow(pfusdkui.UI_ClickBannerUI.createInstance());
+            clickBannerWindow.Hide();
+            this._clickBannerWindow = clickBannerWindow;
+
+            let redpacketWindow = new PFU.UI.RedPacketWindow();
+            redpacketWindow.InitWindow(pfusdkui.UI_RedPacketUI.createInstance());
+            redpacketWindow.Show();
+
+            PfuClickBannerRevive.GetInstance().SetUIHandle(this, (isShow) => {
+                if (isShow) {
+                    clickBannerWindow.Show();
+                } else {
+                    clickBannerWindow.Hide();
+                }
+            });
+
+
+            PfuMoreGameUpdate.GetInstance().SetPopupListVisible(this, (isShow) => {
+                if (isShow) {
+                    moreGameWindow.ShowLeft();
+                } else {
+                    moreGameWindow.HideLeft();
+                }
+            });
+
+            PfuRedPacketManager.GetInstance().SetRedpacketHandle(this, (isShowBtn) => {
+                redpacketWindow.SetIconVisible(isShowBtn);
+            },()=>{
+                redpacketWindow.OpenRadPacketGift();
+            },()=>{
+                redpacketWindow.OpenEverydayGift();
+            },(vx:number,vy:number)=>{
+                redpacketWindow.SetIconBtnPos(vx,vy);
+            });
+
+
+            //设置更多游戏显示开关 createWindow true
             PfuMoreGameUpdate.GetInstance().SetCtrlMoreGameUI(this, (isShow, type) => {
                 if (isShow) {
                     moreGameWindow.Show(type);

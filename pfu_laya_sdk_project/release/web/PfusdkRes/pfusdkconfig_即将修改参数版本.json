@@ -18,13 +18,13 @@
         "wxa0eee1fe564aa730"
     ],
 
-
-    
     "version": "0.0.2.8",
-    "cdnPath": "https://txpk.jfydgame.com/zhuzhuxiazhengban/",
     "pfuShareProtocol": 0,
-    "mtaAppId": "500630637",
-    "mtaEventId": "500630659",
+
+    "cdnPath": "",
+    "mtaAppId": "",
+    "mtaEventId": "",
+
     "checkAppUpdate": 1,
     "ui_moreGameType": 0,
     "ui_crossGameListType": 0

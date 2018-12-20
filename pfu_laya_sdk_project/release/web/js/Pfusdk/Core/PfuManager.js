@@ -114,16 +114,24 @@ var PFU;
         //#region 初始化
         PfuManager.prototype.Init = function () {
             var _this = this;
-            this.Connect(PFU.PfuConfig.Config.pfuAppId, PFU.PfuConfig.Config.version, PFU.PfuConfig.Config.weChatId, function (type) {
+            this.Connect(PFU.PfuConfig.Config.appId, PFU.PfuConfig.Config.version, PFU.PfuConfig.Config.wxId, function (type) {
                 if (type == PfuSdk.SUCCESS) {
                     var param = _this.OLParam;
                     //param.kaiping = 2;
                     //param.ad_banner = PfuSwitch.OFF;
                     console.info("OL Param Success!");
                     console.info("Test Mode:" + (param.pfuSdkTestMode == PfuSwitch.ON));
+                    if (param.pfuSdkBannerRelive) {
+                        param.pfuSdkBannerRelive = parseInt(param.pfuSdkBannerRelive);
+                    }
+                    if (param.pfuSdkPlayTime) {
+                        param.pfuSdkPlayTime = parseInt(param.pfuSdkPlayTime);
+                    }
                     if (param.pfuSdkTestMode == PfuSwitch.ON) {
                         param.pfuSdkMoreGame = PfuSwitch.OFF;
                         param.pfuSdkVideoShare = PfuSwitch.OFF;
+                        param.pfuSdkRed = PfuSwitch.OFF;
+                        param.pfuSdkBannerRelive = 0;
                     }
                     if (param.pfuSdkTestMode == PfuSwitch.OFF && param.pfuSdkShowOpenAds == PfuSwitch.ON) {
                         Laya.timer.once(1000, _this, function () {
@@ -140,7 +148,7 @@ var PFU;
                 console.log("在线参数获取成功");
             });
             PFU.PfuGlobal.CreateIncentiveAd(PFU.PfuConfig.Config.videoId);
-            PFU.PfuBoxList.GetInstance().Connect(PFU.PfuConfig.Config.weChatId, function (type) {
+            PFU.PfuBoxList.GetInstance().Connect(PFU.PfuConfig.Config.wxId, function (type) {
                 _this._getBoxlistComplete = true;
                 console.log("盒子列表参数获取成功");
             });
@@ -269,7 +277,7 @@ var PFU;
             else {
                 wxId = data.wxid;
             }
-            if (wxId == PFU.PfuConfig.Config.weChatId) {
+            if (wxId == PFU.PfuConfig.Config.wxId) {
                 return true;
             }
             //id 和 link都没有 则排除
@@ -322,12 +330,16 @@ var PFU;
          */
         PfuManager.prototype.PfuShareNext = function (isShareGroup, replace, fun, qureyPos, addQurey) {
             if (!this.IsExistShareData()) {
-                fun(PfuSdk.FAIL, "分享数据未准备好");
+                //fun(PfuSdk.FAIL, "分享数据未准备好");
+                console.log("分享数据未准备好");
+                PFU.WeChatUtils.GetInstance().ShareGroupAppMessageImage(isShareGroup, fun, PfuManager.TestMode_ShareDesc, "", "");
                 return;
             }
             var share = this._wechatshare.value[this.shareIndex];
             if (share == null) {
-                fun(PfuSdk.FAIL, "分享下标错误");
+                console.log("分享下标错误");
+                PFU.WeChatUtils.GetInstance().ShareGroupAppMessageImage(isShareGroup, fun, PfuManager.TestMode_ShareDesc, "", "");
+                //fun(PfuSdk.FAIL, "分享下标错误");
                 return;
             }
             var str = PFU.BXStringUtils.Replace(replace, share.desc);
@@ -755,7 +767,7 @@ var PFU;
                 callback.call(handle, PfuSdk.SUCCESS);
                 return;
             }
-            var jumpPath = "pages/index/index?pfukey=" + PFU.PfuConfig.Config.weChatId + "&pfuRelive=true";
+            var jumpPath = "pages/index/index?pfukey=" + PFU.PfuConfig.Config.wxId + "&pfuRelive=true";
             var jumpId = "wx3e33fef689f472b1";
             if (this.OLParam.pfuSdkBoxRelive && this.OLParam.pfuSdkBoxRelive != "") {
                 jumpId = this.OLParam.pfuSdkBoxRelive;

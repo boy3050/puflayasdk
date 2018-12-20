@@ -44,6 +44,7 @@ var PfuSdk = (function () {
     PfuSdk.CallOnShow = function (args) {
         PFU.PfuPlatformManager.GetInstance().OnShow(args);
         PFU.PfuGlobal.Focus();
+        PFU.PfuClickBannerRevive.GetInstance().OnAppShow();
         if (this._showCallBack) {
             this._showCallBack();
         }
@@ -53,6 +54,7 @@ var PfuSdk = (function () {
      */
     PfuSdk.CallOnHide = function () {
         PFU.PfuPlatformManager.GetInstance().OnHide();
+        PFU.PfuClickBannerRevive.GetInstance().OnAppHide();
         if (this._hideCallBack) {
             this._hideCallBack();
         }
@@ -103,14 +105,37 @@ var PfuSdk = (function () {
     PfuSdk.ShareAward = function (handle, fun, qureyPos, addQurey) {
         PFU.PfuGlobal.PfuShareGroupNext(handle, function (type, desc) {
             if (type == PfuSdk.SUCCESS) {
-                fun.call(handle, desc);
+                fun.call(handle, type, desc);
             }
             else {
                 PFU.PfuGlobal.ShowDialog(desc, function () {
-                    fun.call(handle, desc);
+                    fun.call(handle, type, desc);
                 });
             }
         }, true, qureyPos, addQurey);
+    };
+    /**
+     * 视频游戏复活功能
+     * @param handle
+     * @param fun
+     * @param adunit
+     * @param isForceShare
+     */
+    PfuSdk.VideoRevive = function (handle, fun, adunit, isForceShare) {
+        var _this = this;
+        var isShowClickBanner = false;
+        if (this._clickBannerShowTime == 0 || (this._clickBannerShowTime > 0 && (Date.now() - this._clickBannerShowTime) >= 60000)) {
+            isShowClickBanner = true;
+        }
+        if (isShowClickBanner && PFU.PfuClickBannerRevive.GetInstance().IsBannerReviveOpen()) {
+            PFU.PfuClickBannerRevive.GetInstance().ShowBannerRevive(handle, function (type) {
+                _this._clickBannerShowTime = Date.now();
+                fun.call(handle, type);
+            });
+        }
+        else {
+            this.Video(handle, fun, adunit, isForceShare);
+        }
     };
     /**
      * 播放视频
@@ -129,7 +154,6 @@ var PfuSdk = (function () {
                 if (pfuSdkVideoShare == 1) {
                     PFU.PfuGlobal.PfuShareVideo(this, function (type, desc) {
                         if (type == PfuSdk.SUCCESS) {
-                            //this._sdkVideoShareFinish = false;
                             _this.PlayVideo(handle, fun, true, adunit);
                         }
                         else {
@@ -142,17 +166,12 @@ var PfuSdk = (function () {
                 else {
                     //pfuSdkVideoShare = 2 分享后直接视频
                     PFU.PfuGlobal.PfuShareVideo(this, function (type, desc) {
-                        // if (type == PfuSdk.SUCCESS) {
-                        // } else {
-                        //     PFU.PfuGlobal.ShowDialog(desc);
-                        // }
-                        // this.PlayVideo(handle, fun, false, adunit);
                         if (type == PfuSdk.SUCCESS) {
-                            _this.PlayVideo(handle, fun, false, adunit);
+                            _this.PlayVideo(handle, fun, true, adunit);
                         }
                         else {
                             PFU.PfuGlobal.ShowDialog(desc, function () {
-                                _this.PlayVideo(handle, fun, false, adunit);
+                                _this.PlayVideo(handle, fun, null, adunit);
                             });
                         }
                     }, true);
@@ -183,6 +202,10 @@ var PfuSdk = (function () {
                         fun.call(handle, PfuSdk.SUCCESS, "");
                         return;
                     }
+                    if (shareIn == null) {
+                        fun.call(handle, PfuSdk.FAIL, "");
+                        return;
+                    }
                     console.log("video error share");
                     _this.ShareAward(_this, function (type, desc) {
                         console.log("video error share callback:" + type + " |" + desc);
@@ -195,7 +218,7 @@ var PfuSdk = (function () {
                 else {
                     tip = "暂时没有可播放的视频了";
                     PFU.PfuGlobal.ShowDialog(tip, function () {
-                        fun.call(handle, type, tip);
+                        fun.call(handle, PfuSdk.FAIL, tip);
                     });
                 }
             }
@@ -316,9 +339,9 @@ var PfuSdk = (function () {
     /**
      * 设置MoreGameUI层级关系
      */
-    PfuSdk.SetMoreGameUILayer = function (layernum) {
-        PFU.PfuMoreGameUpdate.GetInstance().SetMoreGameUILayer(layernum);
-    };
+    // public static SetMoreGameUILayer(layernum: number) {
+    //     PFU.PfuMoreGameUpdate.GetInstance().SetMoreGameUILayer(layernum);
+    // }
     /**
      * 设置更多游戏按钮Y偏移
      * @param offset
@@ -326,14 +349,69 @@ var PfuSdk = (function () {
     PfuSdk.SetMoreGameUIOffsetY = function (offset) {
         PFU.PfuMoreGameUpdate.GetInstance().SetMoreGameUIOffsetY(offset);
     };
+    /**
+     * 看广告复活
+     */
+    PfuSdk.ShowClickBannnerRevive = function (handle, fun) {
+        PFU.PfuClickBannerRevive.GetInstance().ShowBannerRevive(handle, fun);
+    };
+    /**
+     * 显示弹出试 交叉推广游戏列表
+     */
+    PfuSdk.ShowPopupListGame = function () {
+        PFU.PfuMoreGameUpdate.GetInstance().ShowPopupListGame(true);
+    };
+    /**
+     * 隐藏弹出试 交叉推广游戏列表
+     */
+    PfuSdk.HidePopupListGame = function () {
+        PFU.PfuMoreGameUpdate.GetInstance().ShowPopupListGame(false);
+    };
+    /**
+     * 显示红包按钮
+     */
+    PfuSdk.ShowRedPacketBtn = function () {
+        PFU.PfuRedPacketManager.GetInstance().CallShowRedPacketBtn(true);
+    };
+    PfuSdk.HideRedPacketBtn = function () {
+        PFU.PfuRedPacketManager.GetInstance().CallShowRedPacketBtn(false);
+    };
+    /**
+     * 弹出获得红包
+     */
+    PfuSdk.PopupRedPacket = function (handle, callback) {
+        PFU.PfuRedPacketManager.GetInstance().PopupRedPacket(handle, callback);
+    };
+    /**
+     * 是否可以领取红包
+     */
+    PfuSdk.CanGetRedPacket = function () {
+        return PFU.PfuRedPacketManager.GetInstance().CanGetRedPacket();
+    };
+    /**
+     * 设置红包按钮位置
+     */
+    PfuSdk.SetRedPacketBtnPos = function (vx, vy) {
+        PFU.PfuRedPacketManager.GetInstance().SetRedPacketBtnPos(vx, vy);
+    };
+    /**
+     * 显示红包每日领取界面
+     */
+    PfuSdk.PopupRedPacketEverydayWindow = function () {
+        PFU.PfuRedPacketManager.GetInstance().PopupRedPacketEverydayWindow();
+    };
     return PfuSdk;
 }());
 PfuSdk.SUCCESS = 0; //success
 PfuSdk.FAIL = 1; //fail
 PfuSdk.VIDEO_SHOW_FAIL = 2;
-PfuSdk.sdk_ver = "0.0.6.7";
+PfuSdk.UI_ORDER_MOREGAME = 90000;
+PfuSdk.UI_FIRST_SCENEBOX = 10000000000;
+PfuSdk.UI_ORDER_OTHER = 1000000000;
+PfuSdk.sdk_ver = "0.0.7.0";
 PfuSdk.SHOW_TYPE_ALL = 0; //更多游戏，BosList都显示
 PfuSdk.SHOW_TYPE_MOREGAME = 1; //只显示更多游戏
 PfuSdk.SHOW_TYPE_BOXLIST = 2; //只显示底部盒子列表
 PfuSdk._sdkVideoShareFinish = true;
+PfuSdk._clickBannerShowTime = 0;
 //# sourceMappingURL=PfuSdk.js.map

@@ -15,6 +15,9 @@ package
 		//只显示底部盒子列表
 		public static var SHOW_TYPE_BOXLIST:Number = 2;
 
+		// UI排序 moregameUI 交叉推广按钮更多游戏按钮红包按钮层级关系
+    	public static var UI_ORDER_MOREGAME:Number = 90000;
+
 		private static function JSObj():*
 		{
 			return __JS__('PfuSdk');
@@ -185,6 +188,15 @@ package
 		}
 
 		/**
+		 * 隐藏更多游戏列表
+		 */
+		public static function HideMoreGameList():Boolean {
+			return PfuSdkHelper.JSObj().HideMoreGameList();
+		}
+		
+
+
+		/**
 		* 是否为审核模式
 		*/
 		public static function IsTestModel():Boolean
@@ -219,12 +231,12 @@ package
 		}
 
 		/**
-		* 设置MoreGameUI层级关系 (LayaUI)
+		* 设置MoreGameUI层级关系 (LayaUI) 抛弃使用ZOrder来替代层级
 		*/
-		public static function SetMoreGameUILayer(layernum:Number):void
-		{
-			PfuSdkHelper.JSObj().SetMoreGameUILayer(layernum);
-		}
+		// public static function SetMoreGameUILayer(layernum:Number):void
+		// {
+		// 	PfuSdkHelper.JSObj().SetMoreGameUILayer(layernum);
+		// }
 
 		/**
 		* 设置更多游戏按钮Y偏移 (*beta)
@@ -252,11 +264,95 @@ package
 		}
 
 		/**
-		* 创建LayaUI
+		 * 返回一个SDK包含的View数组
+		 */
+		public static function LayaUI_GetSdkWindowList():Array
+		{
+			return __JS__('PFU').UI.PfuSdkLayaUI.GetSdkWindowList();
+		}
+
+
+		/**
+		* 创建FairyUI
 		*/
 		public static function FairyUI_CreateUI():void {
 			__JS__('PFU').UI.PfuSdkFairyUI.CreateUI();
 		}
+
+		/**
+		* 播放视频复活
+		* @param handle 
+		* @param fun 
+		* @param adunit 额外视频广告ID
+		* @param isForceShare 是否强制分享
+		*/
+		public static function VideoRevive(handle: *, fun: Function,adunit:String = null,isForceShare:Boolean = true):void
+		{
+			PfuSdkHelper.JSObj().Video(handle,fun,adunit,isForceShare);
+		}
+
+
+		/**
+		* 显示弹出试 交叉推广游戏列表
+		*/
+		public static function ShowPopupListGame():void
+		{
+			PfuSdkHelper.JSObj().ShowPopupListGame();
+		}
+
+		/**
+		* 隐藏弹出试 交叉推广游戏列表
+		*/
+		public static function HidePopupListGame():void
+		{
+			PfuSdkHelper.JSObj().HidePopupListGame();
+		}
+		/**
+     	* 显示红包按钮
+     	*/
+		public static function ShowRedPacketBtn():void
+		{
+			PfuSdkHelper.JSObj().ShowRedPacketBtn();
+		}
+		/**
+		 * 隐藏红包按钮
+		 */
+		public static function HideRedPacketBtn():void
+		{
+			PfuSdkHelper.JSObj().HideRedPacketBtn();
+		}
+
+
+		/**
+		* 弹出获得红包
+		*/
+	 	public static function PopupRedPacket(handle:*,callback:Function):void
+		{
+			PfuSdkHelper.JSObj().PopupRedPacket(handle,callback);
+		}
+		/**
+		* 是否可以领取红包
+		*/
+		public static function CanGetRedPacket():Boolean
+		{
+			return PfuSdkHelper.JSObj().CanGetRedPacket();
+		}
+		/**
+		* 设置红包按钮位置
+		*/
+		public static function SetRedPacketBtnPos(vx: Number, vy: Number):Boolean
+		{
+			return PfuSdkHelper.JSObj().SetRedPacketBtnPos(vx,vy);
+		}
+    
+		/**
+		* 显示红包每日领取界面
+		*/
+		public static function PopupRedPacketEverydayWindow():Boolean
+		{
+			return PfuSdkHelper.JSObj().PopupRedPacketEverydayWindow();
+		}
+
 	}
 
 }

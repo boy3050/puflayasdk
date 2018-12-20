@@ -28,18 +28,41 @@ var LayaAir3D = (function () {
         var material = new Laya.StandardMaterial();
         material.diffuseTexture = Laya.Texture2D.load("res/layabox.png");
         box.meshRender.material = material;
+        //Laya.LocalStorage.clear();
         //SDK初始化
         PfuSdk.InitConfig(this, function () {
             //FairyGUI创建
             //PFU.UI.PfuSdkFairyUI.CreateUI();
             //LayaGUI创建
             PFU.UI.PfuSdkLayaUI.CreateUI();
-            for (var i = 0; i < 10; i++) {
-                Laya.timer.once(1000 + (i * 1000), _this, function () {
-                    //PFU.UI.PfuSdkFairyUI.OnAddDialog("显示Dialog把@@@");
-                    PFU.PfuGlobal.ShowDialog("显示Dia");
-                });
-            }
+            // for (let i = 0; i < 10; i++) {
+            //     Laya.timer.once(1000 + (i * 1000), this, () => {
+            //         //PFU.UI.PfuSdkFairyUI.OnAddDialog("显示Dialog把@@@");
+            //         PFU.PfuGlobal.ShowDialog("显示Dia");
+            //     });
+            // }
+            PfuSdk.ShowBanner();
+            //PfuSdk.ShowPopupListGame();
+            PfuSdk.ShowRedPacketBtn();
+            Laya.timer.once(2000, _this, function () {
+                // PfuSdk.ShowClickBannnerRevive(this,(type)=>{
+                // });
+                //PfuSdk.HideRedPacketBtn();
+                //PFU.PfuRedPacketManager.GetInstance().TestRed();
+                // PfuSdk.PopupRedPacket(this,(type)=>{
+                // });
+                // PfuSdk.PopupRedPacketEverydayWindow();
+                // PfuSdk.ShowClickBannnerRevive(this,(type)=>{
+                //     if(type == PfuSdk.SUCCESS)
+                //     {
+                //         console.log("ShowClickBannnerRevive success");
+                //     }
+                //     else
+                //     {
+                //         console.log("ShowClickBannnerRevive fait");
+                //     }
+                // });
+            });
         });
         //监听切换到前台
         PfuSdk.OnShow(function () {
@@ -62,6 +85,14 @@ var LayaAir3D = (function () {
             //         console.log(desc);
             //     }
             // });
+            PfuSdk.VideoRevive(_this, function (type, desc) {
+                if (PfuSdk.SUCCESS == type) {
+                }
+                else {
+                    //错误描述
+                    console.log(desc);
+                }
+            });
         });
         //单纯分享
         PfuSdk.Share(this);

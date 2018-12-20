@@ -15,11 +15,54 @@ var PFU;
                 _this._isCreateMoreGameListBar = false;
                 _this.isMoveLeft = true;
                 _this.isDrag = false;
+                _this.isLockLeftBtn = false;
+                _this.isLeftOpen = false;
                 _this.posx = 0;
+                _this.boxList_left.visible = false;
                 Laya.timer.frameLoop(1, _this, _this.OnUpdate);
                 UI.SceneMatchingLayaUtils.SetAlignBottom(_this.box);
+                _this.btn_redpackageicon.on(Laya.Event.CLICK, _this, _this.OnClickRedIcon);
+                _this.zOrder = PfuSdk.UI_ORDER_MOREGAME;
+                Laya.stage.updateZOrder();
                 return _this;
             }
+            /**
+             * 点击icon
+            */
+            MoreGameUI.prototype.OnClickRedIcon = function () {
+                //进入礼包是否领取
+                if (PFU.PfuRedPacketManager.GetInstance().CanEverydayAward()) {
+                    //没领取弹礼包界面
+                    PFU.UI.PfuSdkLayaUI.OpenEverydayGift();
+                }
+                else {
+                    //领取后弹红包提现界面
+                    PFU.UI.PfuSdkLayaUI.OpenRadPacketTixian();
+                }
+            };
+            /**
+             * 更新
+             * @param money
+             */
+            MoreGameUI.prototype.UpdateIconMoney = function () {
+                this.moneyNumStr.text = "¥" + PFU.PfuRedPacketManager.GetInstance().GetMoney();
+            };
+            /**
+             * 设置红包按钮位置
+             * @param xv
+             * @param yv
+             */
+            MoreGameUI.prototype.SetIconBtnPos = function (xv, yv) {
+                this.btn_redpackageicon.x = xv;
+                this.btn_redpackageicon.y = yv;
+            };
+            /**
+             * 设置隐藏显示
+             * @param visible
+             */
+            MoreGameUI.prototype.SetIconVisible = function (visible) {
+                this.btn_redpackageicon.visible = visible;
+            };
             MoreGameUI.prototype.OnUpdate = function () {
                 //在线参数是否准备完毕
                 if (!this._isCreateSideMoreGameBtn && PfuSdk.GetParamComplete) {
@@ -29,18 +72,19 @@ var PFU;
                 if (!this._isCreateMoreGameListBar && PfuSdk.GetBoxListComplete) {
                     if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
                         this.CreateMoreGameList();
+                        this.CreateMoreGameListLeft();
                     }
                     this._isCreateMoreGameListBar = true;
                 }
                 if (this._isCreateMoreGameListBar) {
                     this.UpdateMoreGameListMove();
                 }
-                if (PFU.PfuMoreGameUpdate.GetInstance().isSetLayerAction) {
-                    if (PFU.PfuMoreGameUpdate.GetInstance().layerNum >= 0 && PFU.PfuMoreGameUpdate.GetInstance().layerNum < Laya.stage.numChildren) {
-                        Laya.stage.setChildIndex(this, PFU.PfuMoreGameUpdate.GetInstance().layerNum);
-                    }
-                    PFU.PfuMoreGameUpdate.GetInstance().EndSetMoreGameUI();
-                }
+                // if (PfuMoreGameUpdate.GetInstance().isSetLayerAction) {
+                //     if (PfuMoreGameUpdate.GetInstance().layerNum >= 0 && PfuMoreGameUpdate.GetInstance().layerNum < Laya.stage.numChildren) {
+                //         Laya.stage.setChildIndex(this, PfuMoreGameUpdate.GetInstance().layerNum);
+                //     }
+                //     PfuMoreGameUpdate.GetInstance().EndSetMoreGameUI();
+                // }
                 if (this._isCreateSideMoreGameBtn && PFU.PfuMoreGameUpdate.GetInstance().isSetMoreGameOffsetY) {
                     this.btn_left.y = this.btn_left.y + PFU.PfuMoreGameUpdate.GetInstance().moreGameOffsetY;
                     this.btn_right.y = this.btn_right.y + PFU.PfuMoreGameUpdate.GetInstance().moreGameOffsetY;
@@ -48,12 +92,12 @@ var PFU;
                 }
             };
             MoreGameUI.prototype.OnHide = function () {
-                this.visible = false;
+                //隐藏所有子节点
+                this.moregameCtl.visible = false;
                 Laya.timer.clearAll(this);
             };
             MoreGameUI.prototype.OnShow = function (type) {
-                this.visible = true;
-                PfuSdk.SetMoreGameUILayer(Laya.stage.numChildren - 1);
+                this.moregameCtl.visible = true;
                 Laya.timer.frameLoop(1, this, this.OnUpdate);
                 this._isShowType = type;
                 this.Refresh();
@@ -157,6 +201,80 @@ var PFU;
                     });
                     this.boxlist.array = this.allgame;
                 }
+            };
+            MoreGameUI.prototype.ShowLeft = function () {
+                if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
+                    this.boxList_left.visible = true;
+                }
+            };
+            MoreGameUI.prototype.HideLeft = function () {
+                if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
+                    this.boxList_left.visible = false;
+                }
+            };
+            MoreGameUI.prototype.CreateMoreGameListLeft = function () {
+                var _this = this;
+                var list = PFU.PfuBoxList.GetInstance().GetMoreGameListData();
+                var count = list.length;
+                if (count > 0) {
+                    this.img_title.visible = true;
+                }
+                this.allgame = [];
+                var boxListData;
+                // 使用但隐藏滚动条
+                this.boxlist_array_left.hScrollBarSkin = "";
+                this.boxlist_array_left.scrollBar.min = 0;
+                this.boxlist_array_left.scrollBar.max = 300;
+                this.boxlist_array_left.mouseHandler = new Laya.Handler(this, this.OnClickMoreGameListItem);
+                this.boxlist_array_left.scrollBar.elasticBackTime = 200;
+                this.boxlist_array_left.scrollBar.elasticDistance = 50;
+                for (var i = 0; i < count; i++) {
+                    boxListData = list[i];
+                    this.allgame.push({
+                        img_icon: boxListData.link,
+                        gameName: { text: boxListData.gameName },
+                        boxListData: boxListData,
+                    });
+                    this.boxlist_array_left.array = this.allgame;
+                }
+                this.btn_list_open.on(Laya.Event.CLICK, this, function () {
+                    if (_this.isLockLeftBtn) {
+                        return;
+                    }
+                    _this.isLockLeftBtn = true;
+                    if (!_this.isLeftOpen) {
+                        _this.showLift.play(0, false);
+                        Laya.timer.once(500, _this, function () {
+                            _this.isLockLeftBtn = false;
+                            _this.isLeftOpen = true;
+                        });
+                    }
+                    else {
+                        _this.hideLift.play(0, false);
+                        Laya.timer.once(500, _this, function () {
+                            _this.isLockLeftBtn = false;
+                            _this.isLeftOpen = false;
+                        });
+                    }
+                });
+                // this._fui.m_btn_left_click.onClick(this, () => {
+                //     if (this.isLockLeftBtn)  {
+                //         return;
+                //     }
+                //     this.isLockLeftBtn = true;
+                //     if (!this.isLeftOpen)  {
+                //         this._fui.m_showLift.play(Laya.Handler.create(this, () => {
+                //             this.isLockLeftBtn = false;
+                //             this.isLeftOpen = true;
+                //         }));
+                //     }
+                //     else  {
+                //         this._fui.m_hideLift.play(Laya.Handler.create(this, () => {
+                //             this.isLockLeftBtn = false;
+                //             this.isLeftOpen = false;
+                //         }));
+                //     }
+                // });
             };
             //点击底部更多游戏项目跳转应用
             MoreGameUI.prototype.OnClickMoreGameListItem = function (e, index) {

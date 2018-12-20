@@ -2,6 +2,7 @@
 	export enum BannerDirction {
 		DOWN_CENTER = 0,
 		TOP_CENTER = 1,
+		CENTER = 2,
 	}
 	/*
 	* name;
@@ -26,7 +27,9 @@
 
 		private static readonly SAVE_BEANNER_KEY = "s_banner_id";
 
-		public Create(adId: string, dir: BannerDirction, fun: Function) {
+		public static customWidth:number = 300;
+
+		public Create(adId: string, dir: BannerDirction, fun: Function,cWidth?:number) {
 			
 			this._adId = adId;
 			this._bannerDir = dir;
@@ -34,7 +37,13 @@
 			let leftPos: number = 0;
 			let topPos: number = 0;
 
-			let adWidth = laya.utils.Browser.clientWidth;
+
+			let adWidth = cWidth;
+			if(adWidth == undefined || adWidth == void 0 || adWidth == null)
+			{
+				adWidth = laya.utils.Browser.clientWidth;
+			}
+			
 			let sceneHeigth: number = laya.utils.Browser.clientHeight;
 
 			if (WeChatUtils.GetInstance().IsWeGame()) {
@@ -44,7 +53,7 @@
 						style: {
 							left: leftPos,
 							top: topPos,
-							width: 300//adWidth
+							width: adWidth //300//
 						}
 					});
 
@@ -62,6 +71,12 @@
 							}
 							topPos = laya.utils.Browser.clientHeight - res.height - a;
 						}
+						else if(dir == BannerDirction.CENTER)
+						{
+							leftPos = (laya.utils.Browser.clientWidth - res.width)/2;
+							topPos = (laya.utils.Browser.clientHeight - res.height)/2;
+						}
+
 						this._bannerAd.style.left = leftPos;
 						this._bannerAd.style.top = topPos;
 					});
@@ -129,7 +144,7 @@
 				this._bannerAd.show();
 			}
 			else {
-				this.Refresh(() => { });
+				this.Refresh(() => { },null,WeChatBannerAd.customWidth);
 			}
 		}
 
@@ -146,9 +161,19 @@
 			this._isReady = false;
 		}
 
-		public Refresh(fun: Function) {
+		public Refresh(fun: Function,dir?: BannerDirction,adWidth?:number) {
 			this.Destroy();
-			this.Create(this._adId, this._bannerDir, fun);
+			let tempDir =dir;
+			if(dir == undefined || dir == void 0 || dir == null)
+			{
+				tempDir = this._bannerDir;
+			}
+			this.Create(this._adId, tempDir, fun);
+		}
+
+		public GetLastBannerDir()
+		{
+			return this._bannerDir;
 		}
 
 	}

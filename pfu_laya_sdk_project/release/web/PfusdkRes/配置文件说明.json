@@ -1,26 +1,16 @@
 {
-    //微信ID
-    "weChatId": "wx2d47467291703ec7",
-    //PFU后台ID
-    "pfuAppId": "1306xxx",
-    //后台版本号
-    "version": "1.4.9",
-    //CDN路径 否
-    "cdnPath": "https://txpk.jfydgame.com/zhuzhuxiazhengban/",
-    //BannerID
-    "bannerId": "adunit-30c586e0e1ff7bd4",
-    //视频ID
-    "videoId": "adunit-6fd6398d42727034",
+     //PFU后台ID
+    "appId": "1306xxx",
     //pfu开放平台ID
-    "privateKey": "bp11lflsecEme9itsb4f",
-    //是否使用pfu分享协议来监听分享卡片点击用户 0 关闭 1开启(开启后会开启微信登录)
-    "pfuShareProtocol": 0,
-    //腾讯统计ID (不是所有项目都用)
-    "mtaAppId": "500630637",
-    //腾讯事件统计ID
-    "mtaEventId": "500630659",
-    //pfusdk可跳转ID(更多游戏列表使用)
-    "navigateToMiniAppId": [
+    "privateKey": "xxxxxxx",
+    //微信ID
+    "wxId": "wx123123123123",
+    //BannerID
+    "bannerId": "adunit-xxxxx",
+    //视频ID
+    "videoId": "adunit-xxxxx",
+    //pfusdk可跳转ID(更多游戏列表使用 * 要和微信开发者工具内设置成一致10个)
+    "navigateToMiniProgramAppIdList": [
         "wx3e33fef689f472b1",
         "wx2d47467291703ec7",
         "wx7505f4985abb17ce",
@@ -30,9 +20,21 @@
         "wx3b33f72ee2ec7bc1",
         "wx989199f7dc0e3a50",
         "wxbbbef0244fa4d4e4",
-        "wx87fe1890ea1384a5",
-        "wxa0eee1fe564aa730"
+        "wx87fe1890ea1384a5"
     ],
+    /***   以下为自定义选项   ***/
+    //后台版本号
+    "version": "0.0.1",
+    //是否使用pfu分享协议来监听分享卡片点击用户 0 关闭 1开启(开启后会开启微信登录)
+    "pfuShareProtocol": 0,
+
+   //CDN路径 否
+    "cdnPath": "",
+    //腾讯统计ID (不是所有项目都用)
+    "mtaAppId": "",
+    //腾讯事件统计ID
+    "mtaEventId": "",
+
     //是否启用检测小游戏版本升级，(1开启 0 不开启) 开启后若更新下载完毕 则系统弹窗提示用户更新。
      "checkAppUpdate":1,
     //两侧更多游戏显示类型 0 两侧都显示， 1 显示左侧  2显示右侧 -1不显示更多游戏

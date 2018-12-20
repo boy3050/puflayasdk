@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="123,137">
+  <displayList>
+    <image id="n31_f4q7" name="n31" src="f4q7ct" fileName="切图/红包/hongbao_tb1.png" xy="0,0"/>
+    <image id="n32_f4q7" name="n32" src="f4q7d3" fileName="切图/红包/hongbao_tb2.png" xy="5,108"/>
+    <text id="n33_f4q7" name="moneyNumStr" xy="28,110" pivot="0.5,0.5" size="68,27" fontSize="20" color="#ffff00" align="center" text="¥19.65"/>
+  </displayList>
+</component>

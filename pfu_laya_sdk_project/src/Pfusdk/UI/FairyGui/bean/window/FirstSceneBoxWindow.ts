@@ -82,7 +82,7 @@ namespace PFU.UI {
         private OnClickItem(data: PfuBoxListData, itemObject: fairygui.GObject)  {
 
             //点击跳转事件
-            if (data.wechatGameid == PfuConfig.Config.weChatId)  {
+            if (data.wechatGameid == PfuConfig.Config.wxId)  {
                 this.OnClickClose();
                 return;
             }

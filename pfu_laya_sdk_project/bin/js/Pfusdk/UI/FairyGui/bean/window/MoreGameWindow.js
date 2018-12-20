@@ -14,6 +14,8 @@ var PFU;
                 _this._isCreateSideMoreGameBtn = false;
                 _this._isCreateMoreGameListBar = false;
                 _this.isMoveLeft = true;
+                _this.isLockLeftBtn = false;
+                _this.isLeftOpen = false;
                 return _this;
             }
             MoreGameWindow.prototype.InitWindow = function (fui) {
@@ -33,6 +35,7 @@ var PFU;
                 if (PFU.PfuConfig.Config && !this._isCreateMoreGameListBar && PfuSdk.GetBoxListComplete) {
                     if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
                         this.CreateMoreGameList();
+                        this.CreateMoreGameListLeft();
                     }
                     this._isCreateMoreGameListBar = true;
                 }
@@ -43,6 +46,16 @@ var PFU;
                     this._fui.m_Btn_MoreGameLeft.setXY(this._fui.m_Btn_MoreGameLeft.x, this._fui.m_Btn_MoreGameLeft.y + PFU.PfuMoreGameUpdate.GetInstance().moreGameOffsetY);
                     this._fui.m_Btn_MoreGameRight.setXY(this._fui.m_Btn_MoreGameRight.x, this._fui.m_Btn_MoreGameRight.y + PFU.PfuMoreGameUpdate.GetInstance().moreGameOffsetY);
                     PFU.PfuMoreGameUpdate.GetInstance().EndMoreGameUIOffsetY();
+                }
+            };
+            MoreGameWindow.prototype.ShowLeft = function () {
+                if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
+                    this._fui.m_boxList_left.visible = true;
+                }
+            };
+            MoreGameWindow.prototype.HideLeft = function () {
+                if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
+                    this._fui.m_boxList_left.visible = false;
                 }
             };
             MoreGameWindow.prototype.CreateSideMoreGameBtn = function () {
@@ -91,6 +104,7 @@ var PFU;
                     //是否显示更多游戏 0 关闭 1 开启
                     if (PFU.PfuGlobal.GetOLParam().pfuSdkMoreGame == PFU.PfuSwitch.OFF || PFU.PfuConfig.Config.ui_moreGameType == -1) {
                         this._fui.m_boxList.visible = false;
+                        //this._fui.m_boxList_left.visible = false;
                         this._fui.m_Btn_MoreGameLeft.visible = false;
                         this._fui.m_Btn_MoreGameRight.visible = false;
                     }
@@ -99,6 +113,7 @@ var PFU;
             MoreGameWindow.prototype.Refresh = function () {
                 var type = this._isShowType;
                 this._fui.m_boxList.visible = true;
+                //this._fui.m_boxList_left.visible = true;
                 this._fui.m_Btn_MoreGameRight.visible = true;
                 this._fui.m_Btn_MoreGameLeft.visible = true;
                 if (!type || type == PfuSdk.SHOW_TYPE_ALL) {
@@ -175,6 +190,37 @@ var PFU;
                 }
                 var targetx = posx; // + (index - curIndex) * this.child_width
                 this._fui.m_list_moregame.scrollPane.setPosX(targetx, false);
+            };
+            MoreGameWindow.prototype.CreateMoreGameListLeft = function () {
+                var _this = this;
+                var list = PFU.PfuBoxList.GetInstance().GetMoreGameListData();
+                var count = list.length;
+                if (count > 0) {
+                }
+                for (var i = 0; i < count; i++) {
+                    var boxListData = list[i];
+                    var vo = this._fui.m_list_moregame_left.addItemFromPool(pfusdkui.UI_List_GameChild_left.URL);
+                    vo.m_icon.icon = boxListData.link;
+                    vo.onClick(this, this.OnClickMoreGameListItem, [boxListData]);
+                }
+                this._fui.m_btn_left_click.onClick(this, function () {
+                    if (_this.isLockLeftBtn) {
+                        return;
+                    }
+                    _this.isLockLeftBtn = true;
+                    if (!_this.isLeftOpen) {
+                        _this._fui.m_showLift.play(Laya.Handler.create(_this, function () {
+                            _this.isLockLeftBtn = false;
+                            _this.isLeftOpen = true;
+                        }));
+                    }
+                    else {
+                        _this._fui.m_hideLift.play(Laya.Handler.create(_this, function () {
+                            _this.isLockLeftBtn = false;
+                            _this.isLeftOpen = false;
+                        }));
+                    }
+                });
             };
             return MoreGameWindow;
         }(UI.WindowBase));

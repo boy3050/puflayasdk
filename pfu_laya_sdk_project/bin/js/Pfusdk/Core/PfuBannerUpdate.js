@@ -84,6 +84,9 @@ var PFU;
             if (!PfuSdk.GetParamComplete) {
                 return;
             }
+            if (PFU.PfuClickBannerRevive.GetInstance().IsClickBannerAward) {
+                return;
+            }
             if (this._isCreateBanner) {
                 if (this._isLastCtrAction) {
                     if (this._isLastShow) {
@@ -98,6 +101,9 @@ var PFU;
         };
         PfuBannerUpdate.prototype.Update = function () {
             if (!PfuSdk.GetParamComplete) {
+                return;
+            }
+            if (PFU.PfuClickBannerRevive.GetInstance().IsClickBannerAward) {
                 return;
             }
             if (this._tempRefreshBannerData.count > PFU.PfuManager.GetInstance().OLParam.pfuSdkBannerCount) {
@@ -141,7 +147,7 @@ var PFU;
                     //刷新按照最后一次设置控制显示和隐藏
                     _this._isLastCtrAction = true;
                     _this.SaveData();
-                });
+                }, null, PFU.WeChatBannerAd.customWidth);
             }
         };
         PfuBannerUpdate.prototype.GetPfuBannerImgUrl = function () {
@@ -154,9 +160,9 @@ var PFU;
             if (!this.IsBeBannerImg()) {
                 return;
             }
-            PfuSdk.CallOnHide();
+            //PfuSdk.CallOnHide();
             PFU.PfuGlobal.CustomShowMoreGameImage(this._moreGameData[this._showIndex], this, function () {
-                PfuSdk.CallOnShow({});
+                //PfuSdk.CallOnShow({});
             });
         };
         PfuBannerUpdate.prototype.CallShow = function () {

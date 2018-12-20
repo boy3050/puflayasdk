@@ -24,7 +24,8 @@ namespace PFU {
         //临时记录Banner显示时间
         public _tempShowBannerTime = 0;
         //临时记录Banner刷新次数
-        public _tempRefreshBannerData:EveryDayRefreshBannerCount;
+        public _tempRefreshBannerData: EveryDayRefreshBannerCount;
+
 
 
         public SetRefreshHandle(handle: any, refreshCallback: Function, onVisible: Function) {
@@ -43,6 +44,7 @@ namespace PFU {
                 //PfuGlobal.ShowBanner();
             });
         }
+
         constructor() {
             this._tempRefreshBannerData = this.GetData();// new EveryDayRefreshBannerCount();//
             Laya.timer.loop(1000, this, this.Update);
@@ -68,8 +70,7 @@ namespace PFU {
             var json: string = Laya.LocalStorage.getJSON("everydayrefreshbannercount");
             if (json != null && json != "") {
                 this._tempRefreshBannerData = JSON.parse(json);
-                if(this.IsShareFinishCountNewDay())
-                {
+                if (this.IsShareFinishCountNewDay())  {
                     this._tempRefreshBannerData.count = 0;
                 }
             } else {
@@ -89,12 +90,15 @@ namespace PFU {
             this._tempRefreshBannerData.time = mt.getTime();
             this._tempRefreshBannerData.count++;
 
-            Laya.LocalStorage.setJSON("everydayrefreshbannercount",JSON.stringify(this._tempRefreshBannerData));
+            Laya.LocalStorage.setJSON("everydayrefreshbannercount", JSON.stringify(this._tempRefreshBannerData));
 
         }
 
         private UpdateBannerAction() {
             if (!PfuSdk.GetParamComplete) {
+                return;
+            }
+            if (PfuClickBannerRevive.GetInstance().IsClickBannerAward)  {
                 return;
             }
 
@@ -117,8 +121,11 @@ namespace PFU {
                 return;
             }
 
-            if(this._tempRefreshBannerData.count > PfuManager.GetInstance().OLParam.pfuSdkBannerCount)
-            {
+            if (PfuClickBannerRevive.GetInstance().IsClickBannerAward)  {
+                return;
+            }
+
+            if (this._tempRefreshBannerData.count > PfuManager.GetInstance().OLParam.pfuSdkBannerCount)  {
                 return;
             }
 
@@ -127,7 +134,6 @@ namespace PFU {
             if (this._timeCount > PfuGlobal.GetOLParam().pfuSdkRefresh) {
                 //刷新
                 this.RefreshBanner();
-
             }
         }
 
@@ -137,6 +143,7 @@ namespace PFU {
             }
             return false;
         }
+
         private RefreshPfuBanner() {
             //通知pfuBanner
             if (this._refreshBannerHandle != null) {
@@ -163,7 +170,7 @@ namespace PFU {
                     this._isLastCtrAction = true;
 
                     this.SaveData();
-                });
+                },null,WeChatBannerAd.customWidth);
             }
 
         }
@@ -179,9 +186,9 @@ namespace PFU {
             if (!this.IsBeBannerImg()) {
                 return;
             }
-            PfuSdk.CallOnHide();
+            //PfuSdk.CallOnHide();
             PfuGlobal.CustomShowMoreGameImage(this._moreGameData[this._showIndex], this, () => {
-                PfuSdk.CallOnShow({});
+                //PfuSdk.CallOnShow({});
             });
         }
 
@@ -233,14 +240,14 @@ namespace PFU {
             //         this._onPfuSetBannerVisible.call(this._refreshBannerHandle, true);
             //     }
             // } else 
-            
+
             {
                 PfuGlobal.ShowBanner();
             }
         }
     }
 
-    class EveryDayRefreshBannerCount  {
+    class EveryDayRefreshBannerCount {
         //最后一次领取时间
         public time: number = 0;
 

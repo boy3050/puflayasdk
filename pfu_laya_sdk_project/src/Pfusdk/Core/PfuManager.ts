@@ -75,17 +75,25 @@
 
         //#region 初始化
         public Init() {
-            this.Connect(PfuConfig.Config.pfuAppId, PfuConfig.Config.version, PfuConfig.Config.weChatId, (type: number) => {
+            this.Connect(PfuConfig.Config.appId, PfuConfig.Config.version, PfuConfig.Config.wxId, (type: number) => {
                 if (type == PfuSdk.SUCCESS) {
                     let param: PFU.PfuOLParamData = this.OLParam;
                     //param.kaiping = 2;
                     //param.ad_banner = PfuSwitch.OFF;
                     console.info("OL Param Success!");
                     console.info("Test Mode:" + (param.pfuSdkTestMode == PfuSwitch.ON));
+                    if (param.pfuSdkBannerRelive)  {
+                        param.pfuSdkBannerRelive = parseInt(param.pfuSdkBannerRelive);
+                    }
+                    if (param.pfuSdkPlayTime)  {
+                        param.pfuSdkPlayTime = parseInt(param.pfuSdkPlayTime);
+                    }
 
                     if (param.pfuSdkTestMode == PfuSwitch.ON) {
                         param.pfuSdkMoreGame = PfuSwitch.OFF;
                         param.pfuSdkVideoShare = PfuSwitch.OFF;
+                        param.pfuSdkRed = PfuSwitch.OFF;
+                        param.pfuSdkBannerRelive = 0;
                     }
 
                     if (param.pfuSdkTestMode == PfuSwitch.OFF && param.pfuSdkShowOpenAds == PfuSwitch.ON) {
@@ -105,7 +113,7 @@
             });
 
             PfuGlobal.CreateIncentiveAd(PfuConfig.Config.videoId);
-            PfuBoxList.GetInstance().Connect(PfuConfig.Config.weChatId, (type) => {
+            PfuBoxList.GetInstance().Connect(PfuConfig.Config.wxId, (type) => {
                 this._getBoxlistComplete = true;
                 console.log("盒子列表参数获取成功");
             });
@@ -205,8 +213,7 @@
                                 for (let i = 0; i < this._moregame.adverts.length; i++) {
                                     let data: PfuMoreGameData = this._moregame.adverts[i];
 
-                                    if(this.ExcludeErrorMoreGame(data))
-                                    {
+                                    if (this.ExcludeErrorMoreGame(data))  {
                                         console.log("exclude:" + data.wxid + "| link" + data.link);
                                         continue;
                                     }
@@ -257,8 +264,7 @@
                 wxId = data.wxid
             }
 
-            if(wxId == PfuConfig.Config.weChatId)
-            {
+            if (wxId == PfuConfig.Config.wxId)  {
                 return true;
             }
 
@@ -268,11 +274,10 @@
                 return true;
             }
             //ID有但是不在列表内，  data.link为空的情况也排除
-            if( (data.link == undefined || data.link == "") && !PfuBoxList.GetInstance().IsMoreGameDataBeAppIdList(data.wxid))
-            {
+            if ((data.link == undefined || data.link == "") && !PfuBoxList.GetInstance().IsMoreGameDataBeAppIdList(data.wxid))  {
                 return true;
             }
-            
+
             return false;
         }
 
@@ -328,12 +333,16 @@
          */
         public PfuShareNext(isShareGroup: boolean, replace: string, fun: Function, qureyPos?: number, addQurey?: string) {
             if (!this.IsExistShareData()) {
-                fun(PfuSdk.FAIL, "分享数据未准备好");
+                //fun(PfuSdk.FAIL, "分享数据未准备好");
+                console.log("分享数据未准备好");
+                WeChatUtils.GetInstance().ShareGroupAppMessageImage(isShareGroup, fun, PfuManager.TestMode_ShareDesc, "", "");
                 return;
             }
             let share: PfuShareData = this._wechatshare.value[this.shareIndex]
             if (share == null) {
-                fun(PfuSdk.FAIL, "分享下标错误");
+                console.log("分享下标错误");
+                WeChatUtils.GetInstance().ShareGroupAppMessageImage(isShareGroup, fun, PfuManager.TestMode_ShareDesc, "", "");
+                //fun(PfuSdk.FAIL, "分享下标错误");
                 return;
             }
             let str = PFU.BXStringUtils.Replace(replace, share.desc);
@@ -868,7 +877,7 @@
                 callback.call(handle, PfuSdk.SUCCESS);
                 return;
             }
-            let jumpPath = "pages/index/index?pfukey=" + PfuConfig.Config.weChatId + "&pfuRelive=true";
+            let jumpPath = "pages/index/index?pfukey=" + PfuConfig.Config.wxId + "&pfuRelive=true";
 
             let jumpId = "wx3e33fef689f472b1";
 

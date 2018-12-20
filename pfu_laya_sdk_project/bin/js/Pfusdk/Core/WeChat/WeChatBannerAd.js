@@ -4,6 +4,7 @@ var PFU;
     (function (BannerDirction) {
         BannerDirction[BannerDirction["DOWN_CENTER"] = 0] = "DOWN_CENTER";
         BannerDirction[BannerDirction["TOP_CENTER"] = 1] = "TOP_CENTER";
+        BannerDirction[BannerDirction["CENTER"] = 2] = "CENTER";
     })(BannerDirction = PFU.BannerDirction || (PFU.BannerDirction = {}));
     /*
     * name;
@@ -18,13 +19,16 @@ var PFU;
             }
             return this.instance;
         };
-        WeChatBannerAd.prototype.Create = function (adId, dir, fun) {
+        WeChatBannerAd.prototype.Create = function (adId, dir, fun, cWidth) {
             var _this = this;
             this._adId = adId;
             this._bannerDir = dir;
             var leftPos = 0;
             var topPos = 0;
-            var adWidth = laya.utils.Browser.clientWidth;
+            var adWidth = cWidth;
+            if (adWidth == undefined || adWidth == void 0 || adWidth == null) {
+                adWidth = laya.utils.Browser.clientWidth;
+            }
             var sceneHeigth = laya.utils.Browser.clientHeight;
             if (PFU.WeChatUtils.GetInstance().IsWeGame()) {
                 if (typeof wx.createBannerAd === 'function') {
@@ -33,7 +37,7 @@ var PFU;
                         style: {
                             left: leftPos,
                             top: topPos,
-                            width: 300 //adWidth
+                            width: adWidth //300//
                         }
                     });
                     this._bannerAd.onResize(function (res) {
@@ -46,6 +50,10 @@ var PFU;
                                 a = 34;
                             }
                             topPos = laya.utils.Browser.clientHeight - res.height - a;
+                        }
+                        else if (dir == BannerDirction.CENTER) {
+                            leftPos = (laya.utils.Browser.clientWidth - res.width) / 2;
+                            topPos = (laya.utils.Browser.clientHeight - res.height) / 2;
                         }
                         _this._bannerAd.style.left = leftPos;
                         _this._bannerAd.style.top = topPos;
@@ -98,7 +106,7 @@ var PFU;
                 this._bannerAd.show();
             }
             else {
-                this.Refresh(function () { });
+                this.Refresh(function () { }, null, WeChatBannerAd.customWidth);
             }
         };
         WeChatBannerAd.prototype.Hide = function () {
@@ -112,13 +120,21 @@ var PFU;
             }
             this._isReady = false;
         };
-        WeChatBannerAd.prototype.Refresh = function (fun) {
+        WeChatBannerAd.prototype.Refresh = function (fun, dir, adWidth) {
             this.Destroy();
-            this.Create(this._adId, this._bannerDir, fun);
+            var tempDir = dir;
+            if (dir == undefined || dir == void 0 || dir == null) {
+                tempDir = this._bannerDir;
+            }
+            this.Create(this._adId, tempDir, fun);
+        };
+        WeChatBannerAd.prototype.GetLastBannerDir = function () {
+            return this._bannerDir;
         };
         return WeChatBannerAd;
     }());
     WeChatBannerAd.SAVE_BEANNER_KEY = "s_banner_id";
+    WeChatBannerAd.customWidth = 300;
     PFU.WeChatBannerAd = WeChatBannerAd;
 })(PFU || (PFU = {}));
 //# sourceMappingURL=WeChatBannerAd.js.map

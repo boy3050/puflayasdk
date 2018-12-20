@@ -6,4 +6,7 @@
    <item name="comp/Img_hy.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0" scale="0"/>
    <item name="comp/Img_zjmdt.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0" scale="0"/>
    <item name="comp/anniu_1.png" type="Image" compress="0" pack="1" quality="80" props="" picType="0" scale="0"/>
+   <item name="comp/zx_jt_di.png" type="Image" compress="0" pack="0" quality="80" props="sizeGrid=21,15,32,15" picType="0" scale="0"/>
+   <item name="comp/button_zjlq.png" type="Image" compress="0" pack="0" quality="80" props="" picType="0" scale="0"/>
+   <item name="comp/button_fxjs.png" type="Image" compress="0" pack="0" quality="80" props="" picType="0" scale="0"/>
 </res>

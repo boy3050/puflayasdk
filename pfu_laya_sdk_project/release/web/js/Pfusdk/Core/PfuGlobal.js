@@ -52,8 +52,11 @@ var PFU;
             PFU.WeChatBannerAd.GetInstance().Hide();
         };
         //刷新Banner广告
-        PfuGlobal.RefreshBanner = function (fun) {
-            PFU.WeChatBannerAd.GetInstance().Refresh(fun);
+        PfuGlobal.RefreshBanner = function (fun, dir, adWidth) {
+            PFU.WeChatBannerAd.GetInstance().Refresh(fun, dir, adWidth);
+        };
+        PfuGlobal.GetLastBannnerDir = function () {
+            return PFU.WeChatBannerAd.GetInstance().GetLastBannerDir();
         };
         //广告是否已准备好
         PfuGlobal.IsReadyBanner = function () {
@@ -97,25 +100,6 @@ var PFU;
          * @param fun (type:number,desc:string)
          */
         PfuGlobal.PfuShareGroupNext = function (handler, fun, isAward, qureyPos, addQurey) {
-            // let stamp: number = Date.now();
-            // PfuManager.GetInstance().PfuShareNext(false, "", fun, qureyPos);
-            // if (isAward && !PfuManager.GetInstance().IsWegameTestMode()) {
-            //     this.SetFocusHandler(this, (time) => {
-            //         if (time - stamp >= this.GetOLParam().pfuSdkShareTime * (PfuManager.GetInstance().GetVideoForceShareTimeMax() + 1)) {
-            //             console.log("分享成功");
-            //             fun.call(handler, PfuSdk.SUCCESS, "");
-            //             PfuManager.GetInstance().AddShareCount();
-            //         } else {
-            //             console.log("分享失败");
-            //             let str = PfuManager.GetInstance().OLParam.pfuSdkShare1;
-            //             if (PfuManager.GetInstance().GetShareCount() > 0) {
-            //                 str = PfuManager.GetInstance().OLParam.pfuSdkShare2;
-            //             }
-            //             fun.call(handler, PfuSdk.FAIL, str);
-            //         }
-            //         this.SetFocusHandler(null, null);
-            //     });
-            // }
             this._shareHandle(handler, fun, isAward, false, qureyPos, addQurey);
         };
         /**
@@ -140,9 +124,6 @@ var PFU;
                     }
                     else {
                         var str = PFU.PfuManager.GetInstance().OLParam.pfuSdkShare1;
-                        // if (PfuManager.GetInstance().GetShareCount() > 0) {
-                        //     str = PfuManager.GetInstance().OLParam.pfuSdkShare2;
-                        // }
                         fun.call(handler, PfuSdk.FAIL, str);
                     }
                     console.log("用时:" + (time - stamp) + " | t:" + max);
@@ -200,6 +181,7 @@ var PFU;
         };
         return PfuGlobal;
     }());
+    PfuGlobal.SDK_RES_CDN_PATH = "https://txpk.jfydgame.com/pfulayasdk/";
     PfuGlobal.focusCallback = null;
     PfuGlobal.focusHandler = null;
     PfuGlobal._addDialogCallback = null;

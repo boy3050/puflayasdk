@@ -79,7 +79,7 @@ var PFU;
             };
             FirstSceneBoxWindow.prototype.OnClickItem = function (data, itemObject) {
                 //点击跳转事件
-                if (data.wechatGameid == PFU.PfuConfig.Config.weChatId) {
+                if (data.wechatGameid == PFU.PfuConfig.Config.wxId) {
                     this.OnClickClose();
                     return;
                 }

@@ -40,7 +40,39 @@ var PFU;
                 var sdkDialogWindow = new PFU.UI.SdkDialogWindow();
                 sdkDialogWindow.InitWindow(pfusdkui.UI_SdkDialogUI.createInstance());
                 this._sdkDialogWindow = sdkDialogWindow;
-                //设置更多游戏显示开关
+                var clickBannerWindow = new PFU.UI.ClickBannerWindow();
+                clickBannerWindow.InitWindow(pfusdkui.UI_ClickBannerUI.createInstance());
+                clickBannerWindow.Hide();
+                this._clickBannerWindow = clickBannerWindow;
+                var redpacketWindow = new PFU.UI.RedPacketWindow();
+                redpacketWindow.InitWindow(pfusdkui.UI_RedPacketUI.createInstance());
+                redpacketWindow.Show();
+                PFU.PfuClickBannerRevive.GetInstance().SetUIHandle(this, function (isShow) {
+                    if (isShow) {
+                        clickBannerWindow.Show();
+                    }
+                    else {
+                        clickBannerWindow.Hide();
+                    }
+                });
+                PFU.PfuMoreGameUpdate.GetInstance().SetPopupListVisible(this, function (isShow) {
+                    if (isShow) {
+                        moreGameWindow.ShowLeft();
+                    }
+                    else {
+                        moreGameWindow.HideLeft();
+                    }
+                });
+                PFU.PfuRedPacketManager.GetInstance().SetRedpacketHandle(this, function (isShowBtn) {
+                    redpacketWindow.SetIconVisible(isShowBtn);
+                }, function () {
+                    redpacketWindow.OpenRadPacketGift();
+                }, function () {
+                    redpacketWindow.OpenEverydayGift();
+                }, function (vx, vy) {
+                    redpacketWindow.SetIconBtnPos(vx, vy);
+                });
+                //设置更多游戏显示开关 createWindow true
                 PFU.PfuMoreGameUpdate.GetInstance().SetCtrlMoreGameUI(this, function (isShow, type) {
                     if (isShow) {
                         moreGameWindow.Show(type);
@@ -53,6 +85,7 @@ var PFU;
             return PfuSdkFairyUI;
         }());
         PfuSdkFairyUI._sdkDialogWindow = null;
+        PfuSdkFairyUI._clickBannerWindow = null;
         UI.PfuSdkFairyUI = PfuSdkFairyUI;
     })(UI = PFU.UI || (PFU.UI = {}));
 })(PFU || (PFU = {}));

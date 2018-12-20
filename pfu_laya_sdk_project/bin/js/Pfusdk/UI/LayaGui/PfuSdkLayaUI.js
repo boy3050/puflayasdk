@@ -19,18 +19,27 @@ var PFU;
             PfuSdkLayaUI.LoadUIData = function () {
                 Laya.loader.load("PfusdkRes/UI/layaui/atlas/comp.atlas", Laya.Handler.create(this, this.CreateUIWindow));
             };
+            PfuSdkLayaUI.AddStage = function (windowUI) {
+                windowUI.scale(this._scaleX, this._scaleY);
+                this._windowList.push(windowUI);
+                Laya.stage.addChild(windowUI);
+            };
+            PfuSdkLayaUI.GetSdkWindowList = function () {
+                return this._windowList;
+            };
             PfuSdkLayaUI.CreateUIWindow = function () {
                 var _this = this;
                 this.moregameUI = new PFU.UI.MoreGameUI();
-                this.moregameUI.scale(this._scaleX, this._scaleY);
-                Laya.stage.addChild(this.moregameUI);
+                this.AddStage(this.moregameUI);
                 this.moregameUI.OnHide();
                 this.bannerUI = new PFU.UI.UI_PfuBannerUI();
-                this.bannerUI.scale(this._scaleX, this._scaleY);
-                Laya.stage.addChild(this.bannerUI);
+                this.AddStage(this.bannerUI);
                 this.boxWindowUI = new PFU.UI.FirstSceneBoxUI();
-                this.boxWindowUI.scale(this._scaleX, this._scaleY);
-                Laya.stage.addChild(this.boxWindowUI);
+                this.AddStage(this.boxWindowUI);
+                var clickBannerUI = new PFU.UI.ClickBannerUI();
+                this.AddStage(clickBannerUI);
+                this.redPacketUI = new PFU.UI.RedPacketUI();
+                this.AddStage(this.redPacketUI);
                 //设置更多游戏显示开关
                 PFU.PfuMoreGameUpdate.GetInstance().SetCtrlMoreGameUI(this, function (isShow, type) {
                     if (isShow) {
@@ -40,12 +49,46 @@ var PFU;
                         _this.moregameUI.OnHide();
                     }
                 });
+                PFU.PfuClickBannerRevive.GetInstance().SetUIHandle(this, function (isShow) {
+                    if (isShow) {
+                        clickBannerUI.Show();
+                    }
+                    else {
+                        clickBannerUI.Hide();
+                    }
+                });
                 PFU.PfuGlobal.SetOnDialog(this, PfuSdkLayaUI.OnAddDialog);
+                PFU.PfuRedPacketManager.GetInstance().SetRedpacketHandle(this, function (isShowBtn) {
+                    _this.moregameUI.SetIconVisible(isShowBtn);
+                }, function () {
+                    _this.redPacketUI.OpenRadPacketGift();
+                }, function () {
+                    _this.redPacketUI.OpenEverydayGift();
+                }, function (vx, vy) {
+                    _this.moregameUI.SetIconBtnPos(vx, vy);
+                });
+                PFU.PfuMoreGameUpdate.GetInstance().SetPopupListVisible(this, function (isShow) {
+                    if (isShow) {
+                        _this.moregameUI.ShowLeft();
+                    }
+                    else {
+                        _this.moregameUI.HideLeft();
+                    }
+                });
+            };
+            PfuSdkLayaUI.OpenEverydayGift = function () {
+                this.redPacketUI.OpenEverydayGift();
+            };
+            PfuSdkLayaUI.OpenRadPacketTixian = function () {
+                this.redPacketUI.OpenRadPacketTixian();
+            };
+            PfuSdkLayaUI.UpdateIconMoney = function () {
+                this.moregameUI.UpdateIconMoney();
             };
             PfuSdkLayaUI.OnAddDialog = function (desc) {
                 var dialog = new ui.SdkDialogUIUI();
                 dialog.dialogtext.text = "" + desc;
-                dialog.zOrder = 10000000;
+                dialog.zOrder = PfuSdk.UI_ORDER_OTHER;
                 Laya.stage.addChild(dialog);
                 Laya.stage.updateZOrder();
                 Laya.timer.once(2000, this, function () {
@@ -57,6 +100,7 @@ var PFU;
         PfuSdkLayaUI._scaleX = 1;
         PfuSdkLayaUI._scaleY = 1;
         PfuSdkLayaUI._bottomOffset = 0;
+        PfuSdkLayaUI._windowList = new Array();
         UI.PfuSdkLayaUI = PfuSdkLayaUI;
     })(UI = PFU.UI || (PFU.UI = {}));
 })(PFU || (PFU = {}));

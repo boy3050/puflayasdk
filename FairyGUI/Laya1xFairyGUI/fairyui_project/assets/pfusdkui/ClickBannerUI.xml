@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,1334" opaque="false">
+  <displayList>
+    <graph id="n1_sxe6" name="n1" xy="0,-133" size="750,1600" alpha="0.6" type="rect" lineSize="0" fillColor="#ff000000"/>
+    <loader id="n10_sxe6" name="loader" xy="0,-133" pivot="0.5,0.5" size="750,1600" url="ui://xcy52l65sxe6cq" align="center" vAlign="middle" fill="scale" autoSize="true"/>
+    <component id="n9_sxe6" name="cancel" src="sxe6cp" fileName="组件/按钮/clickSkip.xml" xy="331,813" size="87,40"/>
+  </displayList>
+</component>

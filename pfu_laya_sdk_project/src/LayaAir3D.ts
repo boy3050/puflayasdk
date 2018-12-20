@@ -35,6 +35,8 @@ class LayaAir3D {
         material.diffuseTexture = Laya.Texture2D.load("res/layabox.png");
         box.meshRender.material = material;
 
+        //Laya.LocalStorage.clear();
+
         //SDK初始化
         PfuSdk.InitConfig(this, () => {
 
@@ -42,14 +44,49 @@ class LayaAir3D {
             //PFU.UI.PfuSdkFairyUI.CreateUI();
             //LayaGUI创建
             PFU.UI.PfuSdkLayaUI.CreateUI();
-            
-            for (let i = 0; i < 10; i++) {
-                Laya.timer.once(1000 + (i * 1000), this, () => {
-                    //PFU.UI.PfuSdkFairyUI.OnAddDialog("显示Dialog把@@@");
-                    PFU.PfuGlobal.ShowDialog("显示Dia");
-                });
-            }
 
+            // for (let i = 0; i < 10; i++) {
+            //     Laya.timer.once(1000 + (i * 1000), this, () => {
+            //         //PFU.UI.PfuSdkFairyUI.OnAddDialog("显示Dialog把@@@");
+            //         PFU.PfuGlobal.ShowDialog("显示Dia");
+            //     });
+            // }
+
+            PfuSdk.ShowBanner();
+
+            //PfuSdk.ShowPopupListGame();
+
+            PfuSdk.ShowRedPacketBtn();
+            PfuSdk.HideRedPacketBtn();
+            
+            Laya.timer.once(2000, this, () => {
+
+                // PfuSdk.ShowClickBannnerRevive(this,(type)=>{
+
+                // });
+                //PfuSdk.HideRedPacketBtn();
+
+                PfuSdk.CanGetRedPacket();
+
+                //PFU.PfuRedPacketManager.GetInstance().TestRed();
+                // PfuSdk.PopupRedPacket(this,(type)=>{
+
+                // });
+
+               // PfuSdk.PopupRedPacketEverydayWindow();
+
+                // PfuSdk.ShowClickBannnerRevive(this,(type)=>{
+                //     if(type == PfuSdk.SUCCESS)
+                //     {
+                //         console.log("ShowClickBannnerRevive success");
+                //     }
+                //     else
+                //     {
+                //         console.log("ShowClickBannnerRevive fait");
+                //     }
+                // });
+
+            });
 
         });
 
@@ -61,8 +98,6 @@ class LayaAir3D {
         PfuSdk.OnHide(() => {
 
         });
-
-
 
         //显示更多游戏列表
         PfuSdk.ShowMoreGameList();
@@ -82,6 +117,18 @@ class LayaAir3D {
             //         console.log(desc);
             //     }
             // });
+            
+
+            PfuSdk.VideoRevive(this, (type, desc) => {
+                if (PfuSdk.SUCCESS == type) {
+                    //给予奖励
+                }
+                else {
+                    //错误描述
+                    console.log(desc);
+                }
+            });
+
         });
 
         //单纯分享

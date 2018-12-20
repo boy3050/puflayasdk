@@ -119,8 +119,8 @@ namespace PFU {
                 return false;
             }
 
-            for (let i = 0; i < PfuConfig.Config.navigateToMiniAppId.length; i++) {
-                let appId = PfuConfig.Config.navigateToMiniAppId[i];
+            for (let i = 0; i < PfuConfig.Config.navigateToMiniProgramAppIdList.length; i++) {
+                let appId = PfuConfig.Config.navigateToMiniProgramAppIdList[i];
                 if (appId == wxChatId) {
                     return true;
                 }

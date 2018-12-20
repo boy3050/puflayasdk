@@ -15,6 +15,9 @@ var PFU;
             this._lastTime = 0;
             this.tempAdId = null;
             this._reconnectCount = 0;
+            //#region 附加
+            this.lastSend2201Type7Time = 0;
+            this.lastSend2202Time = 0;
             //#endregion
         }
         PfuPlatformManager.GetInstance = function () {
@@ -30,7 +33,7 @@ var PFU;
             this.Load();
             if (PFU.WeChatUtils.GetInstance().IsWeGame()) {
                 if (this._privateKey != "") {
-                    PfuPlatformManager.GetInstance().LoginWegame(PFU.PfuConfig.Config.weChatId, PFU.PfuConfig.Config.pfuAppId);
+                    PfuPlatformManager.GetInstance().LoginWegame(PFU.PfuConfig.Config.wxId, PFU.PfuConfig.Config.appId);
                 }
             }
         };
@@ -74,10 +77,17 @@ var PFU;
                 this._platformUserData.userPlayTime += Math.floor(time);
                 console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime);
                 this.Save();
+                this._lastTime = Date.now();
             }
         };
         PfuPlatformManager.prototype.Save = function () {
             PFU.LocalSaveUtils.SaveJsonObject(this.SAVE_KEY, this._platformUserData);
+        };
+        PfuPlatformManager.prototype.GetUserPlayTime = function () {
+            if (this._platformUserData && this._platformUserData.userPlayTime) {
+                return this._platformUserData.userPlayTime;
+            }
+            return 0;
         };
         //private _notifShareInGames: BX.Dictionary<number, Array<Platform_2000_resp_Data>> = new BX.Dictionary<number, Array<Platform_2000_resp_Data>>();
         //private userCache: BX.Dictionary<number, Platform_1333_ResData> = new BX.Dictionary<number, Platform_1333_ResData>();
@@ -661,7 +671,6 @@ var PFU;
             });
             xhr.send(url, "", "get", "text");
         };
-        //#region 附加
         /**
          * 点击量统计
          * @param type
@@ -671,6 +680,13 @@ var PFU;
             if (!this._isLoginPlatform) {
                 return;
             }
+            if (type == PlatformStatisticsType.shareGame) {
+                var t = (Date.now() - this.lastSend2201Type7Time) / 1000;
+                if (t < 2000) {
+                    return;
+                }
+            }
+            this.lastSend2201Type7Time = Date.now();
             var request = new PFU.Platform_2201_Request();
             request.type = type;
             request.picId = picId;
@@ -686,6 +702,11 @@ var PFU;
             if (!this._isLoginPlatform) {
                 return;
             }
+            var t = (Date.now() - this.lastSend2202Time) / 1000;
+            if (t < 2000) {
+                return;
+            }
+            this.lastSend2202Time = Date.now();
             var request = new PFU.Platform_2202_Request();
             request.type = PlatformStatisticsType.videocomplete;
             var url = this.PackageMsgUrl(2202, request);

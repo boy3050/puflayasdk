@@ -19,6 +19,8 @@ var PFU;
                 Laya.timer.loop(200, _this, _this.CheckShow);
                 PfuSdk.HideBanner();
                 _this.closeBtn.on(Laya.Event.CLICK, _this, _this.OnCloseUI);
+                _this.zOrder = PfuSdk.UI_FIRST_SCENEBOX;
+                Laya.stage.updateZOrder();
                 return _this;
             }
             FirstSceneBoxUI.prototype.OnCloseUI = function () {
@@ -85,7 +87,7 @@ var PFU;
             FirstSceneBoxUI.prototype.OnClickItem1 = function (data) {
                 console.error("==");
                 //点击跳转事件
-                if (data.wechatGameid == PFU.PfuConfig.Config.weChatId) {
+                if (data.wechatGameid == PFU.PfuConfig.Config.wxId) {
                     this.OnCloseUI();
                     return;
                 }
@@ -95,7 +97,7 @@ var PFU;
             FirstSceneBoxUI.prototype.OnClickItem = function (e, index) {
                 if (e.type == Laya.Event.CLICK) {
                     //点击跳转事件
-                    if (this.allgame[index].data.wechatGameid == PFU.PfuConfig.Config.weChatId) {
+                    if (this.allgame[index].data.wechatGameid == PFU.PfuConfig.Config.wxId) {
                         this.OnCloseUI();
                         return;
                     }

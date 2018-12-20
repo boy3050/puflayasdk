@@ -22,10 +22,28 @@ namespace PFU {
 
         private _changeMoreGameHandle: any;
         private _changeMoreGameFun: Function;
+
+        //左侧更多游戏
+        private _popupListHandle: any = null;
+        private _popupListCallback: Function = null;
+
+        private _isShowPopupAction: boolean = false;
+        private _showPopupType: boolean = false;
+
+        public SetPopupListVisible(handle: any, callback: Function)  {
+            this._popupListHandle = handle;
+            this._popupListCallback = callback;
+        }
+
+        public ShowPopupListGame(visible: boolean)  {
+            this._isShowPopupAction = true;
+            this._showPopupType = visible;
+        }
+
         //设置moreGameUI层级动作
-        public isSetLayerAction = false;
+        //public isSetLayerAction = false;
         //设置moreGameUI层级数值
-        public layerNum = 0;
+        //public layerNum = 0;
 
         public isSetMoreGameOffsetY = false;
         public moreGameOffsetY = 0;
@@ -121,32 +139,36 @@ namespace PFU {
                 if (this._isLastCtrAction) {
                     if (this._isLastShow) {
                         this.ShowMoreGameUI();
-                    }
-                    else {
+                    } else {
                         this.HideMoreGameUI();
                     }
-
                     this._isLastCtrAction = false;
+                }
+
+                if (this._isShowPopupAction)  {
+                    if (this._popupListCallback)  {
+                        this._popupListCallback.call(this._popupListHandle, this._showPopupType);
+                    }
+                    this._isShowPopupAction = false;
                 }
             }
         }
 
-        public SetMoreGameUILayer(layernum: number)  {
-            this.isSetLayerAction = true;
-            this.layerNum = layernum;
-        }
+        // public SetMoreGameUILayer(layernum: number) {
+        //     this.isSetLayerAction = true;
+        //     this.layerNum = layernum;
+        // }
 
-        public EndSetMoreGameUI()  {
-            this.isSetLayerAction = false;
-        }
+        // public EndSetMoreGameUI() {
+        //     this.isSetLayerAction = false;
+        // }
 
-        public SetMoreGameUIOffsetY(offsetY: number)  {
+        public SetMoreGameUIOffsetY(offsetY: number) {
             this.isSetMoreGameOffsetY = true;
             this.moreGameOffsetY = offsetY;
         }
 
-        public EndMoreGameUIOffsetY()
-        {
+        public EndMoreGameUIOffsetY()  {
             this.isSetMoreGameOffsetY = false;
         }
     }

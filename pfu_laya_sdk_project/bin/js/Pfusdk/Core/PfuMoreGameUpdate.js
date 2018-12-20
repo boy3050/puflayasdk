@@ -9,10 +9,15 @@ var PFU;
             this._isLastShow = true;
             this._indexLeft = 0;
             this._indexRight = 0;
+            //左侧更多游戏
+            this._popupListHandle = null;
+            this._popupListCallback = null;
+            this._isShowPopupAction = false;
+            this._showPopupType = false;
             //设置moreGameUI层级动作
-            this.isSetLayerAction = false;
+            //public isSetLayerAction = false;
             //设置moreGameUI层级数值
-            this.layerNum = 0;
+            //public layerNum = 0;
             this.isSetMoreGameOffsetY = false;
             this.moreGameOffsetY = 0;
             this._indexLeft = 0;
@@ -25,6 +30,14 @@ var PFU;
                 this.instance = new PfuMoreGameUpdate();
             }
             return this.instance;
+        };
+        PfuMoreGameUpdate.prototype.SetPopupListVisible = function (handle, callback) {
+            this._popupListHandle = handle;
+            this._popupListCallback = callback;
+        };
+        PfuMoreGameUpdate.prototype.ShowPopupListGame = function (visible) {
+            this._isShowPopupAction = true;
+            this._showPopupType = visible;
         };
         PfuMoreGameUpdate.prototype.SetChangeHandle = function (handle, fun) {
             this._changeMoreGameHandle = handle;
@@ -101,15 +114,21 @@ var PFU;
                     }
                     this._isLastCtrAction = false;
                 }
+                if (this._isShowPopupAction) {
+                    if (this._popupListCallback) {
+                        this._popupListCallback.call(this._popupListHandle, this._showPopupType);
+                    }
+                    this._isShowPopupAction = false;
+                }
             }
         };
-        PfuMoreGameUpdate.prototype.SetMoreGameUILayer = function (layernum) {
-            this.isSetLayerAction = true;
-            this.layerNum = layernum;
-        };
-        PfuMoreGameUpdate.prototype.EndSetMoreGameUI = function () {
-            this.isSetLayerAction = false;
-        };
+        // public SetMoreGameUILayer(layernum: number) {
+        //     this.isSetLayerAction = true;
+        //     this.layerNum = layernum;
+        // }
+        // public EndSetMoreGameUI() {
+        //     this.isSetLayerAction = false;
+        // }
         PfuMoreGameUpdate.prototype.SetMoreGameUIOffsetY = function (offsetY) {
             this.isSetMoreGameOffsetY = true;
             this.moreGameOffsetY = offsetY;

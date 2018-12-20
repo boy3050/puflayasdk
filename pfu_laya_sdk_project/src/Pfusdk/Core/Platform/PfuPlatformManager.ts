@@ -62,7 +62,7 @@ namespace PFU {
             if (WeChatUtils.GetInstance().IsWeGame()) {
                 if (this._privateKey != "") {
 
-                    PfuPlatformManager.GetInstance().LoginWegame(PfuConfig.Config.weChatId, PfuConfig.Config.pfuAppId);
+                    PfuPlatformManager.GetInstance().LoginWegame(PfuConfig.Config.wxId, PfuConfig.Config.appId);
                 }
             }
         }
@@ -117,12 +117,23 @@ namespace PFU {
                 this._platformUserData.userPlayTime += Math.floor(time);
                 console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime)
                 this.Save();
+
+                this._lastTime = Date.now();
             }
         }
 
 
         public Save() {
             LocalSaveUtils.SaveJsonObject(this.SAVE_KEY, this._platformUserData);
+        }
+
+        public GetUserPlayTime()
+        {
+            if(this._platformUserData && this._platformUserData.userPlayTime)
+            {
+                return this._platformUserData.userPlayTime;
+            }
+            return 0;
         }
 
         //private _notifShareInGames: BX.Dictionary<number, Array<Platform_2000_resp_Data>> = new BX.Dictionary<number, Array<Platform_2000_resp_Data>>();
@@ -186,8 +197,7 @@ namespace PFU {
 
         public GetShareUserList(pos?: number): Array<Platform_1333_ResData> {
 
-            if(pos == undefined || pos == void 0)
-            {
+            if (pos == undefined || pos == void 0)  {
                 pos == -999;
             }
 
@@ -356,10 +366,10 @@ namespace PFU {
                 }
                 let fromUid = query.fromUid;
                 if (fromUid && fromUid != "") {
-                    try  {
+                    try {
                         rinviteUid = parseInt(fromUid);
                     }
-                    catch (e)  {
+                    catch (e) {
 
                     }
                 }
@@ -388,10 +398,10 @@ namespace PFU {
             request.srcid = srcid;
             request.selfid = appId;
             request.inviteUid = rinviteUid;
-            try  {
+            try {
                 request.onlineTime = Math.floor(this._platformUserData.userPlayTime);
             }
-            catch (e)  {
+            catch (e) {
                 request.onlineTime = 0;
             }
 
@@ -435,15 +445,14 @@ namespace PFU {
 
                 //登录两次
                 PfuPlatformManager._loginCount++;//.GetInstance()._loginCount
-                if(PfuPlatformManager._loginCount >= 2)
-                {
+                if (PfuPlatformManager._loginCount >= 2)  {
                     console.log("pfu 平台登录失败!");
                     return;
                 }
-                
+
                 console.log("pfu 登录失败,平台再次登录 等待500毫秒!");
-                Laya.timer.once(500,this,()=>{
-                    this.LoginPlatform1003(weToken,appId);
+                Laya.timer.once(500, this, () => {
+                    this.LoginPlatform1003(weToken, appId);
                 });
             });
         }
@@ -826,6 +835,8 @@ namespace PFU {
 
 
         //#region 附加
+
+        private lastSend2201Type7Time = 0;
         /**
          * 点击量统计
          * @param type 
@@ -835,6 +846,14 @@ namespace PFU {
             if (!this._isLoginPlatform) {
                 return;
             }
+            if (type == PlatformStatisticsType.shareGame)  {
+                let t = (Date.now() - this.lastSend2201Type7Time) / 1000;
+                if (t < 2000)  {
+                    return;
+                }
+            }
+            this.lastSend2201Type7Time = Date.now();
+
             let request: Platform_2201_Request = new Platform_2201_Request();
             request.type = type;
             request.picId = picId;
@@ -849,10 +868,18 @@ namespace PFU {
             });
         }
 
+        private lastSend2202Time = 0;
+
         public StatisticsMsg2202() {
             if (!this._isLoginPlatform) {
                 return;
             }
+            let t = (Date.now() - this.lastSend2202Time) / 1000;
+            if (t < 2000)  {
+                return;
+            }
+            this.lastSend2202Time = Date.now();
+
             let request: Platform_2202_Request = new Platform_2202_Request();
             request.type = PlatformStatisticsType.videocomplete;
             let url = this.PackageMsgUrl(2202, request);

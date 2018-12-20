@@ -25,20 +25,26 @@ namespace PFU {
     }
 
     export class PfuConfigBean {
-        public weChatId: string;
-        public pfuAppId: string;
-        public version: string;
-        public cdnPath: string;
+        public appId: string;
+        public privateKey: string;
+        public wxId: string;
         public bannerId: string;
         public videoId: string;
+        public navigateToMiniProgramAppIdList: Array<string>;
+
+
+        public version: string;
+        public pfuShareProtocol: number;
+        
+        public cdnPath: string;
         public mtaAppId: string;
         public mtaEventId: string;
-        public privateKey: string;
-        public pfuShareProtocol: number;
-        public navigateToMiniAppId:Array<string>;
-        public checkAppUpdate:number;
-        public ui_moreGameType:number;
-        public ui_crossGameListType:number;
+
+
+
+        public checkAppUpdate: number;
+        public ui_moreGameType: number;
+        public ui_crossGameListType: number;
     }
 
     export class DataTimeCount {

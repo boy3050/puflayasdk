@@ -17,6 +17,7 @@ interface PfuSdk {
     SHOW_TYPE_BOXLIST; //只显示底部盒子列表
 
 
+    UI_ORDER_MOREGAME;// UI排序 moregameUI 交叉推广按钮更多游戏按钮红包按钮层级关系
     /**
      * 必须*** 第一种初始化(Init和InitConfig只能选择一种来初始化)
      */
@@ -24,7 +25,7 @@ interface PfuSdk {
     /**
      * 第二种初始化(Init和InitConfig只能选择一种来初始化)，只是增加了一个Config文件读取的回调
      */
-    InitConfig(handle:any,callback: Function);
+    InitConfig(handle: any, callback: Function);
 
     /**
      * 使用cdnpath+varsion作为资源管理使用此配置作为basePath
@@ -49,14 +50,14 @@ interface PfuSdk {
     /**
      * 分享 无回调
      */
-    Share(handle: any, qureyPos?: number,addQurey?:string);
+    Share(handle: any, qureyPos?: number, addQurey?: string);
     /**
      * 激励分享
      * @param handle 
      * @param fun (type:number[返回类型],desc:string[描述])
      * @param qureyPos 
      */
-    ShareAward(handle: any, fun: Function, qureyPos?: number,addQurey?:string);
+    ShareAward(handle: any, fun: Function, qureyPos?: number, addQurey?: string);
     /**
      * 播放视频
      * @param handle 
@@ -64,7 +65,15 @@ interface PfuSdk {
      * @param adunit 额外视频广告ID
      * @param isForceShare 是否强制分享
      */
-    Video(handle: any, fun: Function,adunit?:string,isForceShare?:boolean);
+    Video(handle: any, fun: Function, adunit?: string, isForceShare?: boolean);
+    /**
+     * 播放视频复活
+     * @param handle 
+     * @param fun 
+     * @param adunit 额外视频广告ID
+     * @param isForceShare 是否强制分享
+     */
+    VideoRevive(handle: any, fun: Function, adunit?: string, isForceShare?: boolean);
     /**
      * 获取在线参数
      * @param name 
@@ -90,8 +99,8 @@ interface PfuSdk {
     /**
      * 获取分享用户
      * @param pos 
-     */	
-    GetPlatformShareUser(pos?:number);
+     */
+    GetPlatformShareUser(pos?: number);
 
     /**
      * 清除某个点分享进入的用户信息
@@ -113,7 +122,7 @@ interface PfuSdk {
     /**
      * 显示更多游戏列表  SHOW_TYPE_ALL  SHOW_TYPE_MOREGAME SHOW_TYPE_BOXLIST
      */
-    ShowMoreGameList(type?:number);
+    ShowMoreGameList(type?: number);
     /**
      * 隐藏更多游戏列表
      */
@@ -122,7 +131,7 @@ interface PfuSdk {
     /**
      * 是否为审核模式
      */
-    IsTestModel():boolean;
+    IsTestModel(): boolean;
 
     /**
      * 随机显示公众号
@@ -131,7 +140,7 @@ interface PfuSdk {
 	/**
 	* 视频前分享(复选框开关)
 	*/
-    IsPfuSdkVideoShare():boolean;
+    IsPfuSdkVideoShare(): boolean;
 
     /*
     *	跳转盒子复活功能 
@@ -141,37 +150,78 @@ interface PfuSdk {
     JumpGameboxForRelive(handle: any, callback: Function);
 
     /**
-     * 设置MoreGameUI层级关系 (LayaUI)
+     * 设置MoreGameUI层级关系 (LayaUI) 抛弃使用ZOrder来替代层级
      */
-    SetMoreGameUILayer(layernum:number);
+    //SetMoreGameUILayer(layernum: number);
 
     /**
      * 设置更多游戏按钮Y偏移 (*  beta)
     */
-    SetMoreGameUIOffsetY(offset:number)
+    SetMoreGameUIOffsetY(offset: number)
 
+    /**
+     * 点击Banner复活
+     */
+    ShowClickBannnerRevive(handle: any, fun: Function);
+
+    /**
+     * 显示弹出试 交叉推广游戏列表
+    */
+    ShowPopupListGame();
+
+    /**
+     * 隐藏弹出试 交叉推广游戏列表
+     */
+    HidePopupListGame();
+
+    /**
+     * 显示红包按钮
+     */
+    ShowRedPacketBtn();
+    /**
+    *  隐藏红包按钮
+    */
+    HideRedPacketBtn();
+    /**
+     * 弹出获得红包
+     */
+    PopupRedPacket(handle:any,callback:Function);
+
+    /**
+     * 是否可以领取红包
+     */
+    CanGetRedPacket():boolean
+
+    /**
+     * 设置红包按钮位置
+     */
+    SetRedPacketBtnPos(vx: number, vy: number)
+
+    /**
+     * 显示红包每日领取界面
+     */
+    PopupRedPacketEverydayWindow();
 
 }
 declare const PfuSdk: PfuSdk;
 
 declare module PFU.UI {
     //FairyGui接口
-    class PfuSdkFairyUI
-    {
+    class PfuSdkFairyUI  {
 
         public static CreateUI();
     }
     //LayaUI接口
-    class PfuSdkLayaUI
-    {
+    class PfuSdkLayaUI  {
     	/*
-	* 特殊适配方案，将页面缩放处理，并调整底部适配偏移值
-	* scaleX
-	* scaleY
-	* bottomOffset
-	*/
-	public static CustomSpecialUI(scaleX: number, scaleY: number, bottomOffset: number);
+        * 特殊适配方案，将页面缩放处理，并调整底部适配偏移值
+        * scaleX
+        * scaleY
+        * bottomOffset
+        */
+        public static CustomSpecialUI(scaleX: number, scaleY: number, bottomOffset: number);
         public static CreateUI();
+        public static GetSdkWindowList(): Array<any>;
     }
 }
 

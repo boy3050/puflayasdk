@@ -12,6 +12,8 @@ namespace PFU.UI {
             Laya.timer.loop(200, this, this.CheckShow);
             PfuSdk.HideBanner();
             this.closeBtn.on(Laya.Event.CLICK, this, this.OnCloseUI);
+            this.zOrder = PfuSdk.UI_FIRST_SCENEBOX;
+            Laya.stage.updateZOrder();
         }
         private OnCloseUI(): void {
             Laya.stage.removeChild(this);
@@ -24,7 +26,7 @@ namespace PFU.UI {
             //检查盒子列表参数 和 在线参数 是否准备完毕
             if (PfuSdk.GetParamComplete && PfuSdk.GetBoxListComplete) {
                 //kaiping = 2 开启盒子列表
-                if(!PFU.PfuManager.GetInstance().IsWegameTestMode() &&  PfuGlobal.GetOLParam().pfuSdkShowOpenAds == 2){
+                if (!PFU.PfuManager.GetInstance().IsWegameTestMode() && PfuGlobal.GetOLParam().pfuSdkShowOpenAds == 2) {
                     this.CreateList();
                 }
                 else {
@@ -80,25 +82,26 @@ namespace PFU.UI {
             this.boxlist.array = this.allgame;
             this.visible = true;
 
+
         }
         private OnClickItem1(data: PfuBoxListData) {
             console.error("==")
             //点击跳转事件
-            if (data.wechatGameid == PfuConfig.Config.weChatId) {
+            if (data.wechatGameid == PfuConfig.Config.wxId) {
                 this.OnCloseUI();
                 return;
             }
-            PFU.PfuManager.GetInstance().ShowCrossGameImage(data,this, () => { });
+            PFU.PfuManager.GetInstance().ShowCrossGameImage(data, this, () => { });
             //WeChatUtils.GetInstance().NavigateToMiniProgram(this, () => { }, data.wechatGameid, "");
         }
         private OnClickItem(e: Event, index: number) {
             if (e.type == Laya.Event.CLICK) {
                 //点击跳转事件
-                if (this.allgame[index].data.wechatGameid == PfuConfig.Config.weChatId) {
+                if (this.allgame[index].data.wechatGameid == PfuConfig.Config.wxId) {
                     this.OnCloseUI();
                     return;
                 }
-                PFU.PfuManager.GetInstance().ShowCrossGameImage(this.allgame[index].data,this, () => { });
+                PFU.PfuManager.GetInstance().ShowCrossGameImage(this.allgame[index].data, this, () => { });
                 //WeChatUtils.GetInstance().NavigateToMiniProgram(this, () => { }, this.allgame[index].data.wechatGameid, "");
             }
 
