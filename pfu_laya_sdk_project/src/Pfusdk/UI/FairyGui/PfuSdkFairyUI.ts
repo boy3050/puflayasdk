@@ -6,17 +6,17 @@ namespace PFU.UI {
         private static _clickBannerWindow: PFU.UI.ClickBannerWindow = null;
 
 
-        public static CreateUI() {
+        public static CreateUI(callback:Function) {
             fairygui.UIConfig.packageFileExtension = "bin";
             pfusdkui.pfusdkuiBinder.bindAll();
             Laya.stage.addChild(fairygui.GRoot.inst.displayObject);
-            this.LoadUIData();
+            this.LoadUIData(callback);
 
             SceneMatchingUtils.WIDTH = laya.utils.Browser.width;
             SceneMatchingUtils.HEIGTH = laya.utils.Browser.height;
         }
 
-        private static LoadUIData() {
+        private static LoadUIData(callback:Function) {
             let fairyG = "@";
             if (Laya.version.charAt(0) == '2') {
                 //2.0FairyGUI图片链接改为下划线
@@ -24,12 +24,13 @@ namespace PFU.UI {
             }
 
             Laya.loader.load([
-                { url: "PfusdkRes/UI/fairygui/pfusdkui.bin", type: Laya.Loader.BUFFER },
-                { url: "PfusdkRes/UI/fairygui/pfusdkui" + fairyG + "atlas0.png", type: Laya.Loader.IMAGE }
+                { url: PfuGlobal.sdkCustomResRoot + "PfusdkRes/UI/fairygui/pfusdkui.bin", type: Laya.Loader.BUFFER },
+                { url: PfuGlobal.sdkCustomResRoot + "PfusdkRes/UI/fairygui/pfusdkui" + fairyG + "atlas0.png", type: Laya.Loader.IMAGE }
             ],
                 Laya.Handler.create(this, () => {
-                    fairygui.UIPackage.addPackage("PfusdkRes/UI/fairygui/pfusdkui");
+                    fairygui.UIPackage.addPackage(PfuGlobal.sdkCustomResRoot + "PfusdkRes/UI/fairygui/pfusdkui");
                     this.CreateUIWindow();
+                    callback();
                 }));
         }
 

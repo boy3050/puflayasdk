@@ -32,6 +32,7 @@
             this._wechatparam.value.Init();
 
             this.GetShareNum();
+            this.Load();
         }
 
         private GetShareNum(): void {
@@ -70,7 +71,7 @@
         private _getBoxlistComplete = false;
         public get GetBoxListComplete() { return this._getBoxlistComplete; }
 
-
+        private _DB: PfuNewDay;
 
 
         //#region 初始化
@@ -82,10 +83,10 @@
                     //param.ad_banner = PfuSwitch.OFF;
                     console.info("OL Param Success!");
                     console.info("Test Mode:" + (param.pfuSdkTestMode == PfuSwitch.ON));
-                    if (param.pfuSdkBannerRelive)  {
+                    if (param.pfuSdkBannerRelive) {
                         param.pfuSdkBannerRelive = parseInt(param.pfuSdkBannerRelive);
                     }
-                    if (param.pfuSdkPlayTime)  {
+                    if (param.pfuSdkPlayTime) {
                         param.pfuSdkPlayTime = parseInt(param.pfuSdkPlayTime);
                     }
 
@@ -213,7 +214,7 @@
                                 for (let i = 0; i < this._moregame.adverts.length; i++) {
                                     let data: PfuMoreGameData = this._moregame.adverts[i];
 
-                                    if (this.ExcludeErrorMoreGame(data))  {
+                                    if (this.ExcludeErrorMoreGame(data)) {
                                         console.log("exclude:" + data.wxid + "| link" + data.link);
                                         continue;
                                     }
@@ -264,7 +265,7 @@
                 wxId = data.wxid
             }
 
-            if (wxId == PfuConfig.Config.wxId)  {
+            if (wxId == PfuConfig.Config.wxId) {
                 return true;
             }
 
@@ -274,7 +275,7 @@
                 return true;
             }
             //ID有但是不在列表内，  data.link为空的情况也排除
-            if ((data.link == undefined || data.link == "") && !PfuBoxList.GetInstance().IsMoreGameDataBeAppIdList(data.wxid))  {
+            if ((data.link == undefined || data.link == "") && !PfuBoxList.GetInstance().IsMoreGameDataBeAppIdList(data.wxid)) {
                 return true;
             }
 
@@ -897,6 +898,76 @@
 
         }
 
+
+        //#region 存储
+
+        private Load() {
+            var json = LocalSaveUtils.GetJsonObject("playnewDay");
+            if (json != null && json != undefined) {
+                this._DB = json;
+            } else {
+                this._DB = new PfuNewDay();
+                this._DB.time = 0;
+                this._DB.playTimeCount = 0;
+            }
+            return this._DB;
+        }
+
+        public Save() {
+            LocalSaveUtils.SaveJsonObject("playnewDay", this._DB);
+        }
+
+        public UpdateNewDay() {
+            //是否为新的一天
+            if (this.IsNewDay())  {
+                let date: Date = new Date();
+                let curDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                this._DB.time = curDay.getTime();
+                this._DB.playTimeCount = 0;
+                this.Save();
+            }
+        }
+
+        public AddPlayTimeCount(second:number)
+        {
+            this._DB.playTimeCount += second;
+            console.log("今日游戏时长:" + this._DB.playTimeCount);
+            this.Save();
+        }
+        /**
+         * 获取今天完了多久
+         */
+        public GetTodayPlaySecond():number
+        {
+            return this._DB.playTimeCount + PfuPlatformManager.GetInstance().GetRunTime();
+        }
+
+        /**
+         * 获取SDK游戏时长开启的功能
+         */
+        public GetTodayTimeAction():boolean
+        {
+            return this.GetTodayPlaySecond()>this.OLParam.pfuSdkDailyTime * 60;
+        }
+
+        private IsNewDay() {
+            if (this._DB.time == 0) {
+                return true;
+            }
+
+            let lastTime: number = this._DB.time;
+            let date: Date = new Date();
+            let curDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            let curTime = curDay.getTime();
+            if (curTime > lastTime) {
+                return true;
+            }
+            return false;
+        }
+
+
+        //#endregion
+
         // JumpGameboxForRelive(cb) {
         //     if (cc.sys.platform === cc.sys.WECHAT_GAME) {
         //         PfuSdk.reliveCb = cb;
@@ -1000,6 +1071,11 @@
     class PfuMoreGameBean {
         public code: number;
         public adverts: Array<PfuMoreGameData>;
+    }
+
+    class PfuNewDay {
+        public time;
+        public playTimeCount = 0;
     }
 
     export class PfuMoreGameData {

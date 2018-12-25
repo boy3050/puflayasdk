@@ -3,6 +3,8 @@ namespace PFU.UI {
 
         protected _fui: pfusdkui.UI_RedPacketUI;
 
+
+
         //是否显示图标
         private _isShowRedpacket: boolean = false;
 
@@ -13,12 +15,14 @@ namespace PFU.UI {
 
         }
 
+        private awradPackageType = 0;
+
         protected OnStart() {
             this.InitIconEvent();
             this._fui.m_com_everyday.m_bg_loader.icon = PFU.PfuGlobal.SDK_RES_CDN_PATH + "redgift/denglujl_di.png";
             this._fui.m_com_tixianredpackage.m_bg_loader.icon = PFU.PfuGlobal.SDK_RES_CDN_PATH + "redgift/hb_kq_di.png";
             this._fui.m_com_openredpackage.m_bg_loader.icon = PFU.PfuGlobal.SDK_RES_CDN_PATH + "redgift/hb_di.png";
-            this._fui.m_com_awradredpackage.m_bg_loader.icon =  PFU.PfuGlobal.SDK_RES_CDN_PATH + "redgift/hb_kq_di.png";
+            this._fui.m_com_awradredpackage.m_bg_loader.icon = PFU.PfuGlobal.SDK_RES_CDN_PATH + "redgift/hb_kq_di.png";
 
 
             //提现event
@@ -35,7 +39,8 @@ namespace PFU.UI {
             });
             this._fui.m_com_awradredpackage.m_btn_close.onClick(this, () => {
                 this._fui.m_com_awradredpackage.visible = false;
-                PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.SUCCESS);
+                if (this.awradPackageType == 1)
+                    PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.SUCCESS);
             });
 
             //打开红包
@@ -46,6 +51,13 @@ namespace PFU.UI {
 
             this._fui.m_com_openredpackage.m_btn_red_open.onClick(this, this.OnRedPacketGiftAward);
 
+            if (PfuRedPacketManager.OPEN_RED_ACTION_VIDEO) {
+                this._fui.m_com_openredpackage.m_voidStr.text = "看视频领取";
+                this._fui.m_com_openredpackage.m_openredtip2.text = "看视频有几率翻倍！";
+            } else {
+                this._fui.m_com_openredpackage.m_voidStr.text = "分享领取";
+                this._fui.m_com_openredpackage.m_openredtip2.text = "分享有几率翻倍！";
+            }
 
         }
 
@@ -153,17 +165,21 @@ namespace PFU.UI {
         }
 
         private EverydayAward(isDouble: boolean) {
-            PfuRedPacketManager.GetInstance().AwardEveryDay(isDouble);
+            let num = PfuRedPacketManager.GetInstance().AwardEveryDay(isDouble);
             this.UpdateIconMoney();
+            this.awradPackageType = 0;
+            //打开余额界面
+            this.OpenAwardRadPacket(num);
         }
 
         private OnEveryDoubleAward() {
-            if (!WeChatUtils.GetInstance().IsWeGame())  {
+            if (!WeChatUtils.GetInstance().IsWeGame()) {
                 this._fui.m_com_everyday.visible = false;
                 this.EverydayAward(true);
                 return;
             }
-            PfuSdk.Video(this, (type) => {
+
+            PfuSdk.ShareAward(this, (type) => {
                 if (type == PfuSdk.SUCCESS) {
                     this._fui.m_com_everyday.visible = false;
                     this.EverydayAward(true);
@@ -191,32 +207,43 @@ namespace PFU.UI {
         }
 
         private OnRedPacketGiftAward() {
-            if (!WeChatUtils.GetInstance().IsWeGame())  {
+            if (!WeChatUtils.GetInstance().IsWeGame()) {
                 this.RedPacketGiftAward();
                 return;
             }
+            if (PfuRedPacketManager.OPEN_RED_ACTION_VIDEO) {
+                PfuSdk.Video(this, (type) => {
+                    if (type == PfuSdk.SUCCESS) {
+                        this.RedPacketGiftAward();
+                    } else {
+                        //PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.FAIL);
+                    }
+                });
+            } else {
+                PfuSdk.ShareAward(this, (type) => {
+                    if (type == PfuSdk.SUCCESS) {
+                        this.RedPacketGiftAward();
+                    } else {
+                        //PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.FAIL);
+                    }
+                });
+            }
 
-            PfuSdk.Video(this, (type) => {
-                if (type == PfuSdk.SUCCESS) {
-                    this.RedPacketGiftAward();
-                } else {
-                    PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.FAIL);
-                }
-            });
+
         }
 
         private RedPacketGiftAward() {
             this._fui.m_com_openredpackage.visible = false;
             let award = PfuRedPacketManager.GetInstance().AwardGift();
+            this.awradPackageType = 1;
             this.OpenAwardRadPacket(award);
             this.UpdateIconMoney();
         }
 
-        private OpenAwardRadPacket(award:number)
-        {
-           this._fui.m_com_awradredpackage.visible = true;
-           this._fui.m_com_awradredpackage.m_allMoney.text = "" + (PfuRedPacketManager.GetInstance().GetMoney());
-           this._fui.m_com_awradredpackage.m_moneyNum.text = "" + award;
+        private OpenAwardRadPacket(award: number) {
+            this._fui.m_com_awradredpackage.visible = true;
+            this._fui.m_com_awradredpackage.m_allMoney.text = "" + (PfuRedPacketManager.GetInstance().GetMoney());
+            this._fui.m_com_awradredpackage.m_moneyNum.text = "" + award.toFixed(2);//  Math.floor(award * 100) / 100;
         }
 
         //#endregion----------------

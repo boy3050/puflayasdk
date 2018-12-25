@@ -103,7 +103,7 @@ var PFU;
         WeChatIncentiveAd.prototype.PlayNewVideo = function (adunit) {
             var _this = this;
             if (PFU.WeChatUtils.GetInstance().IsWeGame()) {
-                if (typeof wx.createBannerAd === 'function') {
+                if (typeof wx.createRewardedVideoAd === 'function') {
                     var video = wx.createRewardedVideoAd({
                         adUnitId: adunit
                     });

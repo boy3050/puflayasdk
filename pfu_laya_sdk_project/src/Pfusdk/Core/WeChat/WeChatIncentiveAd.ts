@@ -125,7 +125,7 @@
 
         private PlayNewVideo(adunit?: string) {
             if (WeChatUtils.GetInstance().IsWeGame()) {
-                if (typeof wx.createBannerAd === 'function') {
+                if (typeof wx.createRewardedVideoAd === 'function') {
                     let video = wx.createRewardedVideoAd({
                         adUnitId: adunit
                     });

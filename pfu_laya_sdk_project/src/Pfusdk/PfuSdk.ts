@@ -15,7 +15,9 @@ class PfuSdk {
     public static get GetParamComplete() { return PFU.PfuManager.GetInstance().GetParamComplete; }
     public static get GetBoxListComplete() { return PFU.PfuManager.GetInstance().GetBoxListComplete; }
 
-    private static sdk_ver = "0.0.7.0";
+    private static sdk_ver = "0.0.7.5";
+
+    public static sdk_res_ver = "v7";
 
     public static SHOW_TYPE_ALL = 0;//更多游戏，BosList都显示
     public static SHOW_TYPE_MOREGAME = 1;//只显示更多游戏
@@ -42,6 +44,20 @@ class PfuSdk {
         return PFU.PfuConfig.Config;
     }
 
+    public static OpenCDNRes()
+    {
+        PFU.PfuGlobal.sdkCustomResRoot = PFU.PfuGlobal.SDK_CDN_RES_PATH + this.sdk_res_ver + "/";
+    }
+
+    public static SetBannerWidth(width:number)
+    {
+        PFU.WeChatBannerAd.customWidth = width;
+    }
+
+    public static SetBannerMaxHeight(height:number)
+    {
+        PFU.WeChatBannerAd.customMaxHeight = height;
+    }
 
     /**
      * name
@@ -141,7 +157,6 @@ class PfuSdk {
 
 
 
-    public static _clickBannerShowTime = 0;
     /**
      * 视频游戏复活功能
      * @param handle 
@@ -150,15 +165,15 @@ class PfuSdk {
      * @param isForceShare 
      */
     public static VideoRevive(handle: any, fun: Function, adunit?: string, isForceShare?: boolean)  {
-        let isShowClickBanner = false;
-        if(this._clickBannerShowTime ==0 || (this._clickBannerShowTime > 0 && (Date.now()- this._clickBannerShowTime) >= 60000))
+        let isShowClickBanner = true;
+        if(!PFU.PfuManager.GetInstance().GetTodayTimeAction())
         {
-            isShowClickBanner = true;
-        }
+            isShowClickBanner = false;
+        }   
 
         if (isShowClickBanner && PFU.PfuClickBannerRevive.GetInstance().IsBannerReviveOpen()) {
             PFU.PfuClickBannerRevive.GetInstance().ShowBannerRevive(handle,(type)=>{
-                this._clickBannerShowTime = Date.now();
+               
                 fun.call(handle,type);
             });
         } else  {

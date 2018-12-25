@@ -26,7 +26,8 @@ namespace PFU.UI {
         }
 
         private static LoadUIData() {
-            Laya.loader.load("PfusdkRes/UI/layaui/atlas/comp.atlas", Laya.Handler.create(this, this.CreateUIWindow));
+            Laya.loader.load(PfuGlobal.sdkCustomResRoot + "PfusdkRes/UI/layaui/atlas/comp.atlas", Laya.Handler.create(this, this.CreateUIWindow));
+            //Laya.loader.load("https://txpk.jfydgame.com/pfulayasdk/test/atlas/comp.atlas", Laya.Handler.create(this, this.CreateUIWindow));
         }
 
         private static AddStage(windowUI: any) {

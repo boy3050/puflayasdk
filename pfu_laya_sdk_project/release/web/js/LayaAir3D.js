@@ -29,10 +29,14 @@ var LayaAir3D = (function () {
         material.diffuseTexture = Laya.Texture2D.load("res/layabox.png");
         box.meshRender.material = material;
         //Laya.LocalStorage.clear();
+        //PfuSdk.SetSdkResPath("https://txpk.jfydgame.com/pfulayasdk/test/");
         //SDK初始化
+        PfuSdk.OpenCDNRes();
+        PfuSdk.SetBannerWidth(Laya.Browser.width * 0.28);
+        PfuSdk.SetBannerMaxHeight(Laya.Browser.height * 0.287);
         PfuSdk.InitConfig(this, function () {
             //FairyGUI创建
-            //PFU.UI.PfuSdkFairyUI.CreateUI();
+            //PFU.UI.PfuSdkFairyUI.CreateUI(()=>{});
             //LayaGUI创建
             PFU.UI.PfuSdkLayaUI.CreateUI();
             // for (let i = 0; i < 10; i++) {
@@ -41,13 +45,29 @@ var LayaAir3D = (function () {
             //         PFU.PfuGlobal.ShowDialog("显示Dia");
             //     });
             // }
-            PfuSdk.ShowBanner();
-            //PfuSdk.ShowPopupListGame();
+            PfuSdk.ShowPopupListGame();
             PfuSdk.ShowRedPacketBtn();
+            //PfuSdk.HideRedPacketBtn();
             Laya.timer.once(2000, _this, function () {
+                PfuSdk.ShowBanner();
+                Laya.timer.once(2000, _this, function () {
+                    // PfuSdk.ShowClickBannnerRevive(this, (type) => {
+                    //     if (type == PfuSdk.SUCCESS)  {
+                    //         console.log("ShowClickBannnerRevive success");
+                    //     }
+                    //     else  {
+                    //         console.log("ShowClickBannnerRevive fait");
+                    //     }
+                    //     PfuSdk.ShowBanner();
+                    // });
+                    PfuSdk.PopupRedPacket(_this, function () {
+                    });
+                });
                 // PfuSdk.ShowClickBannnerRevive(this,(type)=>{
                 // });
                 //PfuSdk.HideRedPacketBtn();
+                // PfuSdk.HidePopupListGame();
+                // PfuSdk.CanGetRedPacket();
                 //PFU.PfuRedPacketManager.GetInstance().TestRed();
                 // PfuSdk.PopupRedPacket(this,(type)=>{
                 // });
@@ -71,7 +91,7 @@ var LayaAir3D = (function () {
         PfuSdk.OnHide(function () {
         });
         //显示更多游戏列表
-        PfuSdk.ShowMoreGameList();
+        //PfuSdk.ShowMoreGameList();
         Laya.timer.once(4000, this, function () {
             //PfuSdk.HideMoreGameList();
             //显示Banner
@@ -85,35 +105,38 @@ var LayaAir3D = (function () {
             //         console.log(desc);
             //     }
             // });
-            PfuSdk.VideoRevive(_this, function (type, desc) {
-                if (PfuSdk.SUCCESS == type) {
-                }
-                else {
-                    //错误描述
-                    console.log(desc);
-                }
-            });
+            // PfuSdk.VideoRevive(this, (type, desc) => {
+            //     if (PfuSdk.SUCCESS == type) {
+            //         //给予奖励
+            //     }
+            //     else {
+            //         //错误描述
+            //         console.log(desc);
+            //     }
+            // });
         });
-        //单纯分享
-        PfuSdk.Share(this);
-        //分享 有奖励
-        PfuSdk.ShareAward(this, function (type, desc) {
-            if (PfuSdk.SUCCESS == type) {
-            }
-            else {
-                //错误描述
-                console.log(desc);
-            }
-        });
-        //激励视频
-        PfuSdk.Video(this, function (type, desc) {
-            if (PfuSdk.SUCCESS == type) {
-            }
-            else {
-                //错误描述
-                console.log(desc);
-            }
-        });
+        // //单纯分享
+        // PfuSdk.Share(this);
+        // //分享 有奖励
+        // PfuSdk.ShareAward(this, (type, desc) => {
+        //     if (PfuSdk.SUCCESS == type) {
+        //         //给予奖励
+        //     }
+        //     else {
+        //         //错误描述
+        //         console.log(desc);
+        //     }
+        // });
+        // //激励视频
+        // PfuSdk.Video(this, (type, desc) => {
+        //     if (PfuSdk.SUCCESS == type) {
+        //         //给予奖励
+        //     }
+        //     else {
+        //         //错误描述
+        //         console.log(desc);
+        //     }
+        // });
         console.log("Laya.version:" + Laya.version.charAt(0));
     }
     return LayaAir3D;

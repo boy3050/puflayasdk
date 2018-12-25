@@ -1,6 +1,8 @@
 namespace PFU.UI {
     export class RedPacketUI extends ui.RedPacketUIUI {
 
+        private awradPackageType = 0;
+
         constructor() {
             super();
             Laya.timer.frameLoop(1, this, this.OnUpdate);
@@ -25,10 +27,11 @@ namespace PFU.UI {
 
             this.btn_close_award.on(Laya.Event.CLICK, this, () => {
                 this.com_awradredpackage.visible = false;
-                PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.SUCCESS);
+                if (this.awradPackageType == 1)
+                    PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.SUCCESS);
             });
 
-            
+
             this.btn_close.on(Laya.Event.CLICK, this, () => {
                 this.com_openredpackage.visible = false;
                 PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.FAIL);
@@ -36,9 +39,17 @@ namespace PFU.UI {
 
             this.btn_red_open.on(Laya.Event.CLICK, this, this.OnRedPacketGiftAward);
 
-
             this.zOrder = PfuSdk.UI_ORDER_OTHER;
+
             Laya.stage.updateZOrder();
+
+            if (PfuRedPacketManager.OPEN_RED_ACTION_VIDEO) {
+                this.openredactiontip.text = "看视频领取";
+                this.openredTip2.text = "看视频有几率翻倍！"
+            } else {
+                this.openredactiontip.text = "分享领取";
+                this.openredTip2.text = "分享有几率翻倍！"
+            }
         }
         public OnUpdate() {
 
@@ -59,6 +70,7 @@ namespace PFU.UI {
         * @param money 
         */
         private UpdateIconMoney() {
+
             PFU.UI.PfuSdkLayaUI.UpdateIconMoney();
         }
 
@@ -88,8 +100,8 @@ namespace PFU.UI {
             for (let i = 0; i < count; i++) {
                 if (i < PfuRedPacketManager.GetInstance().GetEverydayAwardCount()) {
                     allgame.push({
-                            deveryNum: { text: "已领取" }
-                        });
+                        deveryNum: { text: "已领取" }
+                    });
                     continue;
                 }
 
@@ -126,8 +138,11 @@ namespace PFU.UI {
         }
 
         private EverydayAward(isDouble: boolean) {
-            PfuRedPacketManager.GetInstance().AwardEveryDay(isDouble);
+            let award = PfuRedPacketManager.GetInstance().AwardEveryDay(isDouble);
             this.UpdateIconMoney();
+
+            this.awradPackageType = 0;
+            this.OpenAwardRadPacket(award);
         }
 
         private OnEveryDoubleAward() {
@@ -136,7 +151,7 @@ namespace PFU.UI {
                 this.EverydayAward(true);
                 return;
             }
-            PfuSdk.Video(this, (type) => {
+            PfuSdk.ShareAward(this, (type) => {
                 if (type == PfuSdk.SUCCESS) {
                     this.com_everyday.visible = false;
                     this.EverydayAward(true);
@@ -168,19 +183,32 @@ namespace PFU.UI {
                 this.RedPacketGiftAward();
                 return;
             }
+            if (PfuRedPacketManager.OPEN_RED_ACTION_VIDEO) {
+                PfuSdk.Video(this, (type) => {
+                    if (type == PfuSdk.SUCCESS) {
+                        this.RedPacketGiftAward();
+                    } else {
+                        //PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.FAIL);
+                    }
+                });
+            } else {
+                PfuSdk.ShareAward(this, (type) => {
+                    if (type == PfuSdk.SUCCESS) {
+                        this.RedPacketGiftAward();
+                    } else {
+                        //PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.FAIL);
+                    }
+                });
+            }
 
-            PfuSdk.Video(this, (type) => {
-                if (type == PfuSdk.SUCCESS) {
-                    this.RedPacketGiftAward();
-                } else {
-                    PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.FAIL);
-                }
-            });
+
+
         }
 
         private RedPacketGiftAward() {
             this.com_openredpackage.visible = false;
             let award = PfuRedPacketManager.GetInstance().AwardGift();
+            this.awradPackageType = 1;
             this.OpenAwardRadPacket(award);
             this.UpdateIconMoney();
         }
@@ -188,7 +216,7 @@ namespace PFU.UI {
         private OpenAwardRadPacket(award: number) {
             this.com_awradredpackage.visible = true;
             this.allMoney_award.text = "" + (PfuRedPacketManager.GetInstance().GetMoney());
-            this.moneyNum_award.text = "" + award;
+            this.moneyNum_award.text = "" + award.toFixed(2);// Math.floor(award * 100) / 100;
         }
 
         //#endregion----------------

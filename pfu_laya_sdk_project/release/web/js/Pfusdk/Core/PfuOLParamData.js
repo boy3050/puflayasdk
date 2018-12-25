@@ -19,6 +19,7 @@ var PFU;
             this.pfuSdkPlayTime = 120 * 60;
             this.pfuSdkBannerRelive = 0;
             this.pfuSdkRed = PFU.PfuSwitch.OFF;
+            this.pfuSdkDailyTime = 3;
         };
         return PfuOLParamData;
     }());

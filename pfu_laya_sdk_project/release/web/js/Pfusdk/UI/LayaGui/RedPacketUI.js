@@ -11,6 +11,7 @@ var PFU;
             __extends(RedPacketUI, _super);
             function RedPacketUI() {
                 var _this = _super.call(this) || this;
+                _this.awradPackageType = 0;
                 Laya.timer.frameLoop(1, _this, _this.OnUpdate);
                 _this.InitIconEvent();
                 _this.bg_loader.loadImage(PFU.PfuGlobal.SDK_RES_CDN_PATH + "redgift/hb_di.png");
@@ -29,7 +30,8 @@ var PFU;
                 });
                 _this.btn_close_award.on(Laya.Event.CLICK, _this, function () {
                     _this.com_awradredpackage.visible = false;
-                    PFU.PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.SUCCESS);
+                    if (_this.awradPackageType == 1)
+                        PFU.PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.SUCCESS);
                 });
                 _this.btn_close.on(Laya.Event.CLICK, _this, function () {
                     _this.com_openredpackage.visible = false;
@@ -38,6 +40,14 @@ var PFU;
                 _this.btn_red_open.on(Laya.Event.CLICK, _this, _this.OnRedPacketGiftAward);
                 _this.zOrder = PfuSdk.UI_ORDER_OTHER;
                 Laya.stage.updateZOrder();
+                if (PFU.PfuRedPacketManager.OPEN_RED_ACTION_VIDEO) {
+                    _this.openredactiontip.text = "看视频领取";
+                    _this.openredTip2.text = "看视频有几率翻倍！";
+                }
+                else {
+                    _this.openredactiontip.text = "分享领取";
+                    _this.openredTip2.text = "分享有几率翻倍！";
+                }
                 return _this;
             }
             RedPacketUI.prototype.OnUpdate = function () {
@@ -109,8 +119,10 @@ var PFU;
                 this.EverydayAward(false);
             };
             RedPacketUI.prototype.EverydayAward = function (isDouble) {
-                PFU.PfuRedPacketManager.GetInstance().AwardEveryDay(isDouble);
+                var award = PFU.PfuRedPacketManager.GetInstance().AwardEveryDay(isDouble);
                 this.UpdateIconMoney();
+                this.awradPackageType = 0;
+                this.OpenAwardRadPacket(award);
             };
             RedPacketUI.prototype.OnEveryDoubleAward = function () {
                 var _this = this;
@@ -119,7 +131,7 @@ var PFU;
                     this.EverydayAward(true);
                     return;
                 }
-                PfuSdk.Video(this, function (type) {
+                PfuSdk.ShareAward(this, function (type) {
                     if (type == PfuSdk.SUCCESS) {
                         _this.com_everyday.visible = false;
                         _this.EverydayAward(true);
@@ -145,25 +157,36 @@ var PFU;
                     this.RedPacketGiftAward();
                     return;
                 }
-                PfuSdk.Video(this, function (type) {
-                    if (type == PfuSdk.SUCCESS) {
-                        _this.RedPacketGiftAward();
-                    }
-                    else {
-                        PFU.PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.FAIL);
-                    }
-                });
+                if (PFU.PfuRedPacketManager.OPEN_RED_ACTION_VIDEO) {
+                    PfuSdk.Video(this, function (type) {
+                        if (type == PfuSdk.SUCCESS) {
+                            _this.RedPacketGiftAward();
+                        }
+                        else {
+                        }
+                    });
+                }
+                else {
+                    PfuSdk.ShareAward(this, function (type) {
+                        if (type == PfuSdk.SUCCESS) {
+                            _this.RedPacketGiftAward();
+                        }
+                        else {
+                        }
+                    });
+                }
             };
             RedPacketUI.prototype.RedPacketGiftAward = function () {
                 this.com_openredpackage.visible = false;
                 var award = PFU.PfuRedPacketManager.GetInstance().AwardGift();
+                this.awradPackageType = 1;
                 this.OpenAwardRadPacket(award);
                 this.UpdateIconMoney();
             };
             RedPacketUI.prototype.OpenAwardRadPacket = function (award) {
                 this.com_awradredpackage.visible = true;
                 this.allMoney_award.text = "" + (PFU.PfuRedPacketManager.GetInstance().GetMoney());
-                this.moneyNum_award.text = "" + award;
+                this.moneyNum_award.text = "" + award.toFixed(2); // Math.floor(award * 100) / 100;
             };
             return RedPacketUI;
         }(ui.RedPacketUIUI));

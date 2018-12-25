@@ -19,7 +19,7 @@ var PFU;
             Laya.timer.loop(200, this, this.CheckAction);
         };
         PfuRedPacketManager.prototype.GetMoney = function () {
-            return this._redpacketData.moneyNum;
+            return this._redpacketData.moneyNum.toFixed(2); // Math.floor(this._redpacketData.moneyNum * 100) / 100;
         };
         PfuRedPacketManager.prototype.AddMoney = function (number) {
             var money = this._redpacketData.moneyNum;
@@ -27,7 +27,7 @@ var PFU;
             if (money > PfuRedPacketManager.redMax) {
                 money = PfuRedPacketManager.redMax;
             }
-            this._redpacketData.moneyNum = Math.floor(money * 100) / 100;
+            this._redpacketData.moneyNum = money;
         };
         PfuRedPacketManager.prototype.SetRedpacketHandle = function (handle, visibleCallback, showGiftCallback, showEveryDayCallBack, setIconposCallBack) {
             this._redpacketHandle = handle;
@@ -170,7 +170,7 @@ var PFU;
         PfuRedPacketManager.prototype.AwardEveryDay = function (isDouble) {
             var index = this._redpacketData.dayCount;
             if (index < 0 || index > PfuRedPacketManager.moneyList.length - 1) {
-                return;
+                return 0;
             }
             var awardCount = PfuRedPacketManager.moneyList[index];
             if (isDouble) {
@@ -181,6 +181,7 @@ var PFU;
             }
             PfuRedPacketManager.GetInstance().AddMoney(awardCount);
             PfuRedPacketManager.GetInstance().AddEverydayAwardCount();
+            return awardCount;
         };
         PfuRedPacketManager.prototype.TestRed = function () {
             while (this.CanShowRedPacketGift()) {
@@ -207,11 +208,11 @@ var PFU;
             else {
                 awardCount = PFU.BXRandom.Get().nextFloat(0.03, 0.2);
             }
-            var a = Math.floor(awardCount * 100) / 100;
+            var a = awardCount;
             this._redpacketData.remaining += a;
             PfuRedPacketManager.GetInstance().AddMoney(a);
             this._redpacketData.awardRedCount++;
-            //this.Save();
+            this.Save();
             //奖励
             console.log("奖励第" + this._redpacketData.awardRedCount + "次，奖励金额" + a + "元，总金额" + this._redpacketData.moneyNum);
             return a;
@@ -235,6 +236,7 @@ var PFU;
         };
         return PfuRedPacketManager;
     }());
+    PfuRedPacketManager.OPEN_RED_ACTION_VIDEO = false;
     PfuRedPacketManager.MONEY_MAX = 20;
     PfuRedPacketManager.DAY_COUNT = 7;
     //19.8 = 9.2 + 10.78

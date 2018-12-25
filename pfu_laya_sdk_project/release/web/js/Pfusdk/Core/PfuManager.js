@@ -74,6 +74,7 @@ var PFU;
             this._wechatparam.value = new PFU.PfuOLParamData();
             this._wechatparam.value.Init();
             this.GetShareNum();
+            this.Load();
         }
         PfuManager.GetInstance = function () {
             if (!this.instance) {
@@ -783,6 +784,62 @@ var PFU;
                 }
             }, jumpId, jumpPath);
         };
+        //#region 存储
+        PfuManager.prototype.Load = function () {
+            var json = PFU.LocalSaveUtils.GetJsonObject("playnewDay");
+            if (json != null && json != undefined) {
+                this._DB = json;
+            }
+            else {
+                this._DB = new PfuNewDay();
+                this._DB.time = 0;
+                this._DB.playTimeCount = 0;
+            }
+            return this._DB;
+        };
+        PfuManager.prototype.Save = function () {
+            PFU.LocalSaveUtils.SaveJsonObject("playnewDay", this._DB);
+        };
+        PfuManager.prototype.UpdateNewDay = function () {
+            //是否为新的一天
+            if (this.IsNewDay()) {
+                var date = new Date();
+                var curDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                this._DB.time = curDay.getTime();
+                this._DB.playTimeCount = 0;
+                this.Save();
+            }
+        };
+        PfuManager.prototype.AddPlayTimeCount = function (second) {
+            this._DB.playTimeCount += second;
+            console.log("今日游戏时长:" + this._DB.playTimeCount);
+            this.Save();
+        };
+        /**
+         * 获取今天完了多久
+         */
+        PfuManager.prototype.GetTodayPlaySecond = function () {
+            return this._DB.playTimeCount + PFU.PfuPlatformManager.GetInstance().GetRunTime();
+        };
+        /**
+         * 获取SDK游戏时长开启的功能
+         */
+        PfuManager.prototype.GetTodayTimeAction = function () {
+            return this.GetTodayPlaySecond() > this.OLParam.pfuSdkDailyTime * 60;
+        };
+        PfuManager.prototype.IsNewDay = function () {
+            if (this._DB.time == 0) {
+                return true;
+            }
+            var lastTime = this._DB.time;
+            var date = new Date();
+            var curDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            var curTime = curDay.getTime();
+            if (curTime > lastTime) {
+                return true;
+            }
+            return false;
+        };
         return PfuManager;
     }());
     //#region 统一在线参数管理
@@ -863,6 +920,12 @@ var PFU;
         function PfuMoreGameBean() {
         }
         return PfuMoreGameBean;
+    }());
+    var PfuNewDay = (function () {
+        function PfuNewDay() {
+            this.playTimeCount = 0;
+        }
+        return PfuNewDay;
     }());
     var PfuMoreGameData = (function () {
         function PfuMoreGameData() {

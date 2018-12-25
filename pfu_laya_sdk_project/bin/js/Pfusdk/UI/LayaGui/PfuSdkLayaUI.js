@@ -17,7 +17,8 @@ var PFU;
                 UI.SceneMatchingLayaUtils.HEIGTH = laya.utils.Browser.height;
             };
             PfuSdkLayaUI.LoadUIData = function () {
-                Laya.loader.load("PfusdkRes/UI/layaui/atlas/comp.atlas", Laya.Handler.create(this, this.CreateUIWindow));
+                Laya.loader.load(PFU.PfuGlobal.sdkCustomResRoot + "PfusdkRes/UI/layaui/atlas/comp.atlas", Laya.Handler.create(this, this.CreateUIWindow));
+                //Laya.loader.load("https://txpk.jfydgame.com/pfulayasdk/test/atlas/comp.atlas", Laya.Handler.create(this, this.CreateUIWindow));
             };
             PfuSdkLayaUI.AddStage = function (windowUI) {
                 windowUI.scale(this._scaleX, this._scaleY);

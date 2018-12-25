@@ -3,6 +3,10 @@
 
         public static SDK_RES_CDN_PATH = "https://txpk.jfydgame.com/pfulayasdk/"
 
+        public static SDK_CDN_RES_PATH = "https://txpk.jfydgame.com/pfulayasdk/ver/";
+
+        public static sdkCustomResRoot = "";
+
         private static focusCallback: any = null;
         private static focusHandler: Function = null;
 
@@ -51,7 +55,7 @@
         //创建Banner广告条
         public static CreateBanner(adId: string, dir: BannerDirction, fun: Function) {
             //let adId =  PfuManager.GetInstance().GetWegameAd().banner;
-            return WeChatBannerAd.GetInstance().Create(adId, dir, fun);
+            return WeChatBannerAd.GetInstance().Create(adId, dir, fun,WeChatBannerAd.customWidth);
         }
         //显示Banner广告
         public static ShowBanner() {
@@ -62,8 +66,8 @@
             WeChatBannerAd.GetInstance().Hide();
         }
         //刷新Banner广告
-        public static RefreshBanner(fun: Function, dir?: BannerDirction,adWidth?:number) {
-            WeChatBannerAd.GetInstance().Refresh(fun,dir,adWidth);
+        public static RefreshBanner(fun: Function, dir?: BannerDirction,adWidht?:number) {
+            WeChatBannerAd.GetInstance().Refresh(fun,dir,adWidht);
         }
         public static GetLastBannnerDir():BannerDirction
         {

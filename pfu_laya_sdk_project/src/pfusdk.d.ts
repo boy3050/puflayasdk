@@ -18,6 +18,24 @@ interface PfuSdk {
 
 
     UI_ORDER_MOREGAME;// UI排序 moregameUI 交叉推广按钮更多游戏按钮红包按钮层级关系
+
+    //#region 在Ini之前调用的接口
+
+    /**
+     * 打开SDK使用CDN资源不使用本地资源
+     */
+    OpenCDNRes();
+    /**
+     * 设置Banner宽度
+     */
+    SetBannerWidth(width: number);
+    /**
+     * 限制Banner最大高度
+     */
+    SetBannerMaxHeight(height: number);
+
+    //#endregion
+
     /**
      * 必须*** 第一种初始化(Init和InitConfig只能选择一种来初始化)
      */
@@ -185,12 +203,12 @@ interface PfuSdk {
     /**
      * 弹出获得红包
      */
-    PopupRedPacket(handle:any,callback:Function);
+    PopupRedPacket(handle: any, callback: Function);
 
     /**
      * 是否可以领取红包
      */
-    CanGetRedPacket():boolean
+    CanGetRedPacket(): boolean
 
     /**
      * 设置红包按钮位置
@@ -207,12 +225,12 @@ declare const PfuSdk: PfuSdk;
 
 declare module PFU.UI {
     //FairyGui接口
-    class PfuSdkFairyUI  {
+    class PfuSdkFairyUI {
 
-        public static CreateUI();
+        public static CreateUI(callback: Function);
     }
     //LayaUI接口
-    class PfuSdkLayaUI  {
+    class PfuSdkLayaUI {
     	/*
         * 特殊适配方案，将页面缩放处理，并调整底部适配偏移值
         * scaleX

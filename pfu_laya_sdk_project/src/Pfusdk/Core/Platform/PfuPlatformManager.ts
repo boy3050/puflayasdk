@@ -57,7 +57,7 @@ namespace PFU {
             //BX.NotificationCenter.GetInstance().AddObserver(this, this.parseMsg2000, PfuPlatformManager.NOTIFYY_MSG_ID + "2000");
 
             this.Load();
-
+            this._lastTime = Date.now();
 
             if (WeChatUtils.GetInstance().IsWeGame()) {
                 if (this._privateKey != "") {
@@ -103,9 +103,11 @@ namespace PFU {
         }
 
         private _lastTime = 0;
+ 
 
         public OnShow(args: any) {
             PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
+            PFU.PfuManager.GetInstance().UpdateNewDay();
             this._lastTime = Date.now();
         }
 
@@ -113,8 +115,10 @@ namespace PFU {
             if (this._lastTime > 0) {
                 //取秒
                 let time = (Date.now() - this._lastTime) / 1000;
-                console.log("本次游戏时长/秒:" + time);
+                console.log("本次计算时长/秒:" + time);
                 this._platformUserData.userPlayTime += Math.floor(time);
+                PFU.PfuManager.GetInstance().AddPlayTimeCount(Math.floor(time));
+
                 console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime)
                 this.Save();
 
@@ -131,9 +135,16 @@ namespace PFU {
         {
             if(this._platformUserData && this._platformUserData.userPlayTime)
             {
-                return this._platformUserData.userPlayTime;
+                let time = (Date.now() - this._lastTime) / 1000;
+                return this._platformUserData.userPlayTime + Math.floor(time);
             }
             return 0;
+        }
+
+        public GetRunTime():number
+        {
+            let time = (Date.now() - this._lastTime) / 1000;
+            return Math.floor(time);
         }
 
         //private _notifShareInGames: BX.Dictionary<number, Array<Platform_2000_resp_Data>> = new BX.Dictionary<number, Array<Platform_2000_resp_Data>>();

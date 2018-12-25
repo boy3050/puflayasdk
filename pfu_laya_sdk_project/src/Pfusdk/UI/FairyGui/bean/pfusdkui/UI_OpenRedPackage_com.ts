@@ -10,7 +10,7 @@ module pfusdkui {
 		public m_n3:fairygui.GTextField;
 		public m_n4:fairygui.GTextField;
 		public m_voidStr:fairygui.GTextField;
-		public m_n6:fairygui.GTextField;
+		public m_openredtip2:fairygui.GTextField;
 		public m_n7:fairygui.GTextField;
 		public m_btn_close:UI_redpackageClose;
 
@@ -33,7 +33,7 @@ module pfusdkui {
 			this.m_n3 = <fairygui.GTextField><any>(this.getChildAt(3));
 			this.m_n4 = <fairygui.GTextField><any>(this.getChildAt(4));
 			this.m_voidStr = <fairygui.GTextField><any>(this.getChildAt(5));
-			this.m_n6 = <fairygui.GTextField><any>(this.getChildAt(6));
+			this.m_openredtip2 = <fairygui.GTextField><any>(this.getChildAt(6));
 			this.m_n7 = <fairygui.GTextField><any>(this.getChildAt(7));
 			this.m_btn_close = <UI_redpackageClose><any>(this.getChildAt(8));
 		}

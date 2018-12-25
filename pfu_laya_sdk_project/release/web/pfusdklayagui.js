@@ -63,7 +63,7 @@ var PFU;
                 UI.SceneMatchingLayaUtils.HEIGTH = laya.utils.Browser.height;
             };
             PfuSdkLayaUI.LoadUIData = function() {
-                Laya.loader.load("PfusdkRes/UI/layaui/atlas/comp.atlas", Laya.Handler.create(this, this.CreateUIWindow));
+                Laya.loader.load(PFU.PfuGlobal.sdkCustomResRoot + "PfusdkRes/UI/layaui/atlas/comp.atlas", Laya.Handler.create(this, this.CreateUIWindow));
             };
             PfuSdkLayaUI.AddStage = function(windowUI) {
                 windowUI.scale(this._scaleX, this._scaleY);
@@ -410,23 +410,26 @@ var ui;
         type: "View",
         props: {
             width: 750,
-            height: 1334
+            height: 1334,
+            centerY: .5,
+            centerX: .5
         },
         child: [ {
-            type: "Sprite",
-            props: {
-                y: -133,
-                width: 750,
-                var: "loaderImg",
-                height: 1600
-            }
-        }, {
             type: "Image",
             props: {
                 y: 813,
                 x: 331,
                 var: "cancel",
                 skin: "comp/dianjifuhuo.png"
+            }
+        }, {
+            type: "Image",
+            props: {
+                width: 750,
+                var: "loaderImg",
+                height: 1600,
+                centerY: .5,
+                centerX: .5
             }
         } ]
     };
@@ -880,6 +883,7 @@ var ui;
                 props: {
                     y: 571,
                     x: 330,
+                    var: "openredactiontip",
                     text: "看视频领取",
                     fontSize: 25,
                     color: "#FEA963"
@@ -889,6 +893,7 @@ var ui;
                 props: {
                     y: 896,
                     x: 246,
+                    var: "openredTip2",
                     text: "看视频有几率翻倍！",
                     fontSize: 33,
                     color: "#FEFFD5"
@@ -1784,10 +1789,10 @@ var PFU;
                 var _this = _super.call(this) || this;
                 _this.visible = false;
                 Laya.timer.frameLoop(1, _this, _this.OnUpdate);
-                _this.loaderImg.loadImage(PFU.PfuGlobal.SDK_RES_CDN_PATH + "bannerrevive/clickbannerbg.jpg");
                 _this.cancel.on(Laya.Event.CLICK, _this, function() {
                     PFU.PfuClickBannerRevive.GetInstance().Cancel();
                 });
+                _this.loaderImg.skin = PFU.PfuGlobal.SDK_RES_CDN_PATH + "bannerrevive/clickbannerbg.jpg";
                 _this.zOrder = PfuSdk.UI_ORDER_OTHER;
                 Laya.stage.updateZOrder();
                 return _this;
@@ -1822,6 +1827,7 @@ var PFU;
             __extends(RedPacketUI, _super);
             function RedPacketUI() {
                 var _this = _super.call(this) || this;
+                _this.awradPackageType = 0;
                 Laya.timer.frameLoop(1, _this, _this.OnUpdate);
                 _this.InitIconEvent();
                 _this.bg_loader.loadImage(PFU.PfuGlobal.SDK_RES_CDN_PATH + "redgift/hb_di.png");
@@ -1839,7 +1845,7 @@ var PFU;
                 });
                 _this.btn_close_award.on(Laya.Event.CLICK, _this, function() {
                     _this.com_awradredpackage.visible = false;
-                    PFU.PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.SUCCESS);
+                    if (_this.awradPackageType == 1) PFU.PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.SUCCESS);
                 });
                 _this.btn_close.on(Laya.Event.CLICK, _this, function() {
                     _this.com_openredpackage.visible = false;
@@ -1848,6 +1854,13 @@ var PFU;
                 _this.btn_red_open.on(Laya.Event.CLICK, _this, _this.OnRedPacketGiftAward);
                 _this.zOrder = PfuSdk.UI_ORDER_OTHER;
                 Laya.stage.updateZOrder();
+                if (PFU.PfuRedPacketManager.OPEN_RED_ACTION_VIDEO) {
+                    _this.openredactiontip.text = "看视频领取";
+                    _this.openredTip2.text = "看视频有几率翻倍！";
+                } else {
+                    _this.openredactiontip.text = "分享领取";
+                    _this.openredTip2.text = "分享有几率翻倍！";
+                }
                 return _this;
             }
             RedPacketUI.prototype.OnUpdate = function() {};
@@ -1900,8 +1913,10 @@ var PFU;
                 this.EverydayAward(false);
             };
             RedPacketUI.prototype.EverydayAward = function(isDouble) {
-                PFU.PfuRedPacketManager.GetInstance().AwardEveryDay(isDouble);
+                var award = PFU.PfuRedPacketManager.GetInstance().AwardEveryDay(isDouble);
                 this.UpdateIconMoney();
+                this.awradPackageType = 0;
+                this.OpenAwardRadPacket(award);
             };
             RedPacketUI.prototype.OnEveryDoubleAward = function() {
                 var _this = this;
@@ -1910,7 +1925,7 @@ var PFU;
                     this.EverydayAward(true);
                     return;
                 }
-                PfuSdk.Video(this, function(type) {
+                PfuSdk.ShareAward(this, function(type) {
                     if (type == PfuSdk.SUCCESS) {
                         _this.com_everyday.visible = false;
                         _this.EverydayAward(true);
@@ -1930,24 +1945,31 @@ var PFU;
                     this.RedPacketGiftAward();
                     return;
                 }
-                PfuSdk.Video(this, function(type) {
-                    if (type == PfuSdk.SUCCESS) {
-                        _this.RedPacketGiftAward();
-                    } else {
-                        PFU.PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.FAIL);
-                    }
-                });
+                if (PFU.PfuRedPacketManager.OPEN_RED_ACTION_VIDEO) {
+                    PfuSdk.Video(this, function(type) {
+                        if (type == PfuSdk.SUCCESS) {
+                            _this.RedPacketGiftAward();
+                        } else {}
+                    });
+                } else {
+                    PfuSdk.ShareAward(this, function(type) {
+                        if (type == PfuSdk.SUCCESS) {
+                            _this.RedPacketGiftAward();
+                        } else {}
+                    });
+                }
             };
             RedPacketUI.prototype.RedPacketGiftAward = function() {
                 this.com_openredpackage.visible = false;
                 var award = PFU.PfuRedPacketManager.GetInstance().AwardGift();
+                this.awradPackageType = 1;
                 this.OpenAwardRadPacket(award);
                 this.UpdateIconMoney();
             };
             RedPacketUI.prototype.OpenAwardRadPacket = function(award) {
                 this.com_awradredpackage.visible = true;
                 this.allMoney_award.text = "" + PFU.PfuRedPacketManager.GetInstance().GetMoney();
-                this.moneyNum_award.text = "" + award;
+                this.moneyNum_award.text = "" + award.toFixed(2);
             };
             return RedPacketUI;
         }(ui.RedPacketUIUI);

@@ -36,6 +36,30 @@ package
 		public static function GetBoxListComplete():Boolean {
 			return PfuSdkHelper.JSObj().GetBoxListComplete;
 		}
+		/**
+		* 打开SDK使用CDN资源不使用本地资源
+		*/
+		public static function OpenCDNRes()
+		{
+			PfuSdkHelper.JSObj().OpenCDNRes();
+		}
+
+		/**
+		* 设置Banner宽度
+		*/
+		public static function SetBannerWidth(width:number)
+		{
+			PfuSdkHelper.JSObj().SetBannerWidth(width);
+		}
+
+		/**
+     	* 限制Banner最大高度
+     	*/
+    	public static function SetBannerMaxHeight(height:number)
+		{
+			PfuSdkHelper.JSObj().SetBannerMaxHeight(height);
+		}
+
 
 		/**
 		* 初始化 获取 在线参数 平台登录  微信登录 授权

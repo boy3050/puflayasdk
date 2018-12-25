@@ -5,15 +5,15 @@ var PFU;
         var PfuSdkFairyUI = (function () {
             function PfuSdkFairyUI() {
             }
-            PfuSdkFairyUI.CreateUI = function () {
+            PfuSdkFairyUI.CreateUI = function (callback) {
                 fairygui.UIConfig.packageFileExtension = "bin";
                 pfusdkui.pfusdkuiBinder.bindAll();
                 Laya.stage.addChild(fairygui.GRoot.inst.displayObject);
-                this.LoadUIData();
+                this.LoadUIData(callback);
                 UI.SceneMatchingUtils.WIDTH = laya.utils.Browser.width;
                 UI.SceneMatchingUtils.HEIGTH = laya.utils.Browser.height;
             };
-            PfuSdkFairyUI.LoadUIData = function () {
+            PfuSdkFairyUI.LoadUIData = function (callback) {
                 var _this = this;
                 var fairyG = "@";
                 if (Laya.version.charAt(0) == '2') {
@@ -21,11 +21,12 @@ var PFU;
                     fairyG = "_";
                 }
                 Laya.loader.load([
-                    { url: "PfusdkRes/UI/fairygui/pfusdkui.bin", type: Laya.Loader.BUFFER },
-                    { url: "PfusdkRes/UI/fairygui/pfusdkui" + fairyG + "atlas0.png", type: Laya.Loader.IMAGE }
+                    { url: PFU.PfuGlobal.sdkCustomResRoot + "PfusdkRes/UI/fairygui/pfusdkui.bin", type: Laya.Loader.BUFFER },
+                    { url: PFU.PfuGlobal.sdkCustomResRoot + "PfusdkRes/UI/fairygui/pfusdkui" + fairyG + "atlas0.png", type: Laya.Loader.IMAGE }
                 ], Laya.Handler.create(this, function () {
-                    fairygui.UIPackage.addPackage("PfusdkRes/UI/fairygui/pfusdkui");
+                    fairygui.UIPackage.addPackage(PFU.PfuGlobal.sdkCustomResRoot + "PfusdkRes/UI/fairygui/pfusdkui");
                     _this.CreateUIWindow();
+                    callback();
                 }));
             };
             PfuSdkFairyUI.CreateUIWindow = function () {

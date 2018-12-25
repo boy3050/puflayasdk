@@ -57,6 +57,8 @@ namespace PFU {
         public pfuSdkBannerRelive;
         //1-使用红包功能 0-隐藏红包功能 审核模式自动隐藏
         public pfuSdkRed;
+        //SDK每日时长
+        public pfuSdkDailyTime;
 
         public Init() {
             
@@ -84,6 +86,8 @@ namespace PFU {
             this.pfuSdkBannerRelive = 0;
 
             this.pfuSdkRed = PfuSwitch.OFF;
+
+            this.pfuSdkDailyTime = 3;
         }
         //AddCode	
 

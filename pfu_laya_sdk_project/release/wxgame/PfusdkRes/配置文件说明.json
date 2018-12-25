@@ -40,5 +40,8 @@
     //两侧更多游戏显示类型 0 两侧都显示， 1 显示左侧  2显示右侧 -1不显示更多游戏
     "ui_moreGameType":0,
     //显示交叉推广底部框时是否排除navigateToMiniAppId   0：排除  1 不排除(不在navigateToMiniAppId列表的用参数显示二维码) -1:不显示底部框
-    "ui_crossGameListType":0
+    "ui_crossGameListType": 0,
+    //Banner广告宽度，实际测试300应该为最小，Banner高度由广告方来自动变化
+    "bannerWidth":300
+    
 }

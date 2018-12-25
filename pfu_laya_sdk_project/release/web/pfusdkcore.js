@@ -465,7 +465,7 @@ var PFU;
         WeChatIncentiveAd.prototype.PlayNewVideo = function(adunit) {
             var _this = this;
             if (PFU.WeChatUtils.GetInstance().IsWeGame()) {
-                if (typeof wx.createBannerAd === "function") {
+                if (typeof wx.createRewardedVideoAd === "function") {
                     var video = wx.createRewardedVideoAd({
                         adUnitId: adunit
                     });
@@ -533,7 +533,6 @@ var PFU;
             if (adWidth == undefined || adWidth == void 0 || adWidth == null) {
                 adWidth = laya.utils.Browser.clientWidth;
             }
-            var sceneHeigth = laya.utils.Browser.clientHeight;
             if (PFU.WeChatUtils.GetInstance().IsWeGame()) {
                 if (typeof wx.createBannerAd === "function") {
                     this._bannerAd = wx.createBannerAd({
@@ -546,14 +545,22 @@ var PFU;
                     });
                     this._bannerAd.onResize(function(res) {
                         _this._bannerAd.style.width = res.width;
-                        _this._bannerAd.style.heigth = res.heigth;
+                        _this._bannerAd.style.height = res.height;
                         if (dir == BannerDirction.DOWN_CENTER) {
-                            leftPos = (laya.utils.Browser.clientWidth - res.width) / 2;
+                            if (WeChatBannerAd.customMaxHeight) {
+                                if (res.height > WeChatBannerAd.customMaxHeight) {
+                                    var height = WeChatBannerAd.customMaxHeight;
+                                    var width = height * res.width / res.height;
+                                    _this._bannerAd.style.width = width;
+                                    _this._bannerAd.style.height = height;
+                                }
+                            }
+                            leftPos = (laya.utils.Browser.clientWidth - _this._bannerAd.style.width) / 2;
                             var a = 0;
                             if (Laya.Browser.onAndroid && (_this.isQuanMian() || _this.isLiuHai())) {
                                 a = 34;
                             }
-                            topPos = laya.utils.Browser.clientHeight - res.height - a;
+                            topPos = laya.utils.Browser.clientHeight - _this._bannerAd.style.height - a;
                         } else if (dir == BannerDirction.CENTER) {
                             leftPos = (laya.utils.Browser.clientWidth - res.width) / 2;
                             topPos = (laya.utils.Browser.clientHeight - res.height) / 2;
@@ -625,7 +632,7 @@ var PFU;
             if (dir == undefined || dir == void 0 || dir == null) {
                 tempDir = this._bannerDir;
             }
-            this.Create(this._adId, tempDir, fun);
+            this.Create(this._adId, tempDir, fun, adWidth);
         };
         WeChatBannerAd.prototype.GetLastBannerDir = function() {
             return this._bannerDir;
@@ -1178,6 +1185,7 @@ var PFU;
         PfuPlatformManager.prototype.Init = function() {
             this._privateKey = PFU.PfuConfig.Config.privateKey;
             this.Load();
+            this._lastTime = Date.now();
             if (PFU.WeChatUtils.GetInstance().IsWeGame()) {
                 if (this._privateKey != "") {
                     PfuPlatformManager.GetInstance().LoginWegame(PFU.PfuConfig.Config.wxId, PFU.PfuConfig.Config.appId);
@@ -1213,13 +1221,15 @@ var PFU;
         };
         PfuPlatformManager.prototype.OnShow = function(args) {
             PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
+            PFU.PfuManager.GetInstance().UpdateNewDay();
             this._lastTime = Date.now();
         };
         PfuPlatformManager.prototype.OnHide = function() {
             if (this._lastTime > 0) {
                 var time = (Date.now() - this._lastTime) / 1e3;
-                console.log("本次游戏时长/秒:" + time);
+                console.log("本次计算时长/秒:" + time);
                 this._platformUserData.userPlayTime += Math.floor(time);
+                PFU.PfuManager.GetInstance().AddPlayTimeCount(Math.floor(time));
                 console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime);
                 this.Save();
                 this._lastTime = Date.now();
@@ -1230,9 +1240,14 @@ var PFU;
         };
         PfuPlatformManager.prototype.GetUserPlayTime = function() {
             if (this._platformUserData && this._platformUserData.userPlayTime) {
-                return this._platformUserData.userPlayTime;
+                var time = (Date.now() - this._lastTime) / 1e3;
+                return this._platformUserData.userPlayTime + Math.floor(time);
             }
             return 0;
+        };
+        PfuPlatformManager.prototype.GetRunTime = function() {
+            var time = (Date.now() - this._lastTime) / 1e3;
+            return Math.floor(time);
         };
         PfuPlatformManager.prototype.parseMsg2000 = function(resp) {
             for (var i = 0; i < resp.items.length; i++) {
@@ -1973,6 +1988,7 @@ var PFU;
             this.pfuSdkPlayTime = 120 * 60;
             this.pfuSdkBannerRelive = 0;
             this.pfuSdkRed = PFU.PfuSwitch.OFF;
+            this.pfuSdkDailyTime = 3;
         };
         return PfuOLParamData;
     }();
@@ -2127,6 +2143,7 @@ var PFU;
             this._wechatparam.value = new PFU.PfuOLParamData();
             this._wechatparam.value.Init();
             this.GetShareNum();
+            this.Load();
         }
         PfuManager.GetInstance = function() {
             if (!this.instance) {
@@ -2741,6 +2758,53 @@ var PFU;
                 }
             }, jumpId, jumpPath);
         };
+        PfuManager.prototype.Load = function() {
+            var json = PFU.LocalSaveUtils.GetJsonObject("playnewDay");
+            if (json != null && json != undefined) {
+                this._DB = json;
+            } else {
+                this._DB = new PfuNewDay();
+                this._DB.time = 0;
+                this._DB.playTimeCount = 0;
+            }
+            return this._DB;
+        };
+        PfuManager.prototype.Save = function() {
+            PFU.LocalSaveUtils.SaveJsonObject("playnewDay", this._DB);
+        };
+        PfuManager.prototype.UpdateNewDay = function() {
+            if (this.IsNewDay()) {
+                var date = new Date();
+                var curDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                this._DB.time = curDay.getTime();
+                this._DB.playTimeCount = 0;
+                this.Save();
+            }
+        };
+        PfuManager.prototype.AddPlayTimeCount = function(second) {
+            this._DB.playTimeCount += second;
+            console.log("今日游戏时长:" + this._DB.playTimeCount);
+            this.Save();
+        };
+        PfuManager.prototype.GetTodayPlaySecond = function() {
+            return this._DB.playTimeCount + PFU.PfuPlatformManager.GetInstance().GetRunTime();
+        };
+        PfuManager.prototype.GetTodayTimeAction = function() {
+            return this.GetTodayPlaySecond() > this.OLParam.pfuSdkDailyTime * 60;
+        };
+        PfuManager.prototype.IsNewDay = function() {
+            if (this._DB.time == 0) {
+                return true;
+            }
+            var lastTime = this._DB.time;
+            var date = new Date();
+            var curDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            var curTime = curDay.getTime();
+            if (curTime > lastTime) {
+                return true;
+            }
+            return false;
+        };
         return PfuManager;
     }();
     PfuManager.TestMode_ShareDesc = "这游戏真好玩，快来一起体验吧!";
@@ -2808,6 +2872,12 @@ var PFU;
         function PfuMoreGameBean() {}
         return PfuMoreGameBean;
     }();
+    var PfuNewDay = function() {
+        function PfuNewDay() {
+            this.playTimeCount = 0;
+        }
+        return PfuNewDay;
+    }();
     var PfuMoreGameData = function() {
         function PfuMoreGameData() {}
         return PfuMoreGameData;
@@ -2847,7 +2917,7 @@ var PFU;
             return PFU.PfuManager.GetInstance().IsMiniAppIn();
         };
         PfuGlobal.CreateBanner = function(adId, dir, fun) {
-            return PFU.WeChatBannerAd.GetInstance().Create(adId, dir, fun);
+            return PFU.WeChatBannerAd.GetInstance().Create(adId, dir, fun, PFU.WeChatBannerAd.customWidth);
         };
         PfuGlobal.ShowBanner = function() {
             PFU.WeChatBannerAd.GetInstance().Show();
@@ -2855,8 +2925,8 @@ var PFU;
         PfuGlobal.HideBanner = function() {
             PFU.WeChatBannerAd.GetInstance().Hide();
         };
-        PfuGlobal.RefreshBanner = function(fun, dir, adWidth) {
-            PFU.WeChatBannerAd.GetInstance().Refresh(fun, dir, adWidth);
+        PfuGlobal.RefreshBanner = function(fun, dir, adWidht) {
+            PFU.WeChatBannerAd.GetInstance().Refresh(fun, dir, adWidht);
         };
         PfuGlobal.GetLastBannnerDir = function() {
             return PFU.WeChatBannerAd.GetInstance().GetLastBannerDir();
@@ -2938,6 +3008,8 @@ var PFU;
         return PfuGlobal;
     }();
     PfuGlobal.SDK_RES_CDN_PATH = "https://txpk.jfydgame.com/pfulayasdk/";
+    PfuGlobal.SDK_CDN_RES_PATH = "https://txpk.jfydgame.com/pfulayasdk/ver/";
+    PfuGlobal.sdkCustomResRoot = "";
     PfuGlobal.focusCallback = null;
     PfuGlobal.focusHandler = null;
     PfuGlobal._addDialogCallback = null;
@@ -3418,7 +3490,7 @@ var PFU;
             Laya.timer.loop(200, this, this.CheckAction);
         };
         PfuRedPacketManager.prototype.GetMoney = function() {
-            return this._redpacketData.moneyNum;
+            return this._redpacketData.moneyNum.toFixed(2);
         };
         PfuRedPacketManager.prototype.AddMoney = function(number) {
             var money = this._redpacketData.moneyNum;
@@ -3426,7 +3498,7 @@ var PFU;
             if (money > PfuRedPacketManager.redMax) {
                 money = PfuRedPacketManager.redMax;
             }
-            this._redpacketData.moneyNum = Math.floor(money * 100) / 100;
+            this._redpacketData.moneyNum = money;
         };
         PfuRedPacketManager.prototype.SetRedpacketHandle = function(handle, visibleCallback, showGiftCallback, showEveryDayCallBack, setIconposCallBack) {
             this._redpacketHandle = handle;
@@ -3540,7 +3612,7 @@ var PFU;
         PfuRedPacketManager.prototype.AwardEveryDay = function(isDouble) {
             var index = this._redpacketData.dayCount;
             if (index < 0 || index > PfuRedPacketManager.moneyList.length - 1) {
-                return;
+                return 0;
             }
             var awardCount = PfuRedPacketManager.moneyList[index];
             if (isDouble) {
@@ -3550,6 +3622,7 @@ var PFU;
             }
             PfuRedPacketManager.GetInstance().AddMoney(awardCount);
             PfuRedPacketManager.GetInstance().AddEverydayAwardCount();
+            return awardCount;
         };
         PfuRedPacketManager.prototype.TestRed = function() {
             while (this.CanShowRedPacketGift()) {
@@ -3569,10 +3642,11 @@ var PFU;
             } else {
                 awardCount = PFU.BXRandom.Get().nextFloat(.03, .2);
             }
-            var a = Math.floor(awardCount * 100) / 100;
+            var a = awardCount;
             this._redpacketData.remaining += a;
             PfuRedPacketManager.GetInstance().AddMoney(a);
             this._redpacketData.awardRedCount++;
+            this.Save();
             console.log("奖励第" + this._redpacketData.awardRedCount + "次，奖励金额" + a + "元，总金额" + this._redpacketData.moneyNum);
             return a;
         };
@@ -3593,6 +3667,7 @@ var PFU;
         };
         return PfuRedPacketManager;
     }();
+    PfuRedPacketManager.OPEN_RED_ACTION_VIDEO = false;
     PfuRedPacketManager.MONEY_MAX = 20;
     PfuRedPacketManager.DAY_COUNT = 7;
     PfuRedPacketManager.moneyList = [ 1.15, 1.3, .8, .2, .35, .2, .51 ];
@@ -3642,6 +3717,15 @@ var PfuSdk = function() {
     };
     PfuSdk.GetConfig = function() {
         return PFU.PfuConfig.Config;
+    };
+    PfuSdk.OpenCDNRes = function() {
+        PFU.PfuGlobal.sdkCustomResRoot = PFU.PfuGlobal.SDK_CDN_RES_PATH + this.sdk_res_ver + "/";
+    };
+    PfuSdk.SetBannerWidth = function(width) {
+        PFU.WeChatBannerAd.customWidth = width;
+    };
+    PfuSdk.SetBannerMaxHeight = function(height) {
+        PFU.WeChatBannerAd.customMaxHeight = height;
     };
     PfuSdk.InitConfig = function(handler, callback) {
         console.log("pfu sdk ver:" + this.sdk_ver);
@@ -3699,14 +3783,12 @@ var PfuSdk = function() {
         }, true, qureyPos, addQurey);
     };
     PfuSdk.VideoRevive = function(handle, fun, adunit, isForceShare) {
-        var _this = this;
-        var isShowClickBanner = false;
-        if (this._clickBannerShowTime == 0 || this._clickBannerShowTime > 0 && Date.now() - this._clickBannerShowTime >= 6e4) {
-            isShowClickBanner = true;
+        var isShowClickBanner = true;
+        if (!PFU.PfuManager.GetInstance().GetTodayTimeAction()) {
+            isShowClickBanner = false;
         }
         if (isShowClickBanner && PFU.PfuClickBannerRevive.GetInstance().IsBannerReviveOpen()) {
             PFU.PfuClickBannerRevive.GetInstance().ShowBannerRevive(handle, function(type) {
-                _this._clickBannerShowTime = Date.now();
                 fun.call(handle, type);
             });
         } else {
@@ -3887,7 +3969,9 @@ PfuSdk.UI_FIRST_SCENEBOX = 1e10;
 
 PfuSdk.UI_ORDER_OTHER = 1e9;
 
-PfuSdk.sdk_ver = "0.0.7.0";
+PfuSdk.sdk_ver = "0.0.7.5";
+
+PfuSdk.sdk_res_ver = "v7";
 
 PfuSdk.SHOW_TYPE_ALL = 0;
 
@@ -3896,5 +3980,3 @@ PfuSdk.SHOW_TYPE_MOREGAME = 1;
 PfuSdk.SHOW_TYPE_BOXLIST = 2;
 
 PfuSdk._sdkVideoShareFinish = true;
-
-PfuSdk._clickBannerShowTime = 0;

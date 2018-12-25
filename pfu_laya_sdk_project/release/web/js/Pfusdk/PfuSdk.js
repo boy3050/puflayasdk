@@ -30,6 +30,15 @@ var PfuSdk = (function () {
     PfuSdk.GetConfig = function () {
         return PFU.PfuConfig.Config;
     };
+    PfuSdk.OpenCDNRes = function () {
+        PFU.PfuGlobal.sdkCustomResRoot = PFU.PfuGlobal.SDK_CDN_RES_PATH + this.sdk_res_ver + "/";
+    };
+    PfuSdk.SetBannerWidth = function (width) {
+        PFU.WeChatBannerAd.customWidth = width;
+    };
+    PfuSdk.SetBannerMaxHeight = function (height) {
+        PFU.WeChatBannerAd.customMaxHeight = height;
+    };
     /**
      * name
      */
@@ -122,14 +131,12 @@ var PfuSdk = (function () {
      * @param isForceShare
      */
     PfuSdk.VideoRevive = function (handle, fun, adunit, isForceShare) {
-        var _this = this;
-        var isShowClickBanner = false;
-        if (this._clickBannerShowTime == 0 || (this._clickBannerShowTime > 0 && (Date.now() - this._clickBannerShowTime) >= 60000)) {
-            isShowClickBanner = true;
+        var isShowClickBanner = true;
+        if (!PFU.PfuManager.GetInstance().GetTodayTimeAction()) {
+            isShowClickBanner = false;
         }
         if (isShowClickBanner && PFU.PfuClickBannerRevive.GetInstance().IsBannerReviveOpen()) {
             PFU.PfuClickBannerRevive.GetInstance().ShowBannerRevive(handle, function (type) {
-                _this._clickBannerShowTime = Date.now();
                 fun.call(handle, type);
             });
         }
@@ -408,10 +415,10 @@ PfuSdk.VIDEO_SHOW_FAIL = 2;
 PfuSdk.UI_ORDER_MOREGAME = 90000;
 PfuSdk.UI_FIRST_SCENEBOX = 10000000000;
 PfuSdk.UI_ORDER_OTHER = 1000000000;
-PfuSdk.sdk_ver = "0.0.7.0";
+PfuSdk.sdk_ver = "0.0.7.5";
+PfuSdk.sdk_res_ver = "v7";
 PfuSdk.SHOW_TYPE_ALL = 0; //更多游戏，BosList都显示
 PfuSdk.SHOW_TYPE_MOREGAME = 1; //只显示更多游戏
 PfuSdk.SHOW_TYPE_BOXLIST = 2; //只显示底部盒子列表
 PfuSdk._sdkVideoShareFinish = true;
-PfuSdk._clickBannerShowTime = 0;
 //# sourceMappingURL=PfuSdk.js.map

@@ -40,11 +40,10 @@ namespace PFU {
         public mtaAppId: string;
         public mtaEventId: string;
 
-
-
         public checkAppUpdate: number;
         public ui_moreGameType: number;
         public ui_crossGameListType: number;
+
     }
 
     export class DataTimeCount {

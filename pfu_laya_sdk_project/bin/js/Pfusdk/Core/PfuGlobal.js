@@ -41,7 +41,7 @@ var PFU;
         //创建Banner广告条
         PfuGlobal.CreateBanner = function (adId, dir, fun) {
             //let adId =  PfuManager.GetInstance().GetWegameAd().banner;
-            return PFU.WeChatBannerAd.GetInstance().Create(adId, dir, fun);
+            return PFU.WeChatBannerAd.GetInstance().Create(adId, dir, fun, PFU.WeChatBannerAd.customWidth);
         };
         //显示Banner广告
         PfuGlobal.ShowBanner = function () {
@@ -52,8 +52,8 @@ var PFU;
             PFU.WeChatBannerAd.GetInstance().Hide();
         };
         //刷新Banner广告
-        PfuGlobal.RefreshBanner = function (fun, dir, adWidth) {
-            PFU.WeChatBannerAd.GetInstance().Refresh(fun, dir, adWidth);
+        PfuGlobal.RefreshBanner = function (fun, dir, adWidht) {
+            PFU.WeChatBannerAd.GetInstance().Refresh(fun, dir, adWidht);
         };
         PfuGlobal.GetLastBannnerDir = function () {
             return PFU.WeChatBannerAd.GetInstance().GetLastBannerDir();
@@ -182,6 +182,8 @@ var PFU;
         return PfuGlobal;
     }());
     PfuGlobal.SDK_RES_CDN_PATH = "https://txpk.jfydgame.com/pfulayasdk/";
+    PfuGlobal.SDK_CDN_RES_PATH = "https://txpk.jfydgame.com/pfulayasdk/ver/";
+    PfuGlobal.sdkCustomResRoot = "";
     PfuGlobal.focusCallback = null;
     PfuGlobal.focusHandler = null;
     PfuGlobal._addDialogCallback = null;

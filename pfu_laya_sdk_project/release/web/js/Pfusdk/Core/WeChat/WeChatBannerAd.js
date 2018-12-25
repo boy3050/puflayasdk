@@ -29,7 +29,6 @@ var PFU;
             if (adWidth == undefined || adWidth == void 0 || adWidth == null) {
                 adWidth = laya.utils.Browser.clientWidth;
             }
-            var sceneHeigth = laya.utils.Browser.clientHeight;
             if (PFU.WeChatUtils.GetInstance().IsWeGame()) {
                 if (typeof wx.createBannerAd === 'function') {
                     this._bannerAd = wx.createBannerAd({
@@ -37,19 +36,27 @@ var PFU;
                         style: {
                             left: leftPos,
                             top: topPos,
-                            width: adWidth //300//
+                            width: adWidth,
                         }
                     });
                     this._bannerAd.onResize(function (res) {
                         _this._bannerAd.style.width = res.width;
-                        _this._bannerAd.style.heigth = res.heigth;
+                        _this._bannerAd.style.height = res.height;
                         if (dir == BannerDirction.DOWN_CENTER) {
-                            leftPos = (laya.utils.Browser.clientWidth - res.width) / 2;
+                            if (WeChatBannerAd.customMaxHeight) {
+                                if (res.height > WeChatBannerAd.customMaxHeight) {
+                                    var height = WeChatBannerAd.customMaxHeight;
+                                    var width = height * res.width / res.height;
+                                    _this._bannerAd.style.width = width;
+                                    _this._bannerAd.style.height = height;
+                                }
+                            }
+                            leftPos = (laya.utils.Browser.clientWidth - _this._bannerAd.style.width) / 2;
                             var a = 0;
                             if (Laya.Browser.onAndroid && (_this.isQuanMian() || _this.isLiuHai())) {
                                 a = 34;
                             }
-                            topPos = laya.utils.Browser.clientHeight - res.height - a;
+                            topPos = laya.utils.Browser.clientHeight - _this._bannerAd.style.height - a;
                         }
                         else if (dir == BannerDirction.CENTER) {
                             leftPos = (laya.utils.Browser.clientWidth - res.width) / 2;
@@ -126,7 +133,7 @@ var PFU;
             if (dir == undefined || dir == void 0 || dir == null) {
                 tempDir = this._bannerDir;
             }
-            this.Create(this._adId, tempDir, fun);
+            this.Create(this._adId, tempDir, fun, adWidth);
         };
         WeChatBannerAd.prototype.GetLastBannerDir = function () {
             return this._bannerDir;

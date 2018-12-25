@@ -22,7 +22,7 @@ var pfusdkui;
             this.m_n3 = (this.getChildAt(3));
             this.m_n4 = (this.getChildAt(4));
             this.m_voidStr = (this.getChildAt(5));
-            this.m_n6 = (this.getChildAt(6));
+            this.m_openredtip2 = (this.getChildAt(6));
             this.m_n7 = (this.getChildAt(7));
             this.m_btn_close = (this.getChildAt(8));
         };
