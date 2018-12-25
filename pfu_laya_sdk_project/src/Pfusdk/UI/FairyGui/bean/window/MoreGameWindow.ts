@@ -106,7 +106,7 @@ namespace PFU.UI {
 
                 //是否显示更多游戏 0 关闭 1 开启
                 if (PfuGlobal.GetOLParam().pfuSdkMoreGame == PfuSwitch.OFF || PfuConfig.Config.ui_moreGameType == -1) {
-                    this._fui.m_boxList.visible = false;
+                    //this._fui.m_boxList.visible = false;
                     //this._fui.m_boxList_left.visible = false;
                     this._fui.m_Btn_MoreGameLeft.visible = false;
                     this._fui.m_Btn_MoreGameRight.visible = false;
@@ -116,8 +116,9 @@ namespace PFU.UI {
 
         private Refresh() {
             let type = this._isShowType;
+     
             this._fui.m_boxList.visible = true;
-            //this._fui.m_boxList_left.visible = true;
+ 
             this._fui.m_Btn_MoreGameRight.visible = true;
             this._fui.m_Btn_MoreGameLeft.visible = true;
             if (!type || type == PfuSdk.SHOW_TYPE_ALL) {
@@ -171,9 +172,17 @@ namespace PFU.UI {
             let list: Array<PfuBoxListData> = PfuBoxList.GetInstance().GetMoreGameListData();
 
             let count = list.length;
+            //没有数据则不显示
             if (count > 0) {
                 this._fui.m_list_moregamebg.visible = true;
                 this._fui.m_list_moregameStr.visible = true;
+                this._fui.m_list_moregame.visible = true;
+            }
+            else
+            {
+                this._fui.m_list_moregamebg.visible = false;
+                this._fui.m_list_moregameStr.visible = false;
+                this._fui.m_list_moregame.visible = false;
             }
             for (let i = 0; i < count; i++) {
                 let boxListData = list[i];

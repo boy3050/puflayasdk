@@ -113,6 +113,17 @@ var PFU;
                 wx.onShow(callBack);
             }
         };
+        WeChatUtils.prototype.OnExitApp = function(complete) {
+            if (this.IsWeGame()) {
+                wx.exitMiniProgram({
+                    success: function() {},
+                    fail: function() {},
+                    complete: function() {
+                        complete();
+                    }
+                });
+            }
+        };
         WeChatUtils.prototype.SetTicketShareTicket = function(isTicket, complete) {
             if (!this.IsWeGame()) {
                 complete();
@@ -1170,6 +1181,8 @@ var PFU;
             this._gameId = "";
             this._isLoginPlatform = false;
             this.SAVE_KEY = "platform_user";
+            this.SAVE_USERPLAY_KEY = "userplayTime";
+            this._playtime = 0;
             this._lastTime = 0;
             this.tempAdId = null;
             this._reconnectCount = 0;
@@ -1183,6 +1196,7 @@ var PFU;
             return this.instance;
         };
         PfuPlatformManager.prototype.Init = function() {
+            var _this = this;
             this._privateKey = PFU.PfuConfig.Config.privateKey;
             this.Load();
             this._lastTime = Date.now();
@@ -1191,6 +1205,15 @@ var PFU;
                     PfuPlatformManager.GetInstance().LoginWegame(PFU.PfuConfig.Config.wxId, PFU.PfuConfig.Config.appId);
                 }
             }
+            PFU.WeChatUtils.GetInstance().OnExitApp(function() {
+                _this.OnHide();
+            });
+            Laya.timer.once(2e3, this, function() {
+                _this.SetPlayTime();
+                Laya.timer.loop(15e3, _this, function() {
+                    _this.SetPlayTime();
+                });
+            });
         };
         PfuPlatformManager.prototype.SetInGameUserHandle = function(handle, callback) {
             this._shareInGameHandle = handle;
@@ -1218,6 +1241,20 @@ var PFU;
                     this._platformUserData.userPlayTime = 0;
                 }
             }
+            var value = PFU.LocalSaveUtils.GetItem(this.SAVE_USERPLAY_KEY);
+            if (value) {
+                try {
+                    this._playtime = parseInt("" + value);
+                } catch (e) {
+                    this._playtime = this._platformUserData.userPlayTime;
+                }
+            } else {
+                this._playtime = this._platformUserData.userPlayTime;
+                this.SavePlaytime();
+            }
+        };
+        PfuPlatformManager.prototype.SavePlaytime = function() {
+            PFU.LocalSaveUtils.SaveItem(this.SAVE_USERPLAY_KEY, this._playtime.toString());
         };
         PfuPlatformManager.prototype.OnShow = function(args) {
             PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
@@ -1227,13 +1264,17 @@ var PFU;
         PfuPlatformManager.prototype.OnHide = function() {
             if (this._lastTime > 0) {
                 var time = (Date.now() - this._lastTime) / 1e3;
-                console.log("本次计算时长/秒:" + time);
-                this._platformUserData.userPlayTime += Math.floor(time);
                 PFU.PfuManager.GetInstance().AddPlayTimeCount(Math.floor(time));
+                this.SetPlayTime();
                 console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime);
-                this.Save();
                 this._lastTime = Date.now();
             }
+        };
+        PfuPlatformManager.prototype.SetPlayTime = function() {
+            var time = (Date.now() - this._lastTime) / 1e3;
+            this._playtime += Math.floor(time);
+            this.SavePlaytime();
+            this._lastTime = Date.now();
         };
         PfuPlatformManager.prototype.Save = function() {
             PFU.LocalSaveUtils.SaveJsonObject(this.SAVE_KEY, this._platformUserData);
@@ -3891,6 +3932,12 @@ var PfuSdk = function() {
             list[name] = newValue;
         }
     };
+    PfuSdk.GetTodayPlaySecond = function() {
+        return PFU.PfuManager.GetInstance().GetTodayPlaySecond();
+    };
+    PfuSdk.GetUserPlayTime = function() {
+        return PFU.PfuPlatformManager.GetInstance().GetUserPlayTime();
+    };
     PfuSdk.SetPlatformShareUserHandle = function(handle, callback) {
         PFU.PfuPlatformManager.GetInstance().SetInGameUserHandle(handle, callback);
     };
@@ -3969,7 +4016,7 @@ PfuSdk.UI_FIRST_SCENEBOX = 1e10;
 
 PfuSdk.UI_ORDER_OTHER = 1e9;
 
-PfuSdk.sdk_ver = "0.0.7.5";
+PfuSdk.sdk_ver = "0.0.7.6";
 
 PfuSdk.sdk_res_ver = "v7";
 

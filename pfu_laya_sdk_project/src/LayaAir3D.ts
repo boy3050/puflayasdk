@@ -46,9 +46,9 @@ class LayaAir3D {
         PfuSdk.InitConfig(this, () => {
 
             //FairyGUI创建
-            //PFU.UI.PfuSdkFairyUI.CreateUI(()=>{});
+            PFU.UI.PfuSdkFairyUI.CreateUI(()=>{});
             //LayaGUI创建
-            PFU.UI.PfuSdkLayaUI.CreateUI();
+            //PFU.UI.PfuSdkLayaUI.CreateUI();
 
             // for (let i = 0; i < 10; i++) {
             //     Laya.timer.once(1000 + (i * 1000), this, () => {
@@ -59,14 +59,15 @@ class LayaAir3D {
 
 
 
-            PfuSdk.ShowPopupListGame();
+            //PfuSdk.ShowPopupListGame();
 
             PfuSdk.ShowRedPacketBtn();
             //PfuSdk.HideRedPacketBtn();
 
             Laya.timer.once(2000, this, () => {
                 PfuSdk.ShowBanner();
-
+        //显示更多游戏列表
+        PfuSdk.ShowMoreGameList();
                 Laya.timer.once(2000, this, () => {
                     // PfuSdk.ShowClickBannnerRevive(this, (type) => {
                     //     if (type == PfuSdk.SUCCESS)  {
@@ -78,7 +79,7 @@ class LayaAir3D {
                     //     }
                     //     PfuSdk.ShowBanner();
                     // });
-                   PfuSdk.PopupRedPacket(this,()=>{
+                   PfuSdk.PopupRedPacket(this,(type)=>{
                        
                    });
                 });
@@ -120,8 +121,7 @@ class LayaAir3D {
 
         });
 
-        //显示更多游戏列表
-        //PfuSdk.ShowMoreGameList();
+
 
         Laya.timer.once(4000, this, () => {
 

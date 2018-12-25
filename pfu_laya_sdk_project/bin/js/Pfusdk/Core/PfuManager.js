@@ -134,6 +134,7 @@ var PFU;
                         param.pfuSdkRed = PfuSwitch.OFF;
                         param.pfuSdkBannerRelive = 0;
                     }
+                    param.pfuSdkMoreGame = PfuSwitch.OFF;
                     if (param.pfuSdkTestMode == PfuSwitch.OFF && param.pfuSdkShowOpenAds == PfuSwitch.ON) {
                         Laya.timer.once(1000, _this, function () {
                             _this.ShowSplashAd(false);

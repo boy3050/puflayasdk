@@ -137,7 +137,6 @@ var PFU;
                 if (PFU.PfuGlobal.GetOLParam().pfuSdkMoreGame == PFU.PfuSwitch.OFF || (PFU.PfuConfig.Config && PFU.PfuConfig.Config.ui_moreGameType == -1)) {
                     this.btn_left.visible = false;
                     this.btn_right.visible = false;
-                    this.box.visible = false;
                 }
             };
             MoreGameUI.prototype.CreateSideMoreGameBtn = function () {
@@ -183,6 +182,13 @@ var PFU;
                 var count = list.length;
                 if (count > 0) {
                     this.img_title.visible = true;
+                    this.box_bg.visible = true;
+                    this.boxlist.visible = true;
+                }
+                else {
+                    this.img_title.visible = false;
+                    this.box_bg.visible = false;
+                    this.boxlist.visible = false;
                 }
                 this.allgame = [];
                 var boxListData;
@@ -217,7 +223,12 @@ var PFU;
                 var list = PFU.PfuBoxList.GetInstance().GetMoreGameListData();
                 var count = list.length;
                 if (count > 0) {
-                    this.img_title.visible = true;
+                    this.btn_list_open.visible = true;
+                    this.boxlist_left_btn_bg.visible = true;
+                }
+                else {
+                    this.btn_list_open.visible = false;
+                    this.boxlist_left_btn_bg.visible = false;
                 }
                 this.allgame = [];
                 var boxListData;

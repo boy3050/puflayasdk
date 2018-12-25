@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":6,
-    "selecteID":15,
+    "selectedBox":1,
+    "selecteID":31,
     "props":{"width":750,"sceneColor":"#000000","mouseThrough":true,"height":1334},
     "nodeParent":-1,
     "label":"View",
@@ -307,13 +307,14 @@
             "props":{"y":0,"x":0,"width":750,"visible":false,"var":"com_awradredpackage","height":1334},
             "nodeParent":1,
             "label":"Sprite(com_awradredpackage)",
-            "isOpen":false,
+            "isOpen":true,
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
             "compId":31,
             "child":[
                 {
+                    "x":30,
                     "type":"Texture",
                     "props":{"y":-133,"x":0,"width":750,"skin":"comp/img_box_1.png","height":1600},
                     "nodeParent":31,
@@ -327,6 +328,7 @@
                     "$LOCKED":true
                 },
                 {
+                    "x":30,
                     "type":"Sprite",
                     "props":{"y":319,"x":132,"width":517,"var":"loader_award","pivotY":0.5,"pivotX":0.5,"height":695},
                     "nodeParent":31,
@@ -341,8 +343,9 @@
                     "$LOCKED":true
                 },
                 {
+                    "x":30,
                     "type":"Text",
-                    "props":{"y":381,"x":273,"text":"获得现金红包","fontSize":40,"color":"#CE8B52"},
+                    "props":{"y":381,"x":269,"text":"获得现金红包","fontSize":40,"color":"#CE8B52"},
                     "nodeParent":31,
                     "label":"Text",
                     "isDirectory":false,
@@ -354,21 +357,9 @@
                     "$LOCKED":false
                 },
                 {
+                    "x":30,
                     "type":"Text",
-                    "props":{"y":523,"x":277,"text":"+","fontSize":30,"color":"#F94A05"},
-                    "nodeParent":31,
-                    "label":"Text",
-                    "isDirectory":false,
-                    "isAniNode":true,
-                    "hasChild":false,
-                    "compId":36,
-                    "child":[
-                        ],
-                    "$LOCKED":false
-                },
-                {
-                    "type":"Text",
-                    "props":{"y":673,"x":289,"text":"红包满20元可提现","fontSize":25,"color":"#CE8B52"},
+                    "props":{"y":550,"x":278,"text":"红包满20元可提现","fontSize":25,"color":"#CE8B52"},
                     "nodeParent":31,
                     "label":"Text",
                     "isDirectory":false,
@@ -380,6 +371,7 @@
                     "$LOCKED":false
                 },
                 {
+                    "x":30,
                     "type":"Text",
                     "props":{"y":827,"x":335,"var":"btn_tixian_award","text":"提现","mouseEnabled":true,"fontSize":50,"color":"#FEFFD5"},
                     "nodeParent":31,
@@ -394,6 +386,7 @@
                     "$LOCKED":false
                 },
                 {
+                    "x":30,
                     "type":"Text",
                     "props":{"y":901,"x":222,"text":"游戏过程中可能出现现金红包","fontSize":26,"color":"#992D27"},
                     "nodeParent":31,
@@ -407,6 +400,7 @@
                     "$LOCKED":false
                 },
                 {
+                    "x":30,
                     "type":"Image",
                     "props":{"y":349,"x":594,"var":"btn_close_award","skin":"comp/hb_kq_b_x.png"},
                     "nodeParent":31,
@@ -420,8 +414,9 @@
                     "$LOCKED":false
                 },
                 {
+                    "x":30,
                     "type":"Text",
-                    "props":{"y":483,"x":294,"width":200,"var":"moneyNum_award","text":"12.00","pivotY":0.5,"pivotX":0.5,"height":80,"fontSize":80,"color":"#F94A05","align":"center"},
+                    "props":{"y":621,"x":312,"width":134,"var":"moneyNum_award","text":"12.00","pivotY":0.5,"pivotX":0.5,"height":55,"fontSize":50,"color":"#F94A05","align":"center"},
                     "nodeParent":31,
                     "label":"Text(moneyNum_award)",
                     "isDirectory":false,
@@ -433,21 +428,9 @@
                     "$LOCKED":false
                 },
                 {
+                    "x":30,
                     "type":"Text",
-                    "props":{"y":523,"x":503,"text":"元","fontSize":30,"color":"#F94A05"},
-                    "nodeParent":31,
-                    "label":"Text",
-                    "isDirectory":false,
-                    "isAniNode":true,
-                    "hasChild":false,
-                    "compId":42,
-                    "child":[
-                        ],
-                    "$LOCKED":false
-                },
-                {
-                    "type":"Text",
-                    "props":{"y":590,"x":367,"text":"余额:","fontSize":21,"color":"#F94A05"},
+                    "props":{"y":491,"x":260,"text":"余额:","fontSize":30,"color":"#F94A05"},
                     "nodeParent":31,
                     "label":"Text",
                     "isDirectory":false,
@@ -459,8 +442,9 @@
                     "$LOCKED":false
                 },
                 {
+                    "x":30,
                     "type":"Text",
-                    "props":{"y":587,"x":417,"width":66,"var":"allMoney_award","text":"12.00","height":25,"fontSize":25,"color":"#F94A05","align":"center"},
+                    "props":{"y":476,"x":327,"width":127,"var":"allMoney_award","text":"12.00","height":54,"fontSize":50,"color":"#F94A05","align":"center"},
                     "nodeParent":31,
                     "label":"Text(allMoney_award)",
                     "isDirectory":false,
@@ -472,14 +456,29 @@
                     "$LOCKED":false
                 },
                 {
+                    "x":30,
                     "type":"Text",
-                    "props":{"y":590,"x":486,"text":"元","fontSize":21,"color":"#F94A05"},
+                    "props":{"y":491,"x":462,"text":"元","fontSize":30,"color":"#F94A05"},
                     "nodeParent":31,
                     "label":"Text",
                     "isDirectory":false,
                     "isAniNode":true,
                     "hasChild":false,
                     "compId":45,
+                    "child":[
+                        ],
+                    "$LOCKED":false
+                },
+                {
+                    "x":30,
+                    "type":"Text",
+                    "props":{"y":693,"x":319,"text":"已存入余额","fontSize":25,"color":"#CE8B52"},
+                    "nodeParent":31,
+                    "label":"Text",
+                    "isDirectory":false,
+                    "isAniNode":true,
+                    "hasChild":false,
+                    "compId":69,
                     "child":[
                         ],
                     "$LOCKED":false
@@ -493,14 +492,13 @@
             "props":{"y":0,"x":0,"width":750,"visible":false,"var":"com_everyday","height":1334},
             "nodeParent":1,
             "label":"Sprite(com_everyday)",
-            "isOpen":true,
+            "isOpen":false,
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
             "compId":46,
             "child":[
                 {
-                    "x":30,
                     "type":"Texture",
                     "props":{"y":-133,"x":0,"width":750,"skin":"comp/img_box_1.png","height":1600},
                     "nodeParent":46,
@@ -514,7 +512,6 @@
                     "$LOCKED":true
                 },
                 {
-                    "x":30,
                     "type":"Sprite",
                     "props":{"y":238,"x":57,"width":635,"var":"loader_everyday","pivotY":0.5,"pivotX":0.5,"height":857},
                     "nodeParent":46,
@@ -529,7 +526,6 @@
                     "$LOCKED":true
                 },
                 {
-                    "x":30,
                     "type":"Image",
                     "props":{"y":151,"x":170,"skin":"comp/meiridenglu.png"},
                     "nodeParent":46,
@@ -542,7 +538,6 @@
                         ]
                 },
                 {
-                    "x":30,
                     "type":"List",
                     "props":{"y":313,"x":129,"width":505,"var":"list_six","spaceY":10,"spaceX":80,"repeatY":2,"repeatX":3,"mouseEnabled":false,"height":361},
                     "nodeParent":46,
@@ -605,7 +600,6 @@
                         }]
                 },
                 {
-                    "x":30,
                     "type":"Box",
                     "props":{"y":685,"x":324,"width":114,"var":"seven","renderType":"render","mouseEnabled":false,"height":174},
                     "nodeParent":46,
@@ -617,7 +611,6 @@
                     "compId":58,
                     "child":[
                         {
-                            "x":45,
                             "type":"Image",
                             "props":{"width":114,"skin":"comp/meitian_hb.png","name":"img_icon","height":130},
                             "nodeParent":58,
@@ -631,7 +624,6 @@
                             "$HIDDEN":false
                         },
                         {
-                            "x":45,
                             "type":"Image",
                             "props":{"y":133,"x":-38,"width":195,"skin":"comp/dijitian_di.png","sizeGrid":"0,24,0,22","height":40},
                             "nodeParent":58,
@@ -644,7 +636,6 @@
                                 ]
                         },
                         {
-                            "x":45,
                             "type":"Text",
                             "props":{"y":142,"x":-23,"var":"seven_text","text":"第7天(翻倍领取)","fontSize":23,"color":"#966549"},
                             "nodeParent":58,
@@ -659,7 +650,6 @@
                     "$HIDDEN":false
                 },
                 {
-                    "x":30,
                     "type":"Image",
                     "props":{"y":890,"x":209,"var":"btn_double_btn","skin":"comp/button_fxjs.png"},
                     "nodeParent":46,
@@ -673,7 +663,6 @@
                     "$LOCKED":true
                 },
                 {
-                    "x":30,
                     "type":"Image",
                     "props":{"y":1021,"x":315,"visible":true,"var":"btn_red_everyday_skip","skin":"comp/button_zjlq.png"},
                     "nodeParent":46,

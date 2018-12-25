@@ -142,7 +142,7 @@ namespace PFU.UI {
             if (PfuGlobal.GetOLParam().pfuSdkMoreGame == PfuSwitch.OFF || (PfuConfig.Config && PfuConfig.Config.ui_moreGameType == -1)) {
                 this.btn_left.visible = false;
                 this.btn_right.visible = false;
-                this.box.visible = false;
+                //this.box.visible = false;
             }
         }
 
@@ -192,7 +192,16 @@ namespace PFU.UI {
             let count = list.length;
             if (count > 0) {
                 this.img_title.visible = true;
+                this.box_bg.visible = true;
+                this.boxlist.visible = true;
             }
+            else
+            {
+                this.img_title.visible = false;
+                this.box_bg.visible = false;
+                this.boxlist.visible = false;
+            }
+
             this.allgame = [];
             let boxListData;
             // 使用但隐藏滚动条
@@ -233,7 +242,13 @@ namespace PFU.UI {
 
             let count = list.length;
             if (count > 0) {
-                this.img_title.visible = true;
+                this.btn_list_open.visible = true;
+                this.boxlist_left_btn_bg.visible = true;
+            }
+            else
+            {
+                this.btn_list_open.visible = false;
+                this.boxlist_left_btn_bg.visible = false;
             }
             this.allgame = [];
             let boxListData;

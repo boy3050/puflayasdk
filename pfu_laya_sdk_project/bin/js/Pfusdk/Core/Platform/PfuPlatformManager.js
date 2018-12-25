@@ -12,6 +12,8 @@ var PFU;
             //是否登录pfu平台
             this._isLoginPlatform = false;
             this.SAVE_KEY = "platform_user";
+            this.SAVE_USERPLAY_KEY = "userplayTime";
+            this._playtime = 0;
             this._lastTime = 0;
             this.tempAdId = null;
             this._reconnectCount = 0;
@@ -27,6 +29,7 @@ var PFU;
             return this.instance;
         };
         PfuPlatformManager.prototype.Init = function () {
+            var _this = this;
             this._privateKey = PFU.PfuConfig.Config.privateKey;
             ;
             //BX.NotificationCenter.GetInstance().AddObserver(this, this.parseMsg2000, PfuPlatformManager.NOTIFYY_MSG_ID + "2000");
@@ -37,6 +40,15 @@ var PFU;
                     PfuPlatformManager.GetInstance().LoginWegame(PFU.PfuConfig.Config.wxId, PFU.PfuConfig.Config.appId);
                 }
             }
+            PFU.WeChatUtils.GetInstance().OnExitApp(function () {
+                _this.OnHide();
+            });
+            Laya.timer.once(2000, this, function () {
+                _this.SetPlayTime();
+                Laya.timer.loop(15000, _this, function () {
+                    _this.SetPlayTime();
+                });
+            });
         };
         PfuPlatformManager.prototype.SetInGameUserHandle = function (handle, callback) {
             this._shareInGameHandle = handle;
@@ -65,6 +77,22 @@ var PFU;
                     this._platformUserData.userPlayTime = 0;
                 }
             }
+            var value = PFU.LocalSaveUtils.GetItem(this.SAVE_USERPLAY_KEY);
+            if (value) {
+                try {
+                    this._playtime = parseInt("" + value);
+                }
+                catch (e) {
+                    this._playtime = this._platformUserData.userPlayTime;
+                }
+            }
+            else {
+                this._playtime = this._platformUserData.userPlayTime;
+                this.SavePlaytime();
+            }
+        };
+        PfuPlatformManager.prototype.SavePlaytime = function () {
+            PFU.LocalSaveUtils.SaveItem(this.SAVE_USERPLAY_KEY, this._playtime.toString());
         };
         PfuPlatformManager.prototype.OnShow = function (args) {
             PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
@@ -75,13 +103,18 @@ var PFU;
             if (this._lastTime > 0) {
                 //取秒
                 var time = (Date.now() - this._lastTime) / 1000;
-                console.log("本次计算时长/秒:" + time);
-                this._platformUserData.userPlayTime += Math.floor(time);
                 PFU.PfuManager.GetInstance().AddPlayTimeCount(Math.floor(time));
+                this.SetPlayTime();
                 console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime);
-                this.Save();
                 this._lastTime = Date.now();
             }
+        };
+        PfuPlatformManager.prototype.SetPlayTime = function () {
+            //取秒
+            var time = (Date.now() - this._lastTime) / 1000;
+            this._playtime += Math.floor(time);
+            this.SavePlaytime();
+            this._lastTime = Date.now();
         };
         PfuPlatformManager.prototype.Save = function () {
             PFU.LocalSaveUtils.SaveJsonObject(this.SAVE_KEY, this._platformUserData);

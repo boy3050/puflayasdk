@@ -36,20 +36,22 @@ var LayaAir3D = (function () {
         PfuSdk.SetBannerMaxHeight(Laya.Browser.height * 0.287);
         PfuSdk.InitConfig(this, function () {
             //FairyGUI创建
-            //PFU.UI.PfuSdkFairyUI.CreateUI(()=>{});
+            PFU.UI.PfuSdkFairyUI.CreateUI(function () { });
             //LayaGUI创建
-            PFU.UI.PfuSdkLayaUI.CreateUI();
+            //PFU.UI.PfuSdkLayaUI.CreateUI();
             // for (let i = 0; i < 10; i++) {
             //     Laya.timer.once(1000 + (i * 1000), this, () => {
             //         //PFU.UI.PfuSdkFairyUI.OnAddDialog("显示Dialog把@@@");
             //         PFU.PfuGlobal.ShowDialog("显示Dia");
             //     });
             // }
-            PfuSdk.ShowPopupListGame();
+            //PfuSdk.ShowPopupListGame();
             PfuSdk.ShowRedPacketBtn();
             //PfuSdk.HideRedPacketBtn();
             Laya.timer.once(2000, _this, function () {
                 PfuSdk.ShowBanner();
+                //显示更多游戏列表
+                PfuSdk.ShowMoreGameList();
                 Laya.timer.once(2000, _this, function () {
                     // PfuSdk.ShowClickBannnerRevive(this, (type) => {
                     //     if (type == PfuSdk.SUCCESS)  {
@@ -60,7 +62,7 @@ var LayaAir3D = (function () {
                     //     }
                     //     PfuSdk.ShowBanner();
                     // });
-                    PfuSdk.PopupRedPacket(_this, function () {
+                    PfuSdk.PopupRedPacket(_this, function (type) {
                     });
                 });
                 // PfuSdk.ShowClickBannnerRevive(this,(type)=>{
@@ -90,8 +92,6 @@ var LayaAir3D = (function () {
         //监听切换到后台
         PfuSdk.OnHide(function () {
         });
-        //显示更多游戏列表
-        //PfuSdk.ShowMoreGameList();
         Laya.timer.once(4000, this, function () {
             //PfuSdk.HideMoreGameList();
             //显示Banner

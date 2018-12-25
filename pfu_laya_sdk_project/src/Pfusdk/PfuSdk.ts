@@ -15,7 +15,7 @@ class PfuSdk {
     public static get GetParamComplete() { return PFU.PfuManager.GetInstance().GetParamComplete; }
     public static get GetBoxListComplete() { return PFU.PfuManager.GetInstance().GetBoxListComplete; }
 
-    private static sdk_ver = "0.0.7.5";
+    private static sdk_ver = "0.0.7.6";
 
     public static sdk_res_ver = "v7";
 
@@ -33,6 +33,7 @@ class PfuSdk {
         PFU.PfuConfig.InitConfig(this, () => {
             PFU.PfuManager.GetInstance().Init();
             PFU.PfuPlatformManager.GetInstance().Init();
+
         });
     }
 
@@ -120,6 +121,8 @@ class PfuSdk {
             this.CallOnHide();
         });
     }
+
+
     /**
      * 是否可以强制视频分享
      */
@@ -309,6 +312,21 @@ class PfuSdk {
         if (list[name]) {
             list[name] = newValue;
         }
+    }
+
+    /**
+     * 获取当天游戏时长
+     */
+    public static GetTodayPlaySecond():number
+    {
+        return PFU.PfuManager.GetInstance().GetTodayPlaySecond();
+    }
+    /**
+     * 获取用户总时长
+     */
+    public static GetUserPlayTime():number
+    {
+        return PFU.PfuPlatformManager.GetInstance().GetUserPlayTime();
     }
 
     /**

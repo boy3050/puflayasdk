@@ -142,6 +142,19 @@ var PFU;
                 wx.onShow(callBack);
             }
         };
+        WeChatUtils.prototype.OnExitApp = function (complete) {
+            if (this.IsWeGame()) {
+                wx.exitMiniProgram({
+                    success: function () {
+                    },
+                    fail: function () {
+                    },
+                    complete: function () {
+                        complete();
+                    }
+                });
+            }
+        };
         // #endregin
         //AddCode	
         //EndAddCode

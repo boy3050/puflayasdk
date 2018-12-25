@@ -272,6 +272,18 @@ var PfuSdk = (function () {
         }
     };
     /**
+     * 获取当天游戏时长
+     */
+    PfuSdk.GetTodayPlaySecond = function () {
+        return PFU.PfuManager.GetInstance().GetTodayPlaySecond();
+    };
+    /**
+     * 获取用户总时长
+     */
+    PfuSdk.GetUserPlayTime = function () {
+        return PFU.PfuPlatformManager.GetInstance().GetUserPlayTime();
+    };
+    /**
      * 分享后有用户点击 消息监听
      * @param handle
      * @param callback
@@ -415,7 +427,7 @@ PfuSdk.VIDEO_SHOW_FAIL = 2;
 PfuSdk.UI_ORDER_MOREGAME = 90000;
 PfuSdk.UI_FIRST_SCENEBOX = 10000000000;
 PfuSdk.UI_ORDER_OTHER = 1000000000;
-PfuSdk.sdk_ver = "0.0.7.5";
+PfuSdk.sdk_ver = "0.0.7.6";
 PfuSdk.sdk_res_ver = "v7";
 PfuSdk.SHOW_TYPE_ALL = 0; //更多游戏，BosList都显示
 PfuSdk.SHOW_TYPE_MOREGAME = 1; //只显示更多游戏

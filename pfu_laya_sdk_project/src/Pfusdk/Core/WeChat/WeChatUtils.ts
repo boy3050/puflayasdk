@@ -175,6 +175,26 @@
             }
         }
 
+        public OnExitApp(complete:Function)
+        {
+            if(this.IsWeGame())
+            {
+                wx.exitMiniProgram(
+                    {
+                        success: function(){
+
+                        },
+                        fail: function(){
+
+                        },
+                        complete: function(){
+                            complete();
+                        }
+                    }
+                );
+            }
+        }
+
         // #endregin
 
         //AddCode	

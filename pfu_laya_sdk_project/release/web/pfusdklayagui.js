@@ -504,6 +504,7 @@ var ui;
                     props: {
                         y: 1119,
                         width: 113,
+                        visible: false,
                         var: "img_title",
                         skin: "comp/Img_hy.png",
                         right: 332,
@@ -516,6 +517,7 @@ var ui;
                         x: 24,
                         width: 710,
                         visible: false,
+                        var: "box_bg",
                         skin: "comp/Img_zjmdt.png",
                         right: 16,
                         height: 164,
@@ -606,6 +608,7 @@ var ui;
                     props: {
                         y: 197,
                         x: 392,
+                        var: "boxlist_left_btn_bg",
                         skin: "comp/zx_jiantou.png",
                         scaleX: -1,
                         anchorY: .5,
@@ -1060,7 +1063,7 @@ var ui;
                 type: "Text",
                 props: {
                     y: 381,
-                    x: 273,
+                    x: 269,
                     text: "获得现金红包",
                     fontSize: 40,
                     color: "#CE8B52"
@@ -1068,17 +1071,8 @@ var ui;
             }, {
                 type: "Text",
                 props: {
-                    y: 523,
-                    x: 277,
-                    text: "+",
-                    fontSize: 30,
-                    color: "#F94A05"
-                }
-            }, {
-                type: "Text",
-                props: {
-                    y: 673,
-                    x: 289,
+                    y: 550,
+                    x: 278,
                     text: "红包满20元可提现",
                     fontSize: 25,
                     color: "#CE8B52"
@@ -1114,23 +1108,45 @@ var ui;
             }, {
                 type: "Text",
                 props: {
-                    y: 483,
-                    x: 294,
-                    width: 200,
+                    y: 621,
+                    x: 312,
+                    width: 134,
                     var: "moneyNum_award",
                     text: "12.00",
                     pivotY: .5,
                     pivotX: .5,
-                    height: 80,
-                    fontSize: 80,
+                    height: 55,
+                    fontSize: 50,
                     color: "#F94A05",
                     align: "center"
                 }
             }, {
                 type: "Text",
                 props: {
-                    y: 523,
-                    x: 503,
+                    y: 491,
+                    x: 260,
+                    text: "余额:",
+                    fontSize: 30,
+                    color: "#F94A05"
+                }
+            }, {
+                type: "Text",
+                props: {
+                    y: 476,
+                    x: 327,
+                    width: 127,
+                    var: "allMoney_award",
+                    text: "12.00",
+                    height: 54,
+                    fontSize: 50,
+                    color: "#F94A05",
+                    align: "center"
+                }
+            }, {
+                type: "Text",
+                props: {
+                    y: 491,
+                    x: 462,
                     text: "元",
                     fontSize: 30,
                     color: "#F94A05"
@@ -1138,33 +1154,11 @@ var ui;
             }, {
                 type: "Text",
                 props: {
-                    y: 590,
-                    x: 367,
-                    text: "余额:",
-                    fontSize: 21,
-                    color: "#F94A05"
-                }
-            }, {
-                type: "Text",
-                props: {
-                    y: 587,
-                    x: 417,
-                    width: 66,
-                    var: "allMoney_award",
-                    text: "12.00",
-                    height: 25,
+                    y: 693,
+                    x: 319,
+                    text: "已存入余额",
                     fontSize: 25,
-                    color: "#F94A05",
-                    align: "center"
-                }
-            }, {
-                type: "Text",
-                props: {
-                    y: 590,
-                    x: 486,
-                    text: "元",
-                    fontSize: 21,
-                    color: "#F94A05"
+                    color: "#CE8B52"
                 }
             } ]
         }, {
@@ -1578,7 +1572,6 @@ var PFU;
                 if (PFU.PfuGlobal.GetOLParam().pfuSdkMoreGame == PFU.PfuSwitch.OFF || PFU.PfuConfig.Config && PFU.PfuConfig.Config.ui_moreGameType == -1) {
                     this.btn_left.visible = false;
                     this.btn_right.visible = false;
-                    this.box.visible = false;
                 }
             };
             MoreGameUI.prototype.CreateSideMoreGameBtn = function() {
@@ -1610,6 +1603,12 @@ var PFU;
                 var count = list.length;
                 if (count > 0) {
                     this.img_title.visible = true;
+                    this.box_bg.visible = true;
+                    this.boxlist.visible = true;
+                } else {
+                    this.img_title.visible = false;
+                    this.box_bg.visible = false;
+                    this.boxlist.visible = false;
                 }
                 this.allgame = [];
                 var boxListData;
@@ -1643,7 +1642,11 @@ var PFU;
                 var list = PFU.PfuBoxList.GetInstance().GetMoreGameListData();
                 var count = list.length;
                 if (count > 0) {
-                    this.img_title.visible = true;
+                    this.btn_list_open.visible = true;
+                    this.boxlist_left_btn_bg.visible = true;
+                } else {
+                    this.btn_list_open.visible = false;
+                    this.boxlist_left_btn_bg.visible = false;
                 }
                 this.allgame = [];
                 var boxListData;

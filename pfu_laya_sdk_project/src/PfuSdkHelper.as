@@ -159,7 +159,22 @@ package
 			PfuSdkHelper.JSObj().SetOLParamInt(name);
 		}
 
+		/**
+		* 获取当天游戏时长
+		*/
+		public static function GetTodayPlaySecond(): Number
+		{
+			return PfuSdkHelper.JSObj().GetTodayPlaySecond();
+		}
 
+		/**
+		* 获取用户总时长
+		*/
+		public static function GetUserPlayTime(): Number
+		{
+			return PfuSdkHelper.JSObj().GetUserPlayTime();
+		}
+		
 		/**
 		* 分享后有用户点击 消息监听 (*beta)
 		* @param handle 

@@ -40,6 +40,8 @@ interface wx
     downloadFile(object:any):void;
 
     getUpdateManager():any;
+
+    exitMiniProgram(object:any):void
 }
 
 /** An intrinsic object that provides basic mathematics functionality and constants. */

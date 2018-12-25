@@ -65,6 +65,19 @@ namespace PFU {
                     PfuPlatformManager.GetInstance().LoginWegame(PfuConfig.Config.wxId, PfuConfig.Config.appId);
                 }
             }
+
+            PFU.WeChatUtils.GetInstance().OnExitApp(
+                () => {
+                    this.OnHide();
+                }
+            );
+
+            Laya.timer.once(2000, this, () => {
+                this.SetPlayTime();
+                Laya.timer.loop(15000, this, () => {
+                    this.SetPlayTime();
+                });
+            });
         }
 
         public SetInGameUserHandle(handle: any, callback: Function) {
@@ -73,6 +86,10 @@ namespace PFU {
         }
 
         private SAVE_KEY = "platform_user";
+
+        private SAVE_USERPLAY_KEY = "userplayTime";
+
+        private _playtime:number = 0;
 
         private Load() {
             let dic = LocalSaveUtils.GetJsonObject(this.SAVE_KEY);
@@ -98,12 +115,33 @@ namespace PFU {
                 catch (e) {
                     this._platformUserData.userPlayTime = 0;
                 }
-
+            }
+            let value = LocalSaveUtils.GetItem(this.SAVE_USERPLAY_KEY);
+            if(value)
+            {
+                try {
+                   this._playtime = parseInt("" + value);
+                }
+                catch (e) {
+                   this._playtime = this._platformUserData.userPlayTime;
+                }
+            }
+            else
+            {
+                this._playtime = this._platformUserData.userPlayTime;
+                this.SavePlaytime();
             }
         }
 
+        private SavePlaytime()
+        {
+            LocalSaveUtils.SaveItem(this.SAVE_USERPLAY_KEY,this._playtime.toString());
+        }
+            
+   
+
         private _lastTime = 0;
- 
+
 
         public OnShow(args: any) {
             PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
@@ -115,15 +153,19 @@ namespace PFU {
             if (this._lastTime > 0) {
                 //取秒
                 let time = (Date.now() - this._lastTime) / 1000;
-                console.log("本次计算时长/秒:" + time);
-                this._platformUserData.userPlayTime += Math.floor(time);
                 PFU.PfuManager.GetInstance().AddPlayTimeCount(Math.floor(time));
-
-                console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime)
-                this.Save();
-
+                this.SetPlayTime();
+                console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime);
                 this._lastTime = Date.now();
             }
+        }
+
+        private SetPlayTime()  {
+            //取秒
+            let time = (Date.now() - this._lastTime) / 1000;
+            this._playtime += Math.floor(time);
+            this.SavePlaytime();
+            this._lastTime = Date.now();
         }
 
 
@@ -131,18 +173,15 @@ namespace PFU {
             LocalSaveUtils.SaveJsonObject(this.SAVE_KEY, this._platformUserData);
         }
 
-        public GetUserPlayTime()
-        {
-            if(this._platformUserData && this._platformUserData.userPlayTime)
-            {
+        public GetUserPlayTime()  {
+            if (this._platformUserData && this._platformUserData.userPlayTime)  {
                 let time = (Date.now() - this._lastTime) / 1000;
                 return this._platformUserData.userPlayTime + Math.floor(time);
             }
             return 0;
         }
 
-        public GetRunTime():number
-        {
+        public GetRunTime(): number  {
             let time = (Date.now() - this._lastTime) / 1000;
             return Math.floor(time);
         }
@@ -208,7 +247,7 @@ namespace PFU {
 
         public GetShareUserList(pos?: number): Array<Platform_1333_ResData> {
 
-            if (pos == undefined || pos == void 0)  {
+            if (pos == undefined || pos == void 0) {
                 pos == -999;
             }
 
@@ -456,7 +495,7 @@ namespace PFU {
 
                 //登录两次
                 PfuPlatformManager._loginCount++;//.GetInstance()._loginCount
-                if (PfuPlatformManager._loginCount >= 2)  {
+                if (PfuPlatformManager._loginCount >= 2) {
                     console.log("pfu 平台登录失败!");
                     return;
                 }
@@ -857,9 +896,9 @@ namespace PFU {
             if (!this._isLoginPlatform) {
                 return;
             }
-            if (type == PlatformStatisticsType.shareGame)  {
+            if (type == PlatformStatisticsType.shareGame) {
                 let t = (Date.now() - this.lastSend2201Type7Time) / 1000;
-                if (t < 2000)  {
+                if (t < 2000) {
                     return;
                 }
             }
@@ -886,7 +925,7 @@ namespace PFU {
                 return;
             }
             let t = (Date.now() - this.lastSend2202Time) / 1000;
-            if (t < 2000)  {
+            if (t < 2000) {
                 return;
             }
             this.lastSend2202Time = Date.now();

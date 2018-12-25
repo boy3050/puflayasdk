@@ -125,6 +125,14 @@ interface PfuSdk {
      * @param pos 
      */
     ClearPlatformShareUserCache(pos: number);
+    /**
+     * 获取当天游戏时长
+     */
+    GetTodayPlaySecond(): number;
+    /**
+     * 获取用户总时长
+     */
+    GetUserPlayTime(): number;
 
     /**
      * 显示Banner
@@ -155,9 +163,9 @@ interface PfuSdk {
      * 随机显示公众号
      */
     ShowRandomGeneralAd();
-	/**
-	* 视频前分享(复选框开关)
-	*/
+    /**
+    * 视频前分享(复选框开关)
+    */
     IsPfuSdkVideoShare(): boolean;
 
     /*

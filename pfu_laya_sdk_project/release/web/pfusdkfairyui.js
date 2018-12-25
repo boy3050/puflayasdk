@@ -527,15 +527,14 @@ var pfusdkui;
             this.m_bg_loader = this.getChildAt(1);
             this.m_btn_close = this.getChildAt(2);
             this.m_n15 = this.getChildAt(3);
-            this.m_n16 = this.getChildAt(4);
-            this.m_moneyNum = this.getChildAt(5);
-            this.m_n18 = this.getChildAt(6);
-            this.m_n19 = this.getChildAt(7);
-            this.m_n20 = this.getChildAt(8);
-            this.m_btn_tixian = this.getChildAt(9);
-            this.m_n23 = this.getChildAt(10);
-            this.m_allMoney = this.getChildAt(11);
-            this.m_n25 = this.getChildAt(12);
+            this.m_moneyNum = this.getChildAt(4);
+            this.m_n19 = this.getChildAt(5);
+            this.m_n20 = this.getChildAt(6);
+            this.m_btn_tixian = this.getChildAt(7);
+            this.m_n23 = this.getChildAt(8);
+            this.m_allMoney = this.getChildAt(9);
+            this.m_n25 = this.getChildAt(10);
+            this.m_n26 = this.getChildAt(11);
         };
         return UI_AwardRedPackage_com;
     }(fairygui.GComponent);
@@ -1426,7 +1425,6 @@ var PFU;
                         this._fui.m_boxList.visible = false;
                     }
                     if (PFU.PfuGlobal.GetOLParam().pfuSdkMoreGame == PFU.PfuSwitch.OFF || PFU.PfuConfig.Config.ui_moreGameType == -1) {
-                        this._fui.m_boxList.visible = false;
                         this._fui.m_Btn_MoreGameLeft.visible = false;
                         this._fui.m_Btn_MoreGameRight.visible = false;
                     }
@@ -1471,6 +1469,11 @@ var PFU;
                 if (count > 0) {
                     this._fui.m_list_moregamebg.visible = true;
                     this._fui.m_list_moregameStr.visible = true;
+                    this._fui.m_list_moregame.visible = true;
+                } else {
+                    this._fui.m_list_moregamebg.visible = false;
+                    this._fui.m_list_moregameStr.visible = false;
+                    this._fui.m_list_moregame.visible = false;
                 }
                 for (var i = 0; i < count; i++) {
                     var boxListData = list[i];
