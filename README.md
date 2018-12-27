@@ -42,6 +42,10 @@
 	https://wxad.jfydgame.com
 	https://wxhz.jfydgame.com
 	
+	downloadFile:
+	
+	https://txpk.jfydgame.com
+	
 	Socket:
 	
 	wss://msg.jfydgame.com
