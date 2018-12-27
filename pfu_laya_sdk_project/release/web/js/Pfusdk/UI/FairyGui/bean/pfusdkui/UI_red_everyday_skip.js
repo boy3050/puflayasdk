@@ -16,7 +16,7 @@ var pfusdkui;
         };
         UI_red_everyday_skip.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n26 = (this.getChildAt(0));
+            this.m_n26 = (this.getChild("n26"));
         };
         return UI_red_everyday_skip;
     }(fairygui.GComponent));

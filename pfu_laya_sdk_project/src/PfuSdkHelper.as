@@ -258,7 +258,20 @@ package
 		{
 			return PfuSdkHelper.JSObj().IsPfuSdkVideoShare();
 		}
-
+		/**
+		* 是否弹出诱导分享 个值SDK里面返回给游戏中,每个游戏自己来做显示判断,需要屏蔽地区
+		*/
+		public static function IsPfuSdkMoreShare(): Boolean
+		{
+			return PfuSdkHelper.JSObj().IsPfuSdkMoreShare();
+		}
+		/**
+		* 视频或者分享  这个值SDK里面返回给游戏中 需要屏蔽地区
+		*/
+		public static function IsPfuSdkSorV(): Boolean
+		{
+			return PfuSdkHelper.JSObj().IsPfuSdkSorV();
+		}
 		/*
 		*	跳转盒子复活功能 
 		*	callback返回type
@@ -392,6 +405,13 @@ package
 			return PfuSdkHelper.JSObj().PopupRedPacketEverydayWindow();
 		}
 
+		/**
+		* 强制关闭红包相关弹出UI
+		*/
+		public static function ForceCloseRedPacketUI():void
+		{
+			PfuSdkHelper.JSObj().ForceCloseRedPacketUI();
+		}
 	}
 
 }

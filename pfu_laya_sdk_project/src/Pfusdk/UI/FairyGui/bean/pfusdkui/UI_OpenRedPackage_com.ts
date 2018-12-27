@@ -27,15 +27,15 @@ module pfusdkui {
 		protected constructFromXML(xml: any): void {
 			super.constructFromXML(xml);
 
-			this.m_n0 = <fairygui.GGraph><any>(this.getChildAt(0));
-			this.m_bg_loader = <fairygui.GLoader><any>(this.getChildAt(1));
-			this.m_btn_red_open = <UI_btn_red_open><any>(this.getChildAt(2));
-			this.m_n3 = <fairygui.GTextField><any>(this.getChildAt(3));
-			this.m_n4 = <fairygui.GTextField><any>(this.getChildAt(4));
-			this.m_voidStr = <fairygui.GTextField><any>(this.getChildAt(5));
-			this.m_openredtip2 = <fairygui.GTextField><any>(this.getChildAt(6));
-			this.m_n7 = <fairygui.GTextField><any>(this.getChildAt(7));
-			this.m_btn_close = <UI_redpackageClose><any>(this.getChildAt(8));
+			this.m_n0 = <fairygui.GGraph><any>(this.getChild("n0"));
+			this.m_bg_loader = <fairygui.GLoader><any>(this.getChild("bg_loader"));
+			this.m_btn_red_open = <UI_btn_red_open><any>(this.getChild("btn_red_open"));
+			this.m_n3 = <fairygui.GTextField><any>(this.getChild("n3"));
+			this.m_n4 = <fairygui.GTextField><any>(this.getChild("n4"));
+			this.m_voidStr = <fairygui.GTextField><any>(this.getChild("voidStr"));
+			this.m_openredtip2 = <fairygui.GTextField><any>(this.getChild("openredtip2"));
+			this.m_n7 = <fairygui.GTextField><any>(this.getChild("n7"));
+			this.m_btn_close = <UI_redpackageClose><any>(this.getChild("btn_close"));
 		}
 	}
 }

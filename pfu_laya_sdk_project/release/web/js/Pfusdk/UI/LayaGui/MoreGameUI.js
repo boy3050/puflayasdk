@@ -138,6 +138,9 @@ var PFU;
                     this.btn_left.visible = false;
                     this.btn_right.visible = false;
                 }
+                if (PfuSdk.IsTestModel()) {
+                    this.box.visible = false;
+                }
             };
             MoreGameUI.prototype.CreateSideMoreGameBtn = function () {
                 var _this = this;
@@ -209,11 +212,23 @@ var PFU;
                 }
             };
             MoreGameUI.prototype.ShowLeft = function () {
+                if (PfuSdk.IsTestModel()) {
+                    return;
+                }
+                if (PFU.PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                    return;
+                }
                 if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
                     this.boxList_left.visible = true;
                 }
             };
             MoreGameUI.prototype.HideLeft = function () {
+                if (PfuSdk.IsTestModel()) {
+                    return;
+                }
+                if (PFU.PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                    return;
+                }
                 if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
                     this.boxList_left.visible = false;
                 }

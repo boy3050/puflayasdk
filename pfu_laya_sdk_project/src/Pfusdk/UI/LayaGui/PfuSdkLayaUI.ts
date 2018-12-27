@@ -86,6 +86,8 @@ namespace PFU.UI {
                 this.redPacketUI.OpenEverydayGift();
             }, (vx: number, vy: number) => {
                 this.moregameUI.SetIconBtnPos(vx, vy);
+            },()=>{
+                this.redPacketUI.ForceCloseRedPacketUI();
             });
 
             PfuMoreGameUpdate.GetInstance().SetPopupListVisible(this, (isShow) => {

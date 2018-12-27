@@ -20,6 +20,8 @@ var PFU;
             this.pfuSdkBannerRelive = 0;
             this.pfuSdkRed = PFU.PfuSwitch.OFF;
             this.pfuSdkDailyTime = 3;
+            this.pfuSdkMoreShare = PFU.PfuSwitch.OFF;
+            this.pfuSdkSorV = PFU.PfuSwitch.OFF;
         };
         return PfuOLParamData;
     }());

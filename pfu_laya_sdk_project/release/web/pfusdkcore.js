@@ -206,6 +206,29 @@ var PFU;
                 fun();
             }
         };
+        WeChatUtils.prototype.ShowDoubleModal = function(title, content, enterStr, cancelStr, enter, cancel) {
+            if (this.IsWeGame()) {
+                wx.showModal({
+                    title: title,
+                    content: content,
+                    confirmText: enterStr,
+                    cancelText: cancelStr,
+                    showCancel: true,
+                    success: function(res) {
+                        if (res.confirm) {
+                            enter();
+                        } else if (res.cancel) {
+                            cancel();
+                        }
+                    },
+                    fail: function() {
+                        cancel();
+                    }
+                });
+            } else {
+                enter();
+            }
+        };
         WeChatUtils.prototype.SetUpdateApp = function() {
             if (!this.IsWeGame()) {
                 return;
@@ -1184,6 +1207,7 @@ var PFU;
             this.SAVE_USERPLAY_KEY = "userplayTime";
             this._playtime = 0;
             this._lastTime = 0;
+            this._todayLasttime = 0;
             this.tempAdId = null;
             this._reconnectCount = 0;
             this.lastSend2201Type7Time = 0;
@@ -1205,9 +1229,6 @@ var PFU;
                     PfuPlatformManager.GetInstance().LoginWegame(PFU.PfuConfig.Config.wxId, PFU.PfuConfig.Config.appId);
                 }
             }
-            PFU.WeChatUtils.GetInstance().OnExitApp(function() {
-                _this.OnHide();
-            });
             Laya.timer.once(2e3, this, function() {
                 _this.SetPlayTime();
                 Laya.timer.loop(15e3, _this, function() {
@@ -1249,7 +1270,11 @@ var PFU;
                     this._playtime = this._platformUserData.userPlayTime;
                 }
             } else {
-                this._playtime = this._platformUserData.userPlayTime;
+                var time = 0;
+                if (this._platformUserData.userPlayTime) {
+                    time = this._platformUserData.userPlayTime;
+                }
+                this._playtime = time;
                 this.SavePlaytime();
             }
         };
@@ -1260,14 +1285,17 @@ var PFU;
             PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
             PFU.PfuManager.GetInstance().UpdateNewDay();
             this._lastTime = Date.now();
+            this._todayLasttime = Date.now();
         };
         PfuPlatformManager.prototype.OnHide = function() {
-            if (this._lastTime > 0) {
-                var time = (Date.now() - this._lastTime) / 1e3;
+            if (this._todayLasttime > 0) {
+                var time = (Date.now() - this._todayLasttime) / 1e3;
                 PFU.PfuManager.GetInstance().AddPlayTimeCount(Math.floor(time));
+                this._todayLasttime = Date.now();
+            }
+            if (this._lastTime > 0) {
                 this.SetPlayTime();
-                console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime);
-                this._lastTime = Date.now();
+                console.log("用户总游戏时长/秒:" + this._playtime);
             }
         };
         PfuPlatformManager.prototype.SetPlayTime = function() {
@@ -1280,14 +1308,14 @@ var PFU;
             PFU.LocalSaveUtils.SaveJsonObject(this.SAVE_KEY, this._platformUserData);
         };
         PfuPlatformManager.prototype.GetUserPlayTime = function() {
-            if (this._platformUserData && this._platformUserData.userPlayTime) {
+            if (this._playtime) {
                 var time = (Date.now() - this._lastTime) / 1e3;
-                return this._platformUserData.userPlayTime + Math.floor(time);
+                return this._playtime + Math.floor(time);
             }
             return 0;
         };
         PfuPlatformManager.prototype.GetRunTime = function() {
-            var time = (Date.now() - this._lastTime) / 1e3;
+            var time = (Date.now() - this._todayLasttime) / 1e3;
             return Math.floor(time);
         };
         PfuPlatformManager.prototype.parseMsg2000 = function(resp) {
@@ -1466,9 +1494,9 @@ var PFU;
             }
             request.srcid = srcid;
             request.selfid = appId;
-            request.inviteUid = rinviteUid;
+            request.rinviteUid = rinviteUid;
             try {
-                request.onlineTime = Math.floor(this._platformUserData.userPlayTime);
+                request.onlineTime = Math.floor(this._playtime);
             } catch (e) {
                 request.onlineTime = 0;
             }
@@ -2030,6 +2058,8 @@ var PFU;
             this.pfuSdkBannerRelive = 0;
             this.pfuSdkRed = PFU.PfuSwitch.OFF;
             this.pfuSdkDailyTime = 3;
+            this.pfuSdkMoreShare = PFU.PfuSwitch.OFF;
+            this.pfuSdkSorV = PFU.PfuSwitch.OFF;
         };
         return PfuOLParamData;
     }();
@@ -2248,6 +2278,8 @@ var PFU;
                         param.pfuSdkVideoShare = PfuSwitch.OFF;
                         param.pfuSdkRed = PfuSwitch.OFF;
                         param.pfuSdkBannerRelive = 0;
+                        param.pfuSdkMoreShare = PfuSwitch.OFF;
+                        param.pfuSdkSorV = PfuSwitch.OFF;
                     }
                     if (param.pfuSdkTestMode == PfuSwitch.OFF && param.pfuSdkShowOpenAds == PfuSwitch.ON) {
                         Laya.timer.once(1e3, _this, function() {
@@ -2942,6 +2974,13 @@ var PFU;
                 }
             });
         };
+        PfuGlobal.ShowShareFailDialog = function(desc, enter, cannel) {
+            PFU.WeChatUtils.GetInstance().ShowDoubleModal("提示", desc, "继续分享", "等下再说", function() {
+                enter();
+            }, function() {
+                cannel();
+            });
+        };
         PfuGlobal.ShowNextSplashAd = function() {
             PFU.PfuManager.GetInstance().ShowNextSplashAd();
         };
@@ -3541,12 +3580,13 @@ var PFU;
             }
             this._redpacketData.moneyNum = money;
         };
-        PfuRedPacketManager.prototype.SetRedpacketHandle = function(handle, visibleCallback, showGiftCallback, showEveryDayCallBack, setIconposCallBack) {
+        PfuRedPacketManager.prototype.SetRedpacketHandle = function(handle, visibleCallback, showGiftCallback, showEveryDayCallBack, setIconposCallBack, redpacketForceCloseRedPacketCallback) {
             this._redpacketHandle = handle;
             this._redpacketVisibeCallback = visibleCallback;
             this._redpacketShowGiftCallback = showGiftCallback;
             this._redpacketShowEveryDayCallback = showEveryDayCallBack;
             this._setIconPosCallBack = setIconposCallBack;
+            this._redpacketForceCloseRedPacketCallback = redpacketForceCloseRedPacketCallback;
         };
         PfuRedPacketManager.prototype.CheckAction = function() {
             if (PfuSdk.GetBoxListComplete && PfuSdk.GetParamComplete && PFU.PfuMoreGameUpdate.GetInstance()._isCreateWindow) {
@@ -3618,6 +3658,12 @@ var PFU;
                 return;
             }
             this._redpacketShowEveryDayCallback.call(this._redpacketHandle);
+        };
+        PfuRedPacketManager.prototype.ForceCloseRedPacketUI = function() {
+            if (this._redpacketHandle == null) {
+                return;
+            }
+            this._redpacketForceCloseRedPacketCallback.call(this._redpacketHandle);
         };
         PfuRedPacketManager.prototype.CanEverydayAward = function() {
             if (this._redpacketData.lastDayTime == 0) {
@@ -3809,19 +3855,33 @@ var PfuSdk = function() {
     PfuSdk.IsVideoForceShare = function() {
         return PFU.PfuManager.GetInstance().IsVideoForceShare();
     };
+    PfuSdk.IsPfuSdkMoreShare = function() {
+        return PFU.PfuManager.GetInstance().OLParam.pfuSdkMoreShare == PFU.PfuSwitch.ON;
+    };
+    PfuSdk.IsPfuSdkSorV = function() {
+        return PFU.PfuManager.GetInstance().OLParam.pfuSdkSorV == PFU.PfuSwitch.ON;
+    };
     PfuSdk.Share = function(handle, qureyPos, addQurey) {
         PFU.PfuGlobal.PfuShareGroupNext(handle, function() {}, false, qureyPos, addQurey);
     };
     PfuSdk.ShareAward = function(handle, fun, qureyPos, addQurey) {
+        var _this = this;
         PFU.PfuGlobal.PfuShareGroupNext(handle, function(type, desc) {
             if (type == PfuSdk.SUCCESS) {
                 fun.call(handle, type, desc);
             } else {
-                PFU.PfuGlobal.ShowDialog(desc, function() {
-                    fun.call(handle, type, desc);
-                });
+                _this._shareCancelDialog(desc, handle, fun, qureyPos, addQurey);
             }
         }, true, qureyPos, addQurey);
+    };
+    PfuSdk._shareCancelDialog = function(desc, handle, fun, qureyPos, addQurey) {
+        PFU.PfuGlobal.ShowShareFailDialog(desc, function() {
+            PFU.PfuGlobal.PfuShareGroupNext(handle, function(type, desc) {
+                fun.call(handle, type, desc);
+            }, true, qureyPos, addQurey);
+        }, function() {
+            fun.call(handle, PfuSdk.FAIL, desc);
+        });
     };
     PfuSdk.VideoRevive = function(handle, fun, adunit, isForceShare) {
         var isShowClickBanner = true;
@@ -4001,6 +4061,9 @@ var PfuSdk = function() {
     PfuSdk.PopupRedPacketEverydayWindow = function() {
         PFU.PfuRedPacketManager.GetInstance().PopupRedPacketEverydayWindow();
     };
+    PfuSdk.ForceCloseRedPacketUI = function() {
+        PFU.PfuRedPacketManager.GetInstance().ForceCloseRedPacketUI();
+    };
     return PfuSdk;
 }();
 
@@ -4016,7 +4079,7 @@ PfuSdk.UI_FIRST_SCENEBOX = 1e10;
 
 PfuSdk.UI_ORDER_OTHER = 1e9;
 
-PfuSdk.sdk_ver = "0.0.7.6";
+PfuSdk.sdk_ver = "0.0.7.9";
 
 PfuSdk.sdk_res_ver = "v7";
 

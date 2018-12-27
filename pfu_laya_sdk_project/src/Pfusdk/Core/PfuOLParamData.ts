@@ -60,6 +60,11 @@ namespace PFU {
         //SDK每日时长
         public pfuSdkDailyTime;
 
+        //是否弹出诱导分享
+        public pfuSdkMoreShare;
+        //视频或者分享
+        public pfuSdkSorV;
+
         public Init() {
             
             this.pfuSdkTestMode = PfuSwitch.ON;
@@ -88,6 +93,9 @@ namespace PFU {
             this.pfuSdkRed = PfuSwitch.OFF;
 
             this.pfuSdkDailyTime = 3;
+
+            this.pfuSdkMoreShare = PfuSwitch.OFF;
+            this.pfuSdkSorV = PfuSwitch.OFF;
         }
         //AddCode	
 

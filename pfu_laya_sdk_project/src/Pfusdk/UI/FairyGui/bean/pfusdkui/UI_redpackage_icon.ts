@@ -21,9 +21,9 @@ module pfusdkui {
 		protected constructFromXML(xml: any): void {
 			super.constructFromXML(xml);
 
-			this.m_n31 = <fairygui.GImage><any>(this.getChildAt(0));
-			this.m_n32 = <fairygui.GImage><any>(this.getChildAt(1));
-			this.m_moneyNumStr = <fairygui.GTextField><any>(this.getChildAt(2));
+			this.m_n31 = <fairygui.GImage><any>(this.getChild("n31"));
+			this.m_n32 = <fairygui.GImage><any>(this.getChild("n32"));
+			this.m_moneyNumStr = <fairygui.GTextField><any>(this.getChild("moneyNumStr"));
 		}
 	}
 }

@@ -188,6 +188,15 @@ var PFU;
                 this.allMoney_award.text = "" + (PFU.PfuRedPacketManager.GetInstance().GetMoney());
                 this.moneyNum_award.text = "" + award.toFixed(2); // Math.floor(award * 100) / 100;
             };
+            //#endregion----------------
+            RedPacketUI.prototype.ForceCloseRedPacketUI = function () {
+                if (this.com_openredpackage.visible) {
+                    this.com_openredpackage.visible = false;
+                }
+                if (this.com_awradredpackage.visible) {
+                    this.com_awradredpackage.visible = false;
+                }
+            };
             return RedPacketUI;
         }(ui.RedPacketUIUI));
         UI.RedPacketUI = RedPacketUI;

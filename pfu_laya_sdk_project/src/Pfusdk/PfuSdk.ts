@@ -15,7 +15,7 @@ class PfuSdk {
     public static get GetParamComplete() { return PFU.PfuManager.GetInstance().GetParamComplete; }
     public static get GetBoxListComplete() { return PFU.PfuManager.GetInstance().GetBoxListComplete; }
 
-    private static sdk_ver = "0.0.7.6";
+    private static sdk_ver = "0.0.7.9";
 
     public static sdk_res_ver = "v7";
 
@@ -45,18 +45,15 @@ class PfuSdk {
         return PFU.PfuConfig.Config;
     }
 
-    public static OpenCDNRes()
-    {
+    public static OpenCDNRes() {
         PFU.PfuGlobal.sdkCustomResRoot = PFU.PfuGlobal.SDK_CDN_RES_PATH + this.sdk_res_ver + "/";
     }
 
-    public static SetBannerWidth(width:number)
-    {
+    public static SetBannerWidth(width: number) {
         PFU.WeChatBannerAd.customWidth = width;
     }
 
-    public static SetBannerMaxHeight(height:number)
-    {
+    public static SetBannerMaxHeight(height: number) {
         PFU.WeChatBannerAd.customMaxHeight = height;
     }
 
@@ -130,6 +127,18 @@ class PfuSdk {
         return PFU.PfuManager.GetInstance().IsVideoForceShare();
     }
 
+    /**
+     * 是否弹出诱导分享
+     */
+    public static IsPfuSdkMoreShare(): boolean {
+        return PFU.PfuManager.GetInstance().OLParam.pfuSdkMoreShare == PFU.PfuSwitch.ON;
+    }
+    /**
+     * 视频或者分享
+     */
+    public static IsPfuSdkSorV(): boolean {
+        return PFU.PfuManager.GetInstance().OLParam.pfuSdkSorV == PFU.PfuSwitch.ON;
+    }
 
     /**
      * 分享 无回调
@@ -151,13 +160,24 @@ class PfuSdk {
             if (type == PfuSdk.SUCCESS) {
                 fun.call(handle, type, desc);
             } else {
-                PFU.PfuGlobal.ShowDialog(desc, () => {
-                    fun.call(handle, type, desc);
-                });
+                //是否继续分享？
+                this._shareCancelDialog(desc,handle,fun,qureyPos,addQurey);
+                // PFU.PfuGlobal.ShowDialog(desc, () => {
+                //     fun.call(handle, type, desc);
+                // });
             }
         }, true, qureyPos, addQurey);
     }
 
+    private static _shareCancelDialog(desc, handle: any, fun: Function,qureyPos?:number,addQurey?:string) {
+        PFU.PfuGlobal.ShowShareFailDialog(desc, () => {
+            PFU.PfuGlobal.PfuShareGroupNext(handle, (type, desc) => {
+                fun.call(handle, type, desc);
+            }, true, qureyPos, addQurey);
+        }, () => {
+            fun.call(handle, PfuSdk.FAIL, desc);
+        });
+    }
 
 
     /**
@@ -167,19 +187,18 @@ class PfuSdk {
      * @param adunit 
      * @param isForceShare 
      */
-    public static VideoRevive(handle: any, fun: Function, adunit?: string, isForceShare?: boolean)  {
+    public static VideoRevive(handle: any, fun: Function, adunit?: string, isForceShare?: boolean) {
         let isShowClickBanner = true;
-        if(!PFU.PfuManager.GetInstance().GetTodayTimeAction())
-        {
+        if (!PFU.PfuManager.GetInstance().GetTodayTimeAction()) {
             isShowClickBanner = false;
-        }   
+        }
 
         if (isShowClickBanner && PFU.PfuClickBannerRevive.GetInstance().IsBannerReviveOpen()) {
-            PFU.PfuClickBannerRevive.GetInstance().ShowBannerRevive(handle,(type)=>{
-               
-                fun.call(handle,type);
+            PFU.PfuClickBannerRevive.GetInstance().ShowBannerRevive(handle, (type) => {
+
+                fun.call(handle, type);
             });
-        } else  {
+        } else {
             this.Video(handle, fun, adunit, isForceShare);
         }
 
@@ -248,7 +267,7 @@ class PfuSdk {
                         fun.call(handle, PfuSdk.SUCCESS, "");
                         return;
                     }
-                    if (shareIn == null)  {
+                    if (shareIn == null) {
                         fun.call(handle, PfuSdk.FAIL, "");
                         return;
                     }
@@ -317,15 +336,13 @@ class PfuSdk {
     /**
      * 获取当天游戏时长
      */
-    public static GetTodayPlaySecond():number
-    {
+    public static GetTodayPlaySecond(): number {
         return PFU.PfuManager.GetInstance().GetTodayPlaySecond();
     }
     /**
      * 获取用户总时长
      */
-    public static GetUserPlayTime():number
-    {
+    public static GetUserPlayTime(): number {
         return PFU.PfuPlatformManager.GetInstance().GetUserPlayTime();
     }
 
@@ -454,14 +471,14 @@ class PfuSdk {
     /**
      * 弹出获得红包
      */
-    public static PopupRedPacket(handle: any, callback: Function)  {
+    public static PopupRedPacket(handle: any, callback: Function) {
         PFU.PfuRedPacketManager.GetInstance().PopupRedPacket(handle, callback);
     }
 
     /**
      * 是否可以领取红包
      */
-    public static CanGetRedPacket(): boolean  {
+    public static CanGetRedPacket(): boolean {
         return PFU.PfuRedPacketManager.GetInstance().CanGetRedPacket();
     }
 
@@ -475,8 +492,14 @@ class PfuSdk {
     /**
      * 显示红包每日领取界面
      */
-    public static PopupRedPacketEverydayWindow()  {
+    public static PopupRedPacketEverydayWindow() {
         PFU.PfuRedPacketManager.GetInstance().PopupRedPacketEverydayWindow();
     }
 
+    /**
+     * 强制关闭红包相关弹出UI
+     */
+    public static ForceCloseRedPacketUI() {
+        PFU.PfuRedPacketManager.GetInstance().ForceCloseRedPacketUI();
+    }
 }

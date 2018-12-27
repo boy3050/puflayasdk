@@ -19,7 +19,7 @@ module pfusdkui {
 		protected constructFromXML(xml: any): void {
 			super.constructFromXML(xml);
 
-			this.m_n21 = <fairygui.GTextField><any>(this.getChildAt(0));
+			this.m_n21 = <fairygui.GTextField><any>(this.getChild("n21"));
 		}
 	}
 }

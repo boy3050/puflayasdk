@@ -67,6 +67,8 @@ var PFU;
                     _this.redPacketUI.OpenEverydayGift();
                 }, function (vx, vy) {
                     _this.moregameUI.SetIconBtnPos(vx, vy);
+                }, function () {
+                    _this.redPacketUI.ForceCloseRedPacketUI();
                 });
                 PFU.PfuMoreGameUpdate.GetInstance().SetPopupListVisible(this, function (isShow) {
                     if (isShow) {

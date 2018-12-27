@@ -270,6 +270,31 @@ var PFU;
                 fun();
             }
         };
+        WeChatUtils.prototype.ShowDoubleModal = function (title, content, enterStr, cancelStr, enter, cancel) {
+            if (this.IsWeGame()) {
+                wx.showModal({
+                    title: title,
+                    content: content,
+                    confirmText: enterStr,
+                    cancelText: cancelStr,
+                    showCancel: true,
+                    success: function (res) {
+                        if (res.confirm) {
+                            enter();
+                        }
+                        else if (res.cancel) {
+                            cancel();
+                        }
+                    },
+                    fail: function () {
+                        cancel();
+                    }
+                });
+            }
+            else {
+                enter();
+            }
+        };
         WeChatUtils.prototype.SetUpdateApp = function () {
             if (!this.IsWeGame()) {
                 return;

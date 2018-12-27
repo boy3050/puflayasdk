@@ -23,11 +23,11 @@ module pfusdkui {
 		protected constructFromXML(xml: any): void {
 			super.constructFromXML(xml);
 
-			this.m_btn_redpackageicon = <UI_redpackage_icon><any>(this.getChildAt(0));
-			this.m_com_openredpackage = <UI_OpenRedPackage_com><any>(this.getChildAt(1));
-			this.m_com_tixianredpackage = <UI_TiXianRedPackage_com><any>(this.getChildAt(2));
-			this.m_com_everyday = <UI_everyday_redpackage_com><any>(this.getChildAt(3));
-			this.m_com_awradredpackage = <UI_AwardRedPackage_com><any>(this.getChildAt(4));
+			this.m_btn_redpackageicon = <UI_redpackage_icon><any>(this.getChild("btn_redpackageicon"));
+			this.m_com_openredpackage = <UI_OpenRedPackage_com><any>(this.getChild("com_openredpackage"));
+			this.m_com_tixianredpackage = <UI_TiXianRedPackage_com><any>(this.getChild("com_tixianredpackage"));
+			this.m_com_everyday = <UI_everyday_redpackage_com><any>(this.getChild("com_everyday"));
+			this.m_com_awradredpackage = <UI_AwardRedPackage_com><any>(this.getChild("com_awradredpackage"));
 		}
 	}
 }

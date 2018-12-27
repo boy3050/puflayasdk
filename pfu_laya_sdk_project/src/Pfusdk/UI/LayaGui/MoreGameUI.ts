@@ -35,10 +35,10 @@ namespace PFU.UI {
                 PFU.UI.PfuSdkLayaUI.OpenRadPacketTixian();
             }
         }
-       /**
-        * 更新
-        * @param money 
-        */
+        /**
+         * 更新
+         * @param money 
+         */
         public UpdateIconMoney() {
             this.moneyNumStr.text = "¥" + PfuRedPacketManager.GetInstance().GetMoney();
         }
@@ -142,7 +142,11 @@ namespace PFU.UI {
             if (PfuGlobal.GetOLParam().pfuSdkMoreGame == PfuSwitch.OFF || (PfuConfig.Config && PfuConfig.Config.ui_moreGameType == -1)) {
                 this.btn_left.visible = false;
                 this.btn_right.visible = false;
-                //this.box.visible = false;
+                //
+            }
+
+            if (PfuSdk.IsTestModel()) {
+                this.box.visible = false;
             }
         }
 
@@ -195,8 +199,7 @@ namespace PFU.UI {
                 this.box_bg.visible = true;
                 this.boxlist.visible = true;
             }
-            else
-            {
+            else  {
                 this.img_title.visible = false;
                 this.box_bg.visible = false;
                 this.boxlist.visible = false;
@@ -222,11 +225,23 @@ namespace PFU.UI {
         }
 
         public ShowLeft() {
+            if (PfuSdk.IsTestModel()) {
+                return;
+            }
+            if (PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                return;
+            }
             if (PfuConfig.Config.ui_crossGameListType != -1) {
                 this.boxList_left.visible = true;
             }
         }
         public HideLeft() {
+            if (PfuSdk.IsTestModel()) {
+                return;
+            }
+            if (PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                return;
+            }
             if (PfuConfig.Config.ui_crossGameListType != -1) {
                 this.boxList_left.visible = false;
             }
@@ -245,8 +260,7 @@ namespace PFU.UI {
                 this.btn_list_open.visible = true;
                 this.boxlist_left_btn_bg.visible = true;
             }
-            else
-            {
+            else  {
                 this.btn_list_open.visible = false;
                 this.boxlist_left_btn_bg.visible = false;
             }

@@ -35,18 +35,21 @@ class LayaAir3D {
         material.diffuseTexture = Laya.Texture2D.load("res/layabox.png");
         box.meshRender.material = material;
 
-        //Laya.LocalStorage.clear();
+        Laya.LocalStorage.clear();
+
         //PfuSdk.SetSdkResPath("https://txpk.jfydgame.com/pfulayasdk/test/");
         //SDK初始化
 
-        PfuSdk.OpenCDNRes();
+        //PfuSdk.OpenCDNRes();
+
+
         PfuSdk.SetBannerWidth(Laya.Browser.width * 0.28);
         PfuSdk.SetBannerMaxHeight(Laya.Browser.height * 0.287);
 
         PfuSdk.InitConfig(this, () => {
 
             //FairyGUI创建
-            PFU.UI.PfuSdkFairyUI.CreateUI(()=>{});
+            PFU.UI.PfuSdkFairyUI.CreateUI(() => { });
             //LayaGUI创建
             //PFU.UI.PfuSdkLayaUI.CreateUI();
 
@@ -66,22 +69,40 @@ class LayaAir3D {
 
             Laya.timer.once(2000, this, () => {
                 PfuSdk.ShowBanner();
-        //显示更多游戏列表
-        PfuSdk.ShowMoreGameList();
+                //显示更多游戏列表
+                PfuSdk.ShowMoreGameList();
                 Laya.timer.once(2000, this, () => {
                     // PfuSdk.ShowClickBannnerRevive(this, (type) => {
                     //     if (type == PfuSdk.SUCCESS)  {
                     //         console.log("ShowClickBannnerRevive success");
-                            
+
                     //     }
                     //     else  {
                     //         console.log("ShowClickBannnerRevive fait");
                     //     }
                     //     PfuSdk.ShowBanner();
                     // });
-                   PfuSdk.PopupRedPacket(this,(type)=>{
-                       
-                   });
+                    // PfuSdk.ShareAward(this, (type, desc) => {
+                    //     if (PfuSdk.SUCCESS == type) {
+                    //         //给予奖励
+                    //     }
+                    //     else {
+                    //         //错误描述
+                    //         console.log(desc);
+                    //     }
+                    // });
+                    PfuSdk.SetOLParamInt("pfuSdkDailyTime",0);
+                    PfuSdk.SetOLParamInt("pfuSdkPlayTime",0);
+
+                    PfuSdk.PopupRedPacket(this, (type) => {
+                        PfuSdk.VideoRevive(this, () => {
+
+                        });
+                    });
+
+      
+
+
                 });
                 // PfuSdk.ShowClickBannnerRevive(this,(type)=>{
 

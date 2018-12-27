@@ -16,7 +16,7 @@ var pfusdkui;
         };
         UI_btn_red_open.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n2 = (this.getChildAt(0));
+            this.m_n2 = (this.getChild("n2"));
         };
         return UI_btn_red_open;
     }(fairygui.GComponent));

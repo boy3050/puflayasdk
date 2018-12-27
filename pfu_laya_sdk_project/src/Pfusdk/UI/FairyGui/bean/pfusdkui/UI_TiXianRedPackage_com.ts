@@ -28,16 +28,16 @@ module pfusdkui {
 		protected constructFromXML(xml: any): void {
 			super.constructFromXML(xml);
 
-			this.m_n8 = <fairygui.GGraph><any>(this.getChildAt(0));
-			this.m_bg_loader = <fairygui.GLoader><any>(this.getChildAt(1));
-			this.m_btn_close = <UI_redpackageClose><any>(this.getChildAt(2));
-			this.m_n15 = <fairygui.GTextField><any>(this.getChildAt(3));
-			this.m_n16 = <fairygui.GTextField><any>(this.getChildAt(4));
-			this.m_moneyNum = <fairygui.GTextField><any>(this.getChildAt(5));
-			this.m_n18 = <fairygui.GTextField><any>(this.getChildAt(6));
-			this.m_n19 = <fairygui.GTextField><any>(this.getChildAt(7));
-			this.m_n20 = <fairygui.GTextField><any>(this.getChildAt(8));
-			this.m_btn_tixian = <UI_red_TiXian><any>(this.getChildAt(9));
+			this.m_n8 = <fairygui.GGraph><any>(this.getChild("n8"));
+			this.m_bg_loader = <fairygui.GLoader><any>(this.getChild("bg_loader"));
+			this.m_btn_close = <UI_redpackageClose><any>(this.getChild("btn_close"));
+			this.m_n15 = <fairygui.GTextField><any>(this.getChild("n15"));
+			this.m_n16 = <fairygui.GTextField><any>(this.getChild("n16"));
+			this.m_moneyNum = <fairygui.GTextField><any>(this.getChild("moneyNum"));
+			this.m_n18 = <fairygui.GTextField><any>(this.getChild("n18"));
+			this.m_n19 = <fairygui.GTextField><any>(this.getChild("n19"));
+			this.m_n20 = <fairygui.GTextField><any>(this.getChild("n20"));
+			this.m_btn_tixian = <UI_red_TiXian><any>(this.getChild("btn_tixian"));
 		}
 	}
 }

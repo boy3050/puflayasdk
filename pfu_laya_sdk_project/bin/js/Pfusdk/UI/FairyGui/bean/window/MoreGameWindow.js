@@ -49,11 +49,23 @@ var PFU;
                 }
             };
             MoreGameWindow.prototype.ShowLeft = function () {
+                if (PfuSdk.IsTestModel()) {
+                    return;
+                }
+                if (PFU.PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                    return;
+                }
                 if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
                     this._fui.m_boxList_left.visible = true;
                 }
             };
             MoreGameWindow.prototype.HideLeft = function () {
+                if (PfuSdk.IsTestModel()) {
+                    return;
+                }
+                if (PFU.PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                    return;
+                }
                 if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
                     this._fui.m_boxList_left.visible = false;
                 }
@@ -107,6 +119,9 @@ var PFU;
                         //this._fui.m_boxList_left.visible = false;
                         this._fui.m_Btn_MoreGameLeft.visible = false;
                         this._fui.m_Btn_MoreGameRight.visible = false;
+                    }
+                    if (PfuSdk.IsTestModel()) {
+                        this._fui.m_boxList.visible = false;
                     }
                 }
             };
@@ -202,6 +217,9 @@ var PFU;
                 var list = PFU.PfuBoxList.GetInstance().GetMoreGameListData();
                 var count = list.length;
                 if (count > 0) {
+                }
+                else {
+                    this._fui.m_boxList_left.visible = false;
                 }
                 for (var i = 0; i < count; i++) {
                     var boxListData = list[i];

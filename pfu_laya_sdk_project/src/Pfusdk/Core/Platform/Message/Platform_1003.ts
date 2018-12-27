@@ -14,7 +14,7 @@ namespace PFU {
         //自己的appId
         public selfid: string;
         //邀请者Uid
-        public inviteUid: number;
+        public rinviteUid: number;
         //在线总时长
         public onlineTime: number;
     }

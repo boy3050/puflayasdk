@@ -168,6 +168,15 @@ interface PfuSdk {
     */
     IsPfuSdkVideoShare(): boolean;
 
+    /**
+     * 是否弹出诱导分享 个值SDK里面返回给游戏中,每个游戏自己来做显示判断,需要屏蔽地区
+     */
+    IsPfuSdkMoreShare(): boolean;
+    /**
+     * 视频或者分享  这个值SDK里面返回给游戏中 需要屏蔽地区
+     */
+    IsPfuSdkSorV(): boolean;
+
     /*
     *	跳转盒子复活功能 
     *	callback返回type
@@ -227,6 +236,12 @@ interface PfuSdk {
      * 显示红包每日领取界面
      */
     PopupRedPacketEverydayWindow();
+
+    /**
+     * 强制关闭红包相关弹出UI
+     */
+    ForceCloseRedPacketUI();
+
 
 }
 declare const PfuSdk: PfuSdk;

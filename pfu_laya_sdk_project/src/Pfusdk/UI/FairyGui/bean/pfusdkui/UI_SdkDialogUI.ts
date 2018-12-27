@@ -4,7 +4,7 @@ module pfusdkui {
 
 	export class UI_SdkDialogUI extends fairygui.GComponent {
 
-		public m_n0:UI_DialogCom;
+		public m_com:UI_DialogCom;
 
 		public static URL:string = "ui://xcy52l65jkohcj";
 
@@ -19,7 +19,7 @@ module pfusdkui {
 		protected constructFromXML(xml: any): void {
 			super.constructFromXML(xml);
 
-			this.m_n0 = <UI_DialogCom><any>(this.getChildAt(0));
+			this.m_com = <UI_DialogCom><any>(this.getChild("com"));
 		}
 	}
 }

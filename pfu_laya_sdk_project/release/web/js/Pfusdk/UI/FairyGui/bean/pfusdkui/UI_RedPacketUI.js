@@ -16,11 +16,11 @@ var pfusdkui;
         };
         UI_RedPacketUI.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_btn_redpackageicon = (this.getChildAt(0));
-            this.m_com_openredpackage = (this.getChildAt(1));
-            this.m_com_tixianredpackage = (this.getChildAt(2));
-            this.m_com_everyday = (this.getChildAt(3));
-            this.m_com_awradredpackage = (this.getChildAt(4));
+            this.m_btn_redpackageicon = (this.getChild("btn_redpackageicon"));
+            this.m_com_openredpackage = (this.getChild("com_openredpackage"));
+            this.m_com_tixianredpackage = (this.getChild("com_tixianredpackage"));
+            this.m_com_everyday = (this.getChild("com_everyday"));
+            this.m_com_awradredpackage = (this.getChild("com_awradredpackage"));
         };
         return UI_RedPacketUI;
     }(fairygui.GComponent));

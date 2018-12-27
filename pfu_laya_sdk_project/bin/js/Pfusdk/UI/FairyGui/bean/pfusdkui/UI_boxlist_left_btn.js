@@ -16,7 +16,7 @@ var pfusdkui;
         };
         UI_boxlist_left_btn.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n9 = (this.getChildAt(0));
+            this.m_n9 = (this.getChild("n9"));
         };
         return UI_boxlist_left_btn;
     }(fairygui.GComponent));

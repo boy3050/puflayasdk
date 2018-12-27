@@ -113139,6 +113139,19 @@ var PFU;
                 wx.onShow(callBack);
             }
         };
+        WeChatUtils.prototype.OnExitApp = function (complete) {
+            if (this.IsWeGame()) {
+                wx.exitMiniProgram({
+                    success: function () {
+                    },
+                    fail: function () {
+                    },
+                    complete: function () {
+                        complete();
+                    }
+                });
+            }
+        };
         // #endregin
         //AddCode	
         //EndAddCode
@@ -113252,6 +113265,31 @@ var PFU;
             }
             else {
                 fun();
+            }
+        };
+        WeChatUtils.prototype.ShowDoubleModal = function (title, content, enterStr, cancelStr, enter, cancel) {
+            if (this.IsWeGame()) {
+                wx.showModal({
+                    title: title,
+                    content: content,
+                    confirmText: enterStr,
+                    cancelText: cancelStr,
+                    showCancel: true,
+                    success: function (res) {
+                        if (res.confirm) {
+                            enter();
+                        }
+                        else if (res.cancel) {
+                            cancel();
+                        }
+                    },
+                    fail: function () {
+                        cancel();
+                    }
+                });
+            }
+            else {
+                enter();
             }
         };
         WeChatUtils.prototype.SetUpdateApp = function () {
@@ -113716,7 +113754,7 @@ var PFU;
                                     _this._bannerAd.style.height = height;
                                 }
                             }
-                            leftPos = (laya.utils.Browser.clientWidth - res.width) / 2;
+                            leftPos = (laya.utils.Browser.clientWidth - _this._bannerAd.style.width) / 2;
                             var a = 0;
                             if (Laya.Browser.onAndroid && (_this.isQuanMian() || _this.isLiuHai())) {
                                 a = 34;
@@ -114414,6 +114452,8 @@ var PFU;
             //是否登录pfu平台
             this._isLoginPlatform = false;
             this.SAVE_KEY = "platform_user";
+            this.SAVE_USERPLAY_KEY = "userplayTime";
+            this._playtime = 0;
             this._lastTime = 0;
             this.tempAdId = null;
             this._reconnectCount = 0;
@@ -114429,15 +114469,28 @@ var PFU;
             return this.instance;
         };
         PfuPlatformManager.prototype.Init = function () {
+            var _this = this;
             this._privateKey = PFU.PfuConfig.Config.privateKey;
             ;
             //BX.NotificationCenter.GetInstance().AddObserver(this, this.parseMsg2000, PfuPlatformManager.NOTIFYY_MSG_ID + "2000");
             this.Load();
+            this._lastTime = Date.now();
             if (PFU.WeChatUtils.GetInstance().IsWeGame()) {
                 if (this._privateKey != "") {
                     PfuPlatformManager.GetInstance().LoginWegame(PFU.PfuConfig.Config.wxId, PFU.PfuConfig.Config.appId);
                 }
             }
+            // PFU.WeChatUtils.GetInstance().OnExitApp(
+            //     () => {
+            //         this.OnHide();
+            //     }
+            // );
+            Laya.timer.once(2000, this, function () {
+                _this.SetPlayTime();
+                Laya.timer.loop(15000, _this, function () {
+                    _this.SetPlayTime();
+                });
+            });
         };
         PfuPlatformManager.prototype.SetInGameUserHandle = function (handle, callback) {
             this._shareInGameHandle = handle;
@@ -114466,30 +114519,58 @@ var PFU;
                     this._platformUserData.userPlayTime = 0;
                 }
             }
+            var value = PFU.LocalSaveUtils.GetItem(this.SAVE_USERPLAY_KEY);
+            if (value) {
+                try {
+                    this._playtime = parseInt("" + value);
+                }
+                catch (e) {
+                    this._playtime = this._platformUserData.userPlayTime;
+                }
+            }
+            else {
+                this._playtime = this._platformUserData.userPlayTime;
+                this.SavePlaytime();
+            }
+        };
+        PfuPlatformManager.prototype.SavePlaytime = function () {
+            PFU.LocalSaveUtils.SaveItem(this.SAVE_USERPLAY_KEY, this._playtime.toString());
         };
         PfuPlatformManager.prototype.OnShow = function (args) {
             PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
+            PFU.PfuManager.GetInstance().UpdateNewDay();
             this._lastTime = Date.now();
         };
         PfuPlatformManager.prototype.OnHide = function () {
             if (this._lastTime > 0) {
                 //取秒
                 var time = (Date.now() - this._lastTime) / 1000;
-                console.log("本次游戏时长/秒:" + time);
-                this._platformUserData.userPlayTime += Math.floor(time);
+                PFU.PfuManager.GetInstance().AddPlayTimeCount(Math.floor(time));
+                this.SetPlayTime();
                 console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime);
-                this.Save();
                 this._lastTime = Date.now();
             }
+        };
+        PfuPlatformManager.prototype.SetPlayTime = function () {
+            //取秒
+            var time = (Date.now() - this._lastTime) / 1000;
+            this._playtime += Math.floor(time);
+            this.SavePlaytime();
+            this._lastTime = Date.now();
         };
         PfuPlatformManager.prototype.Save = function () {
             PFU.LocalSaveUtils.SaveJsonObject(this.SAVE_KEY, this._platformUserData);
         };
         PfuPlatformManager.prototype.GetUserPlayTime = function () {
             if (this._platformUserData && this._platformUserData.userPlayTime) {
-                return this._platformUserData.userPlayTime;
+                var time = (Date.now() - this._lastTime) / 1000;
+                return this._platformUserData.userPlayTime + Math.floor(time);
             }
             return 0;
+        };
+        PfuPlatformManager.prototype.GetRunTime = function () {
+            var time = (Date.now() - this._lastTime) / 1000;
+            return Math.floor(time);
         };
         //private _notifShareInGames: BX.Dictionary<number, Array<Platform_2000_resp_Data>> = new BX.Dictionary<number, Array<Platform_2000_resp_Data>>();
         //private userCache: BX.Dictionary<number, Platform_1333_ResData> = new BX.Dictionary<number, Platform_1333_ResData>();
@@ -114699,7 +114780,7 @@ var PFU;
             //Debug.Log("srcId=" + srcid);
             request.srcid = srcid;
             request.selfid = appId;
-            request.inviteUid = rinviteUid;
+            request.rinviteUid = rinviteUid;
             try {
                 request.onlineTime = Math.floor(this._platformUserData.userPlayTime);
             }
@@ -115327,6 +115408,9 @@ var PFU;
             this.pfuSdkPlayTime = 120 * 60;
             this.pfuSdkBannerRelive = 0;
             this.pfuSdkRed = PFU.PfuSwitch.OFF;
+            this.pfuSdkDailyTime = 3;
+            this.pfuSdkMoreShare = PFU.PfuSwitch.OFF;
+            this.pfuSdkSorV = PFU.PfuSwitch.OFF;
         };
         return PfuOLParamData;
     }());
@@ -115552,6 +115636,7 @@ var PFU;
             this._wechatparam.value = new PFU.PfuOLParamData();
             this._wechatparam.value.Init();
             this.GetShareNum();
+            this.Load();
         }
         PfuManager.GetInstance = function () {
             if (!this.instance) {
@@ -115610,6 +115695,8 @@ var PFU;
                         param.pfuSdkVideoShare = PfuSwitch.OFF;
                         param.pfuSdkRed = PfuSwitch.OFF;
                         param.pfuSdkBannerRelive = 0;
+                        param.pfuSdkMoreShare = PfuSwitch.OFF;
+                        param.pfuSdkSorV = PfuSwitch.OFF;
                     }
                     if (param.pfuSdkTestMode == PfuSwitch.OFF && param.pfuSdkShowOpenAds == PfuSwitch.ON) {
                         Laya.timer.once(1000, _this, function () {
@@ -116261,6 +116348,62 @@ var PFU;
                 }
             }, jumpId, jumpPath);
         };
+        //#region 存储
+        PfuManager.prototype.Load = function () {
+            var json = PFU.LocalSaveUtils.GetJsonObject("playnewDay");
+            if (json != null && json != undefined) {
+                this._DB = json;
+            }
+            else {
+                this._DB = new PfuNewDay();
+                this._DB.time = 0;
+                this._DB.playTimeCount = 0;
+            }
+            return this._DB;
+        };
+        PfuManager.prototype.Save = function () {
+            PFU.LocalSaveUtils.SaveJsonObject("playnewDay", this._DB);
+        };
+        PfuManager.prototype.UpdateNewDay = function () {
+            //是否为新的一天
+            if (this.IsNewDay()) {
+                var date = new Date();
+                var curDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                this._DB.time = curDay.getTime();
+                this._DB.playTimeCount = 0;
+                this.Save();
+            }
+        };
+        PfuManager.prototype.AddPlayTimeCount = function (second) {
+            this._DB.playTimeCount += second;
+            console.log("今日游戏时长:" + this._DB.playTimeCount);
+            this.Save();
+        };
+        /**
+         * 获取今天完了多久
+         */
+        PfuManager.prototype.GetTodayPlaySecond = function () {
+            return this._DB.playTimeCount + PFU.PfuPlatformManager.GetInstance().GetRunTime();
+        };
+        /**
+         * 获取SDK游戏时长开启的功能
+         */
+        PfuManager.prototype.GetTodayTimeAction = function () {
+            return this.GetTodayPlaySecond() > this.OLParam.pfuSdkDailyTime * 60;
+        };
+        PfuManager.prototype.IsNewDay = function () {
+            if (this._DB.time == 0) {
+                return true;
+            }
+            var lastTime = this._DB.time;
+            var date = new Date();
+            var curDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            var curTime = curDay.getTime();
+            if (curTime > lastTime) {
+                return true;
+            }
+            return false;
+        };
         return PfuManager;
     }());
     //#region 统一在线参数管理
@@ -116342,6 +116485,12 @@ var PFU;
         }
         return PfuMoreGameBean;
     }());
+    var PfuNewDay = (function () {
+        function PfuNewDay() {
+            this.playTimeCount = 0;
+        }
+        return PfuNewDay;
+    }());
     var PfuMoreGameData = (function () {
         function PfuMoreGameData() {
         }
@@ -116369,6 +116518,13 @@ var PFU;
             // if (this._addDialogCallback) {
             //     this._addDialogCallback.call(this._addDialogHandle, desc);
             // }
+        };
+        PfuGlobal.ShowShareFailDialog = function (desc, enter, cannel) {
+            PFU.WeChatUtils.GetInstance().ShowDoubleModal("提示", desc, "继续分享", "等下再说", function () {
+                enter();
+            }, function () {
+                cannel();
+            });
         };
         //轮播闪屏广告
         PfuGlobal.ShowNextSplashAd = function () {
@@ -116534,7 +116690,8 @@ var PFU;
         return PfuGlobal;
     }());
     PfuGlobal.SDK_RES_CDN_PATH = "https://txpk.jfydgame.com/pfulayasdk/";
-    PfuGlobal.SDK_CUSTOM_RES_PATH = "";
+    PfuGlobal.SDK_CDN_RES_PATH = "https://txpk.jfydgame.com/pfulayasdk/ver/";
+    PfuGlobal.sdkCustomResRoot = "";
     PfuGlobal.focusCallback = null;
     PfuGlobal.focusHandler = null;
     PfuGlobal._addDialogCallback = null;
@@ -116953,10 +117110,8 @@ var PfuSdk = (function () {
     PfuSdk.GetConfig = function () {
         return PFU.PfuConfig.Config;
     };
-    PfuSdk.SetSdkResPath = function (url) {
-        if (url) {
-            PFU.PfuGlobal.SDK_CUSTOM_RES_PATH = url;
-        }
+    PfuSdk.OpenCDNRes = function () {
+        PFU.PfuGlobal.sdkCustomResRoot = PFU.PfuGlobal.SDK_CDN_RES_PATH + this.sdk_res_ver + "/";
     };
     PfuSdk.SetBannerWidth = function (width) {
         PFU.WeChatBannerAd.customWidth = width;
@@ -117023,6 +117178,18 @@ var PfuSdk = (function () {
         return PFU.PfuManager.GetInstance().IsVideoForceShare();
     };
     /**
+     * 是否弹出诱导分享
+     */
+    PfuSdk.IsPfuSdkMoreShare = function () {
+        return PFU.PfuManager.GetInstance().OLParam.pfuSdkMoreShare == PFU.PfuSwitch.ON;
+    };
+    /**
+     * 视频或者分享
+     */
+    PfuSdk.IsPfuSdkSorV = function () {
+        return PFU.PfuManager.GetInstance().OLParam.pfuSdkSorV == PFU.PfuSwitch.ON;
+    };
+    /**
      * 分享 无回调
      * @param handle
      * @param qureyPos 分享参数  1
@@ -117037,16 +117204,25 @@ var PfuSdk = (function () {
      * @param qureyPos
      */
     PfuSdk.ShareAward = function (handle, fun, qureyPos, addQurey) {
+        var _this = this;
         PFU.PfuGlobal.PfuShareGroupNext(handle, function (type, desc) {
             if (type == PfuSdk.SUCCESS) {
                 fun.call(handle, type, desc);
             }
             else {
-                PFU.PfuGlobal.ShowDialog(desc, function () {
-                    fun.call(handle, type, desc);
-                });
+                //是否继续分享？
+                _this._shareCancelDialog(desc, handle, fun, qureyPos, addQurey);
             }
         }, true, qureyPos, addQurey);
+    };
+    PfuSdk._shareCancelDialog = function (desc, handle, fun, qureyPos, addQurey) {
+        PFU.PfuGlobal.ShowShareFailDialog(desc, function () {
+            PFU.PfuGlobal.PfuShareGroupNext(handle, function (type, desc) {
+                fun.call(handle, type, desc);
+            }, true, qureyPos, addQurey);
+        }, function () {
+            fun.call(handle, PfuSdk.FAIL, desc);
+        });
     };
     /**
      * 视频游戏复活功能
@@ -117056,14 +117232,12 @@ var PfuSdk = (function () {
      * @param isForceShare
      */
     PfuSdk.VideoRevive = function (handle, fun, adunit, isForceShare) {
-        var _this = this;
-        var isShowClickBanner = false;
-        if (this._clickBannerShowTime == 0 || (this._clickBannerShowTime > 0 && (Date.now() - this._clickBannerShowTime) >= 60000)) {
-            isShowClickBanner = true;
+        var isShowClickBanner = true;
+        if (!PFU.PfuManager.GetInstance().GetTodayTimeAction()) {
+            isShowClickBanner = false;
         }
         if (isShowClickBanner && PFU.PfuClickBannerRevive.GetInstance().IsBannerReviveOpen()) {
             PFU.PfuClickBannerRevive.GetInstance().ShowBannerRevive(handle, function (type) {
-                _this._clickBannerShowTime = Date.now();
                 fun.call(handle, type);
             });
         }
@@ -117197,6 +117371,18 @@ var PfuSdk = (function () {
         if (list[name]) {
             list[name] = newValue;
         }
+    };
+    /**
+     * 获取当天游戏时长
+     */
+    PfuSdk.GetTodayPlaySecond = function () {
+        return PFU.PfuManager.GetInstance().GetTodayPlaySecond();
+    };
+    /**
+     * 获取用户总时长
+     */
+    PfuSdk.GetUserPlayTime = function () {
+        return PFU.PfuPlatformManager.GetInstance().GetUserPlayTime();
     };
     /**
      * 分享后有用户点击 消息监听
@@ -117334,6 +117520,12 @@ var PfuSdk = (function () {
     PfuSdk.PopupRedPacketEverydayWindow = function () {
         PFU.PfuRedPacketManager.GetInstance().PopupRedPacketEverydayWindow();
     };
+    /**
+     * 强制关闭红包相关弹出UI
+     */
+    PfuSdk.ForceCloseRedPacketUI = function () {
+        PFU.PfuRedPacketManager.GetInstance().ForceCloseRedPacketUI();
+    };
     return PfuSdk;
 }());
 PfuSdk.SUCCESS = 0; //success
@@ -117342,12 +117534,12 @@ PfuSdk.VIDEO_SHOW_FAIL = 2;
 PfuSdk.UI_ORDER_MOREGAME = 90000;
 PfuSdk.UI_FIRST_SCENEBOX = 10000000000;
 PfuSdk.UI_ORDER_OTHER = 1000000000;
-PfuSdk.sdk_ver = "0.0.7.3";
+PfuSdk.sdk_ver = "0.0.7.9";
+PfuSdk.sdk_res_ver = "v7";
 PfuSdk.SHOW_TYPE_ALL = 0; //更多游戏，BosList都显示
 PfuSdk.SHOW_TYPE_MOREGAME = 1; //只显示更多游戏
 PfuSdk.SHOW_TYPE_BOXLIST = 2; //只显示底部盒子列表
 PfuSdk._sdkVideoShareFinish = true;
-PfuSdk._clickBannerShowTime = 0;
 //# sourceMappingURL=PfuSdk.js.map
 var PFU;
 (function (PFU) {
@@ -117436,7 +117628,7 @@ var PFU;
                 UI.SceneMatchingLayaUtils.HEIGTH = laya.utils.Browser.height;
             };
             PfuSdkLayaUI.LoadUIData = function () {
-                Laya.loader.load(PFU.PfuGlobal.SDK_CUSTOM_RES_PATH + "PfusdkRes/UI/layaui/atlas/comp.atlas", Laya.Handler.create(this, this.CreateUIWindow));
+                Laya.loader.load(PFU.PfuGlobal.sdkCustomResRoot + "PfusdkRes/UI/layaui/atlas/comp.atlas", Laya.Handler.create(this, this.CreateUIWindow));
                 //Laya.loader.load("https://txpk.jfydgame.com/pfulayasdk/test/atlas/comp.atlas", Laya.Handler.create(this, this.CreateUIWindow));
             };
             PfuSdkLayaUI.AddStage = function (windowUI) {
@@ -117486,6 +117678,8 @@ var PFU;
                     _this.redPacketUI.OpenEverydayGift();
                 }, function (vx, vy) {
                     _this.moregameUI.SetIconBtnPos(vx, vy);
+                }, function () {
+                    _this.redPacketUI.ForceCloseRedPacketUI();
                 });
                 PFU.PfuMoreGameUpdate.GetInstance().SetPopupListVisible(this, function (isShow) {
                     if (isShow) {
@@ -117592,7 +117786,7 @@ var ui;
         };
         return MoreGameUIUI;
     }(View));
-    MoreGameUIUI.uiView = { "type": "View", "props": { "width": 750, "mouseThrough": true, "height": 1334 }, "child": [{ "type": "Sprite", "props": { "y": 0, "x": 0, "width": 750, "var": "moregameCtl", "mouseThrough": true, "height": 1334 }, "child": [{ "type": "Button", "props": { "y": 567, "x": 7, "width": 177, "var": "btn_left", "top": 567, "stateNum": 1, "left": 7, "height": 84 } }, { "type": "Button", "props": { "y": 567, "x": 710, "width": 177, "var": "btn_right", "top": 567, "stateNum": 1, "right": 40, "height": 84, "anchorX": 1 } }, { "type": "Box", "props": { "y": 0, "x": 0, "var": "box", "mouseThrough": true }, "child": [{ "type": "Image", "props": { "y": 1119, "width": 113, "var": "img_title", "skin": "comp/Img_hy.png", "right": 332, "height": 25 } }, { "type": "Image", "props": { "y": 1157, "x": 24, "width": 710, "visible": false, "skin": "comp/Img_zjmdt.png", "right": 16, "height": 164, "bottom": 13 } }, { "type": "List", "props": { "y": 1160, "x": 0, "width": 750, "var": "boxlist", "spaceX": 1, "repeatY": 1 }, "child": [{ "type": "Box", "props": { "width": 130, "var": "boxitem", "renderType": "render", "height": 130 }, "child": [{ "type": "Image", "props": { "width": 130, "name": "img_icon", "height": 130 } }, { "type": "Sprite", "props": { "y": 65, "x": 65, "width": 0, "renderType": "mask", "height": 0 }, "child": [{ "type": "Circle", "props": { "radius": 60, "lineWidth": 1, "fillColor": "#ff0000" } }] }] }] }] }, { "type": "Box", "props": { "y": 298, "x": -367, "width": 0, "visible": false, "var": "boxList_left", "mouseThrough": true, "height": 0 }, "compId": 23, "child": [{ "type": "Image", "props": { "y": 153, "x": 367, "width": 51, "var": "btn_list_open", "skin": "comp/zx_jt_di.png", "rotation": 0, "mouseEnabled": true, "height": 94, "sizeGrid": "21,15,32,15" } }, { "type": "Image", "props": { "y": -25, "x": -12, "width": 379, "skin": "comp/zx_jt_di.png", "height": 469, "sizeGrid": "21,15,32,15" } }, { "type": "Image", "props": { "y": 197, "x": 392, "skin": "comp/zx_jiantou.png", "scaleX": -1, "anchorY": 0.5, "anchorX": 0.5 }, "compId": 33 }, { "type": "List", "props": { "y": -22, "x": -7, "width": 371, "var": "boxlist_array_left", "spaceY": 0, "spaceX": 0, "repeatY": 3, "repeatX": 0, "height": 478 }, "child": [{ "type": "Box", "props": { "y": 6, "x": -5, "width": 125, "var": "boxitemleft", "renderType": "render", "height": 153 }, "child": [{ "type": "Image", "props": { "y": 50, "x": 61, "width": 100, "pivotY": 50, "pivotX": 50, "name": "img_icon", "height": 100 } }, { "type": "Label", "props": { "y": 103, "x": 0, "wordWrap": true, "width": 121, "text": "更多游戏FK更多游戏FK", "overflow": "hidden", "name": "gameName", "height": 45, "fontSize": 20, "color": "#ffffff", "anchorY": 0, "anchorX": 0, "align": "center" } }] }] }] }] }, { "type": "Sprite", "props": { "y": 865, "x": 656, "width": 123, "visible": false, "var": "btn_redpackageicon", "pivotY": 71, "pivotX": 61, "mouseEnabled": true, "height": 141 }, "child": [{ "type": "Image", "props": { "y": 106, "x": 3, "skin": "comp/hongbao_tb2.png" } }, { "type": "Image", "props": { "skin": "comp/hongbao_tb1.png" } }, { "type": "Text", "props": { "y": 110, "x": 9, "width": 102, "var": "moneyNumStr", "text": "¥19.65", "pivotY": 0.5, "pivotX": 0.5, "height": 20, "fontSize": 20, "color": "#FFFF00", "align": "center" } }] }], "animations": [{ "nodes": [{ "target": 23, "keyframes": { "x": [{ "value": -367, "tweenMethod": "linearNone", "tween": true, "target": 23, "key": "x", "index": 0 }, { "value": 12, "tweenMethod": "linearNone", "tween": true, "target": 23, "key": "x", "index": 12 }] } }, { "target": 33, "keyframes": { "scaleX": [{ "value": -1, "tweenMethod": "linearNone", "tween": false, "target": 33, "key": "scaleX", "index": 0 }, { "value": 1, "tweenMethod": "linearNone", "tween": true, "target": 33, "key": "scaleX", "index": 12 }] } }], "name": "showLift", "id": 1, "frameRate": 24, "action": 0 }, { "nodes": [{ "target": 23, "keyframes": { "x": [{ "value": 12, "tweenMethod": "linearNone", "tween": true, "target": 23, "key": "x", "index": 0 }, { "value": -367, "tweenMethod": "linearNone", "tween": true, "target": 23, "key": "x", "index": 12 }] } }, { "target": 33, "keyframes": { "scaleX": [{ "value": 1, "tweenMethod": "linearNone", "tween": false, "target": 33, "key": "scaleX", "index": 0 }, { "value": -1, "tweenMethod": "linearNone", "tween": true, "target": 33, "key": "scaleX", "index": 12 }] } }], "name": "hideLift", "id": 1, "frameRate": 24, "action": 0 }] };
+    MoreGameUIUI.uiView = { "type": "View", "props": { "width": 750, "mouseThrough": true, "height": 1334 }, "child": [{ "type": "Sprite", "props": { "y": 0, "x": 0, "width": 750, "var": "moregameCtl", "mouseThrough": true, "height": 1334 }, "child": [{ "type": "Button", "props": { "y": 567, "x": 7, "width": 177, "var": "btn_left", "top": 567, "stateNum": 1, "left": 7, "height": 84 } }, { "type": "Button", "props": { "y": 567, "x": 710, "width": 177, "var": "btn_right", "top": 567, "stateNum": 1, "right": 40, "height": 84, "anchorX": 1 } }, { "type": "Box", "props": { "y": 0, "x": 0, "var": "box", "mouseThrough": true }, "child": [{ "type": "Image", "props": { "y": 1119, "width": 113, "visible": false, "var": "img_title", "skin": "comp/Img_hy.png", "right": 332, "height": 25 } }, { "type": "Image", "props": { "y": 1157, "x": 24, "width": 710, "visible": false, "var": "box_bg", "skin": "comp/Img_zjmdt.png", "right": 16, "height": 164, "bottom": 13 } }, { "type": "List", "props": { "y": 1160, "x": 0, "width": 750, "var": "boxlist", "spaceX": 1, "repeatY": 1 }, "child": [{ "type": "Box", "props": { "width": 130, "var": "boxitem", "renderType": "render", "height": 130 }, "child": [{ "type": "Image", "props": { "width": 130, "name": "img_icon", "height": 130 } }, { "type": "Sprite", "props": { "y": 65, "x": 65, "width": 0, "renderType": "mask", "height": 0 }, "child": [{ "type": "Circle", "props": { "radius": 60, "lineWidth": 1, "fillColor": "#ff0000" } }] }] }] }] }, { "type": "Box", "props": { "y": 298, "x": -367, "width": 0, "visible": false, "var": "boxList_left", "mouseThrough": true, "height": 0 }, "compId": 23, "child": [{ "type": "Image", "props": { "y": 153, "x": 367, "width": 51, "var": "btn_list_open", "skin": "comp/zx_jt_di.png", "rotation": 0, "mouseEnabled": true, "height": 94, "sizeGrid": "21,15,32,15" } }, { "type": "Image", "props": { "y": -25, "x": -12, "width": 379, "skin": "comp/zx_jt_di.png", "height": 469, "sizeGrid": "21,15,32,15" } }, { "type": "Image", "props": { "y": 197, "x": 392, "var": "boxlist_left_btn_bg", "skin": "comp/zx_jiantou.png", "scaleX": -1, "anchorY": 0.5, "anchorX": 0.5 }, "compId": 33 }, { "type": "List", "props": { "y": -22, "x": -7, "width": 371, "var": "boxlist_array_left", "spaceY": 0, "spaceX": 0, "repeatY": 3, "repeatX": 0, "height": 478 }, "child": [{ "type": "Box", "props": { "y": 6, "x": -5, "width": 125, "var": "boxitemleft", "renderType": "render", "height": 153 }, "child": [{ "type": "Image", "props": { "y": 50, "x": 61, "width": 100, "pivotY": 50, "pivotX": 50, "name": "img_icon", "height": 100 } }, { "type": "Label", "props": { "y": 103, "x": 0, "wordWrap": true, "width": 121, "text": "更多游戏FK更多游戏FK", "overflow": "hidden", "name": "gameName", "height": 45, "fontSize": 20, "color": "#ffffff", "anchorY": 0, "anchorX": 0, "align": "center" } }] }] }] }] }, { "type": "Sprite", "props": { "y": 865, "x": 656, "width": 123, "visible": false, "var": "btn_redpackageicon", "pivotY": 71, "pivotX": 61, "mouseEnabled": true, "height": 141 }, "child": [{ "type": "Image", "props": { "y": 106, "x": 3, "skin": "comp/hongbao_tb2.png" } }, { "type": "Image", "props": { "skin": "comp/hongbao_tb1.png" } }, { "type": "Text", "props": { "y": 110, "x": 9, "width": 102, "var": "moneyNumStr", "text": "¥19.65", "pivotY": 0.5, "pivotX": 0.5, "height": 20, "fontSize": 20, "color": "#FFFF00", "align": "center" } }] }], "animations": [{ "nodes": [{ "target": 23, "keyframes": { "x": [{ "value": -367, "tweenMethod": "linearNone", "tween": true, "target": 23, "key": "x", "index": 0 }, { "value": 12, "tweenMethod": "linearNone", "tween": true, "target": 23, "key": "x", "index": 12 }] } }, { "target": 33, "keyframes": { "scaleX": [{ "value": -1, "tweenMethod": "linearNone", "tween": false, "target": 33, "key": "scaleX", "index": 0 }, { "value": 1, "tweenMethod": "linearNone", "tween": true, "target": 33, "key": "scaleX", "index": 12 }] } }], "name": "showLift", "id": 1, "frameRate": 24, "action": 0 }, { "nodes": [{ "target": 23, "keyframes": { "x": [{ "value": 12, "tweenMethod": "linearNone", "tween": true, "target": 23, "key": "x", "index": 0 }, { "value": -367, "tweenMethod": "linearNone", "tween": true, "target": 23, "key": "x", "index": 12 }] } }, { "target": 33, "keyframes": { "scaleX": [{ "value": 1, "tweenMethod": "linearNone", "tween": false, "target": 33, "key": "scaleX", "index": 0 }, { "value": -1, "tweenMethod": "linearNone", "tween": true, "target": 33, "key": "scaleX", "index": 12 }] } }], "name": "hideLift", "id": 1, "frameRate": 24, "action": 0 }] };
     ui.MoreGameUIUI = MoreGameUIUI;
 })(ui || (ui = {}));
 (function (ui) {
@@ -117608,7 +117802,7 @@ var ui;
         };
         return RedPacketUIUI;
     }(View));
-    RedPacketUIUI.uiView = { "type": "View", "props": { "width": 750, "mouseThrough": true, "height": 1334 }, "child": [{ "type": "Sprite", "props": { "y": 0, "x": 0, "width": 750, "visible": false, "var": "com_openredpackage", "height": 1334 }, "child": [{ "type": "Texture", "props": { "y": -133, "x": 0, "width": 750, "skin": "comp/img_box_1.png", "height": 1600 } }, { "type": "Sprite", "props": { "y": 319, "x": 132, "width": 517, "var": "bg_loader", "pivotY": 0.5, "pivotX": 0.5, "height": 695 } }, { "type": "Image", "props": { "y": 632, "x": 299, "var": "btn_red_open", "skin": "comp/hb_b_kai.png" } }, { "type": "Text", "props": { "y": 403, "x": 328, "text": "恭喜", "fontSize": 63, "color": "#feffd5" } }, { "type": "Text", "props": { "y": 521, "x": 245, "text": "你获得一个现金红包", "fontSize": 33, "color": "#FEDB6C" } }, { "type": "Text", "props": { "y": 571, "x": 330, "text": "看视频领取", "fontSize": 25, "color": "#FEA963" } }, { "type": "Text", "props": { "y": 896, "x": 246, "text": "看视频有几率翻倍！", "fontSize": 33, "color": "#FEFFD5" } }, { "type": "Text", "props": { "y": 948, "x": 222, "text": "游戏过程中可能出现现金红包", "fontSize": 26, "color": "#952B24" } }, { "type": "Image", "props": { "y": 349, "x": 594, "var": "btn_close", "skin": "comp/hb_kq_b_x.png" } }] }, { "type": "Sprite", "props": { "y": 0, "x": 0, "width": 750, "visible": false, "var": "com_tixianredpackage", "height": 1334 }, "child": [{ "type": "Texture", "props": { "y": -133, "x": 0, "width": 750, "skin": "comp/img_box_1.png", "height": 1600 } }, { "type": "Sprite", "props": { "y": 319, "x": 132, "width": 517, "var": "loader_tixian", "pivotY": 0.5, "pivotX": 0.5, "height": 695 } }, { "type": "Text", "props": { "y": 381, "x": 311, "text": "现金红包", "fontSize": 40, "color": "#CE8B52" } }, { "type": "Text", "props": { "y": 523, "x": 225, "text": "余额:", "fontSize": 30, "color": "#F94A05" } }, { "type": "Text", "props": { "y": 673, "x": 289, "text": "红包满20元可提现", "fontSize": 25, "color": "#CE8B52" } }, { "type": "Text", "props": { "y": 827, "x": 335, "var": "btn_tixian", "text": "提现", "mouseEnabled": true, "fontSize": 50, "color": "#FEFFD5" } }, { "type": "Text", "props": { "y": 901, "x": 222, "text": "游戏过程中可能出现现金红包", "fontSize": 26, "color": "#992D27" } }, { "type": "Image", "props": { "y": 349, "x": 594, "var": "btn_close_tixian", "skin": "comp/hb_kq_b_x.png" } }, { "type": "Text", "props": { "y": 483, "x": 294, "width": 200, "var": "moneyNum", "text": "12.00", "pivotY": 0.5, "pivotX": 0.5, "height": 80, "fontSize": 80, "color": "#F94A05", "align": "center" } }, { "type": "Text", "props": { "y": 523, "x": 503, "text": "元", "fontSize": 30, "color": "#F94A05" } }] }, { "type": "Sprite", "props": { "y": 0, "x": 0, "width": 750, "visible": false, "var": "com_awradredpackage", "height": 1334 }, "child": [{ "type": "Texture", "props": { "y": -133, "x": 0, "width": 750, "skin": "comp/img_box_1.png", "height": 1600 } }, { "type": "Sprite", "props": { "y": 319, "x": 132, "width": 517, "var": "loader_award", "pivotY": 0.5, "pivotX": 0.5, "height": 695 } }, { "type": "Text", "props": { "y": 381, "x": 273, "text": "获得现金红包", "fontSize": 40, "color": "#CE8B52" } }, { "type": "Text", "props": { "y": 523, "x": 277, "text": "+", "fontSize": 30, "color": "#F94A05" } }, { "type": "Text", "props": { "y": 673, "x": 289, "text": "红包满20元可提现", "fontSize": 25, "color": "#CE8B52" } }, { "type": "Text", "props": { "y": 827, "x": 335, "var": "btn_tixian_award", "text": "提现", "mouseEnabled": true, "fontSize": 50, "color": "#FEFFD5" } }, { "type": "Text", "props": { "y": 901, "x": 222, "text": "游戏过程中可能出现现金红包", "fontSize": 26, "color": "#992D27" } }, { "type": "Image", "props": { "y": 349, "x": 594, "var": "btn_close_award", "skin": "comp/hb_kq_b_x.png" } }, { "type": "Text", "props": { "y": 483, "x": 294, "width": 200, "var": "moneyNum_award", "text": "12.00", "pivotY": 0.5, "pivotX": 0.5, "height": 80, "fontSize": 80, "color": "#F94A05", "align": "center" } }, { "type": "Text", "props": { "y": 523, "x": 503, "text": "元", "fontSize": 30, "color": "#F94A05" } }, { "type": "Text", "props": { "y": 590, "x": 367, "text": "余额:", "fontSize": 21, "color": "#F94A05" } }, { "type": "Text", "props": { "y": 587, "x": 417, "width": 66, "var": "allMoney_award", "text": "12.00", "height": 25, "fontSize": 25, "color": "#F94A05", "align": "center" } }, { "type": "Text", "props": { "y": 590, "x": 486, "text": "元", "fontSize": 21, "color": "#F94A05" } }] }, { "type": "Sprite", "props": { "y": 0, "x": 0, "width": 750, "visible": false, "var": "com_everyday", "height": 1334 }, "child": [{ "type": "Texture", "props": { "y": -133, "x": 0, "width": 750, "skin": "comp/img_box_1.png", "height": 1600 } }, { "type": "Sprite", "props": { "y": 238, "x": 57, "width": 635, "var": "loader_everyday", "pivotY": 0.5, "pivotX": 0.5, "height": 857 } }, { "type": "Image", "props": { "y": 151, "x": 170, "skin": "comp/meiridenglu.png" } }, { "type": "List", "props": { "y": 313, "x": 129, "width": 505, "var": "list_six", "spaceY": 10, "spaceX": 80, "repeatY": 2, "repeatX": 3, "mouseEnabled": false, "height": 361 }, "child": [{ "type": "Box", "props": { "y": 0, "x": 0, "width": 114, "renderType": "render", "height": 174 }, "child": [{ "type": "Image", "props": { "width": 114, "skin": "comp/meitian_hb.png", "name": "img_icon", "height": 130 } }, { "type": "Image", "props": { "y": 131, "x": 0, "skin": "comp/dijitian_di.png" } }, { "type": "Label", "props": { "y": 139, "x": 28, "text": "第1天", "name": "deveryNum", "fontSize": 23, "color": "#966549" } }] }] }, { "type": "Box", "props": { "y": 685, "x": 324, "width": 114, "var": "seven", "renderType": "render", "mouseEnabled": false, "height": 174 }, "child": [{ "type": "Image", "props": { "width": 114, "skin": "comp/meitian_hb.png", "name": "img_icon", "height": 130 } }, { "type": "Image", "props": { "y": 133, "x": -38, "width": 195, "skin": "comp/dijitian_di.png", "sizeGrid": "0,24,0,22", "height": 40 } }, { "type": "Text", "props": { "y": 142, "x": -23, "var": "seven_text", "text": "第7天(翻倍领取)", "fontSize": 23, "color": "#966549" } }] }, { "type": "Image", "props": { "y": 890, "x": 209, "var": "btn_double_btn", "skin": "comp/button_fxjs.png" } }, { "type": "Image", "props": { "y": 1021, "x": 315, "visible": true, "var": "btn_red_everyday_skip", "skin": "comp/button_zjlq.png" } }] }] };
+    RedPacketUIUI.uiView = { "type": "View", "props": { "width": 750, "mouseThrough": true, "height": 1334 }, "child": [{ "type": "Sprite", "props": { "y": 0, "x": 0, "width": 750, "visible": false, "var": "com_openredpackage", "height": 1334 }, "child": [{ "type": "Texture", "props": { "y": -133, "x": 0, "width": 750, "skin": "comp/img_box_1.png", "height": 1600 } }, { "type": "Sprite", "props": { "y": 319, "x": 132, "width": 517, "var": "bg_loader", "pivotY": 0.5, "pivotX": 0.5, "height": 695 } }, { "type": "Image", "props": { "y": 632, "x": 299, "var": "btn_red_open", "skin": "comp/hb_b_kai.png" } }, { "type": "Text", "props": { "y": 403, "x": 328, "text": "恭喜", "fontSize": 63, "color": "#feffd5" } }, { "type": "Text", "props": { "y": 521, "x": 245, "text": "你获得一个现金红包", "fontSize": 33, "color": "#FEDB6C" } }, { "type": "Text", "props": { "y": 571, "x": 330, "var": "openredactiontip", "text": "看视频领取", "fontSize": 25, "color": "#FEA963" } }, { "type": "Text", "props": { "y": 896, "x": 246, "var": "openredTip2", "text": "看视频有几率翻倍！", "fontSize": 33, "color": "#FEFFD5" } }, { "type": "Text", "props": { "y": 948, "x": 222, "text": "游戏过程中可能出现现金红包", "fontSize": 26, "color": "#952B24" } }, { "type": "Image", "props": { "y": 349, "x": 594, "var": "btn_close", "skin": "comp/hb_kq_b_x.png" } }] }, { "type": "Sprite", "props": { "y": 0, "x": 0, "width": 750, "visible": false, "var": "com_tixianredpackage", "height": 1334 }, "child": [{ "type": "Texture", "props": { "y": -133, "x": 0, "width": 750, "skin": "comp/img_box_1.png", "height": 1600 } }, { "type": "Sprite", "props": { "y": 319, "x": 132, "width": 517, "var": "loader_tixian", "pivotY": 0.5, "pivotX": 0.5, "height": 695 } }, { "type": "Text", "props": { "y": 381, "x": 311, "text": "现金红包", "fontSize": 40, "color": "#CE8B52" } }, { "type": "Text", "props": { "y": 523, "x": 225, "text": "余额:", "fontSize": 30, "color": "#F94A05" } }, { "type": "Text", "props": { "y": 673, "x": 289, "text": "红包满20元可提现", "fontSize": 25, "color": "#CE8B52" } }, { "type": "Text", "props": { "y": 827, "x": 335, "var": "btn_tixian", "text": "提现", "mouseEnabled": true, "fontSize": 50, "color": "#FEFFD5" } }, { "type": "Text", "props": { "y": 901, "x": 222, "text": "游戏过程中可能出现现金红包", "fontSize": 26, "color": "#992D27" } }, { "type": "Image", "props": { "y": 349, "x": 594, "var": "btn_close_tixian", "skin": "comp/hb_kq_b_x.png" } }, { "type": "Text", "props": { "y": 483, "x": 294, "width": 200, "var": "moneyNum", "text": "12.00", "pivotY": 0.5, "pivotX": 0.5, "height": 80, "fontSize": 80, "color": "#F94A05", "align": "center" } }, { "type": "Text", "props": { "y": 523, "x": 503, "text": "元", "fontSize": 30, "color": "#F94A05" } }] }, { "type": "Sprite", "props": { "y": 0, "x": 0, "width": 750, "visible": false, "var": "com_awradredpackage", "height": 1334 }, "child": [{ "type": "Texture", "props": { "y": -133, "x": 0, "width": 750, "skin": "comp/img_box_1.png", "height": 1600 } }, { "type": "Sprite", "props": { "y": 319, "x": 132, "width": 517, "var": "loader_award", "pivotY": 0.5, "pivotX": 0.5, "height": 695 } }, { "type": "Text", "props": { "y": 381, "x": 269, "text": "获得现金红包", "fontSize": 40, "color": "#CE8B52" } }, { "type": "Text", "props": { "y": 550, "x": 278, "text": "红包满20元可提现", "fontSize": 25, "color": "#CE8B52" } }, { "type": "Text", "props": { "y": 827, "x": 335, "var": "btn_tixian_award", "text": "提现", "mouseEnabled": true, "fontSize": 50, "color": "#FEFFD5" } }, { "type": "Text", "props": { "y": 901, "x": 222, "text": "游戏过程中可能出现现金红包", "fontSize": 26, "color": "#992D27" } }, { "type": "Image", "props": { "y": 349, "x": 594, "var": "btn_close_award", "skin": "comp/hb_kq_b_x.png" } }, { "type": "Text", "props": { "y": 621, "x": 312, "width": 134, "var": "moneyNum_award", "text": "12.00", "pivotY": 0.5, "pivotX": 0.5, "height": 55, "fontSize": 50, "color": "#F94A05", "align": "center" } }, { "type": "Text", "props": { "y": 491, "x": 260, "text": "余额:", "fontSize": 30, "color": "#F94A05" } }, { "type": "Text", "props": { "y": 476, "x": 327, "width": 127, "var": "allMoney_award", "text": "12.00", "height": 54, "fontSize": 50, "color": "#F94A05", "align": "center" } }, { "type": "Text", "props": { "y": 491, "x": 462, "text": "元", "fontSize": 30, "color": "#F94A05" } }, { "type": "Text", "props": { "y": 693, "x": 319, "text": "已存入余额", "fontSize": 25, "color": "#CE8B52" } }] }, { "type": "Sprite", "props": { "y": 0, "x": 0, "width": 750, "visible": false, "var": "com_everyday", "height": 1334 }, "child": [{ "type": "Texture", "props": { "y": -133, "x": 0, "width": 750, "skin": "comp/img_box_1.png", "height": 1600 } }, { "type": "Sprite", "props": { "y": 238, "x": 57, "width": 635, "var": "loader_everyday", "pivotY": 0.5, "pivotX": 0.5, "height": 857 } }, { "type": "Image", "props": { "y": 151, "x": 170, "skin": "comp/meiridenglu.png" } }, { "type": "List", "props": { "y": 313, "x": 129, "width": 505, "var": "list_six", "spaceY": 10, "spaceX": 80, "repeatY": 2, "repeatX": 3, "mouseEnabled": false, "height": 361 }, "child": [{ "type": "Box", "props": { "y": 0, "x": 0, "width": 114, "renderType": "render", "height": 174 }, "child": [{ "type": "Image", "props": { "width": 114, "skin": "comp/meitian_hb.png", "name": "img_icon", "height": 130 } }, { "type": "Image", "props": { "y": 131, "x": 0, "skin": "comp/dijitian_di.png" } }, { "type": "Label", "props": { "y": 139, "x": 28, "text": "第1天", "name": "deveryNum", "fontSize": 23, "color": "#966549" } }] }] }, { "type": "Box", "props": { "y": 685, "x": 324, "width": 114, "var": "seven", "renderType": "render", "mouseEnabled": false, "height": 174 }, "child": [{ "type": "Image", "props": { "width": 114, "skin": "comp/meitian_hb.png", "name": "img_icon", "height": 130 } }, { "type": "Image", "props": { "y": 133, "x": -38, "width": 195, "skin": "comp/dijitian_di.png", "sizeGrid": "0,24,0,22", "height": 40 } }, { "type": "Text", "props": { "y": 142, "x": -23, "var": "seven_text", "text": "第7天(翻倍领取)", "fontSize": 23, "color": "#966549" } }] }, { "type": "Image", "props": { "y": 890, "x": 209, "var": "btn_double_btn", "skin": "comp/button_fxjs.png" } }, { "type": "Image", "props": { "y": 1021, "x": 315, "visible": true, "var": "btn_red_everyday_skip", "skin": "comp/button_zjlq.png" } }] }] };
     ui.RedPacketUIUI = RedPacketUIUI;
 })(ui || (ui = {}));
 (function (ui) {
@@ -117879,6 +118073,8 @@ var PFU;
                 if (PFU.PfuGlobal.GetOLParam().pfuSdkMoreGame == PFU.PfuSwitch.OFF || (PFU.PfuConfig.Config && PFU.PfuConfig.Config.ui_moreGameType == -1)) {
                     this.btn_left.visible = false;
                     this.btn_right.visible = false;
+                }
+                if (PfuSdk.IsTestModel()) {
                     this.box.visible = false;
                 }
             };
@@ -117925,6 +118121,13 @@ var PFU;
                 var count = list.length;
                 if (count > 0) {
                     this.img_title.visible = true;
+                    this.box_bg.visible = true;
+                    this.boxlist.visible = true;
+                }
+                else {
+                    this.img_title.visible = false;
+                    this.box_bg.visible = false;
+                    this.boxlist.visible = false;
                 }
                 this.allgame = [];
                 var boxListData;
@@ -117945,11 +118148,23 @@ var PFU;
                 }
             };
             MoreGameUI.prototype.ShowLeft = function () {
+                if (PfuSdk.IsTestModel()) {
+                    return;
+                }
+                if (PFU.PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                    return;
+                }
                 if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
                     this.boxList_left.visible = true;
                 }
             };
             MoreGameUI.prototype.HideLeft = function () {
+                if (PfuSdk.IsTestModel()) {
+                    return;
+                }
+                if (PFU.PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                    return;
+                }
                 if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
                     this.boxList_left.visible = false;
                 }
@@ -117959,7 +118174,12 @@ var PFU;
                 var list = PFU.PfuBoxList.GetInstance().GetMoreGameListData();
                 var count = list.length;
                 if (count > 0) {
-                    this.img_title.visible = true;
+                    this.btn_list_open.visible = true;
+                    this.boxlist_left_btn_bg.visible = true;
+                }
+                else {
+                    this.btn_list_open.visible = false;
+                    this.boxlist_left_btn_bg.visible = false;
                 }
                 this.allgame = [];
                 var boxListData;
@@ -118125,15 +118345,15 @@ var PFU;
         var PfuSdkFairyUI = (function () {
             function PfuSdkFairyUI() {
             }
-            PfuSdkFairyUI.CreateUI = function () {
+            PfuSdkFairyUI.CreateUI = function (callback) {
                 fairygui.UIConfig.packageFileExtension = "bin";
                 pfusdkui.pfusdkuiBinder.bindAll();
                 Laya.stage.addChild(fairygui.GRoot.inst.displayObject);
-                this.LoadUIData();
+                this.LoadUIData(callback);
                 UI.SceneMatchingUtils.WIDTH = laya.utils.Browser.width;
                 UI.SceneMatchingUtils.HEIGTH = laya.utils.Browser.height;
             };
-            PfuSdkFairyUI.LoadUIData = function () {
+            PfuSdkFairyUI.LoadUIData = function (callback) {
                 var _this = this;
                 var fairyG = "@";
                 if (Laya.version.charAt(0) == '2') {
@@ -118141,11 +118361,12 @@ var PFU;
                     fairyG = "_";
                 }
                 Laya.loader.load([
-                    { url: PFU.PfuGlobal.SDK_CUSTOM_RES_PATH + "PfusdkRes/UI/fairygui/pfusdkui.bin", type: Laya.Loader.BUFFER },
-                    { url: PFU.PfuGlobal.SDK_CUSTOM_RES_PATH + "PfusdkRes/UI/fairygui/pfusdkui" + fairyG + "atlas0.png", type: Laya.Loader.IMAGE }
+                    { url: PFU.PfuGlobal.sdkCustomResRoot + "PfusdkRes/UI/fairygui/pfusdkui.bin", type: Laya.Loader.BUFFER },
+                    { url: PFU.PfuGlobal.sdkCustomResRoot + "PfusdkRes/UI/fairygui/pfusdkui" + fairyG + "atlas0.png", type: Laya.Loader.IMAGE }
                 ], Laya.Handler.create(this, function () {
-                    fairygui.UIPackage.addPackage(PFU.PfuGlobal.SDK_CUSTOM_RES_PATH + "PfusdkRes/UI/fairygui/pfusdkui");
+                    fairygui.UIPackage.addPackage(PFU.PfuGlobal.sdkCustomResRoot + "PfusdkRes/UI/fairygui/pfusdkui");
                     _this.CreateUIWindow();
+                    callback();
                 }));
             };
             PfuSdkFairyUI.CreateUIWindow = function () {
@@ -118191,6 +118412,8 @@ var PFU;
                     redpacketWindow.OpenEverydayGift();
                 }, function (vx, vy) {
                     redpacketWindow.SetIconBtnPos(vx, vy);
+                }, function () {
+                    redpacketWindow.ForceCloseRedPacketUI();
                 });
                 //设置更多游戏显示开关 createWindow true
                 PFU.PfuMoreGameUpdate.GetInstance().SetCtrlMoreGameUI(this, function (isShow, type) {
@@ -118376,7 +118599,7 @@ var PFU;
             Laya.timer.loop(200, this, this.CheckAction);
         };
         PfuRedPacketManager.prototype.GetMoney = function () {
-            return this._redpacketData.moneyNum;
+            return this._redpacketData.moneyNum.toFixed(2); // Math.floor(this._redpacketData.moneyNum * 100) / 100;
         };
         PfuRedPacketManager.prototype.AddMoney = function (number) {
             var money = this._redpacketData.moneyNum;
@@ -118384,14 +118607,15 @@ var PFU;
             if (money > PfuRedPacketManager.redMax) {
                 money = PfuRedPacketManager.redMax;
             }
-            this._redpacketData.moneyNum = Math.floor(money * 100) / 100;
+            this._redpacketData.moneyNum = money;
         };
-        PfuRedPacketManager.prototype.SetRedpacketHandle = function (handle, visibleCallback, showGiftCallback, showEveryDayCallBack, setIconposCallBack) {
+        PfuRedPacketManager.prototype.SetRedpacketHandle = function (handle, visibleCallback, showGiftCallback, showEveryDayCallBack, setIconposCallBack, redpacketForceCloseRedPacketCallback) {
             this._redpacketHandle = handle;
             this._redpacketVisibeCallback = visibleCallback;
             this._redpacketShowGiftCallback = showGiftCallback;
             this._redpacketShowEveryDayCallback = showEveryDayCallBack;
             this._setIconPosCallBack = setIconposCallBack;
+            this._redpacketForceCloseRedPacketCallback = redpacketForceCloseRedPacketCallback;
         };
         PfuRedPacketManager.prototype.CheckAction = function () {
             if (PfuSdk.GetBoxListComplete && PfuSdk.GetParamComplete && PFU.PfuMoreGameUpdate.GetInstance()._isCreateWindow) {
@@ -118483,6 +118707,15 @@ var PFU;
             }
             this._redpacketShowEveryDayCallback.call(this._redpacketHandle);
         };
+        PfuRedPacketManager.prototype.ForceCloseRedPacketUI = function () {
+            if (this._redpacketHandle == null) {
+                return;
+            }
+            if (!this.CanEverydayAward()) {
+                return;
+            }
+            this._redpacketForceCloseRedPacketCallback.call(this._redpacketHandle);
+        };
         /**
          * 可以领取每日奖励
          */
@@ -118527,7 +118760,7 @@ var PFU;
         PfuRedPacketManager.prototype.AwardEveryDay = function (isDouble) {
             var index = this._redpacketData.dayCount;
             if (index < 0 || index > PfuRedPacketManager.moneyList.length - 1) {
-                return;
+                return 0;
             }
             var awardCount = PfuRedPacketManager.moneyList[index];
             if (isDouble) {
@@ -118538,6 +118771,7 @@ var PFU;
             }
             PfuRedPacketManager.GetInstance().AddMoney(awardCount);
             PfuRedPacketManager.GetInstance().AddEverydayAwardCount();
+            return awardCount;
         };
         PfuRedPacketManager.prototype.TestRed = function () {
             while (this.CanShowRedPacketGift()) {
@@ -118564,11 +118798,11 @@ var PFU;
             else {
                 awardCount = PFU.BXRandom.Get().nextFloat(0.03, 0.2);
             }
-            var a = Math.floor(awardCount * 100) / 100;
+            var a = awardCount;
             this._redpacketData.remaining += a;
             PfuRedPacketManager.GetInstance().AddMoney(a);
             this._redpacketData.awardRedCount++;
-            //this.Save();
+            this.Save();
             //奖励
             console.log("奖励第" + this._redpacketData.awardRedCount + "次，奖励金额" + a + "元，总金额" + this._redpacketData.moneyNum);
             return a;
@@ -118592,6 +118826,7 @@ var PFU;
         };
         return PfuRedPacketManager;
     }());
+    PfuRedPacketManager.OPEN_RED_ACTION_VIDEO = false;
     PfuRedPacketManager.MONEY_MAX = 20;
     PfuRedPacketManager.DAY_COUNT = 7;
     //19.8 = 9.2 + 10.78
@@ -118755,15 +118990,14 @@ var pfusdkui;
             this.m_bg_loader = (this.getChildAt(1));
             this.m_btn_close = (this.getChildAt(2));
             this.m_n15 = (this.getChildAt(3));
-            this.m_n16 = (this.getChildAt(4));
-            this.m_moneyNum = (this.getChildAt(5));
-            this.m_n18 = (this.getChildAt(6));
-            this.m_n19 = (this.getChildAt(7));
-            this.m_n20 = (this.getChildAt(8));
-            this.m_btn_tixian = (this.getChildAt(9));
-            this.m_n23 = (this.getChildAt(10));
-            this.m_allMoney = (this.getChildAt(11));
-            this.m_n25 = (this.getChildAt(12));
+            this.m_moneyNum = (this.getChildAt(4));
+            this.m_n19 = (this.getChildAt(5));
+            this.m_n20 = (this.getChildAt(6));
+            this.m_btn_tixian = (this.getChildAt(7));
+            this.m_n23 = (this.getChildAt(8));
+            this.m_allMoney = (this.getChildAt(9));
+            this.m_n25 = (this.getChildAt(10));
+            this.m_n26 = (this.getChildAt(11));
         };
         return UI_AwardRedPackage_com;
     }(fairygui.GComponent));
@@ -119235,7 +119469,7 @@ var pfusdkui;
             this.m_n3 = (this.getChildAt(3));
             this.m_n4 = (this.getChildAt(4));
             this.m_voidStr = (this.getChildAt(5));
-            this.m_n6 = (this.getChildAt(6));
+            this.m_openredtip2 = (this.getChildAt(6));
             this.m_n7 = (this.getChildAt(7));
             this.m_btn_close = (this.getChildAt(8));
         };
@@ -119743,11 +119977,23 @@ var PFU;
                 }
             };
             MoreGameWindow.prototype.ShowLeft = function () {
+                if (PfuSdk.IsTestModel()) {
+                    return;
+                }
+                if (PFU.PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                    return;
+                }
                 if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
                     this._fui.m_boxList_left.visible = true;
                 }
             };
             MoreGameWindow.prototype.HideLeft = function () {
+                if (PfuSdk.IsTestModel()) {
+                    return;
+                }
+                if (PFU.PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                    return;
+                }
                 if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
                     this._fui.m_boxList_left.visible = false;
                 }
@@ -119797,17 +120043,19 @@ var PFU;
                     }
                     //是否显示更多游戏 0 关闭 1 开启
                     if (PFU.PfuGlobal.GetOLParam().pfuSdkMoreGame == PFU.PfuSwitch.OFF || PFU.PfuConfig.Config.ui_moreGameType == -1) {
-                        this._fui.m_boxList.visible = false;
+                        //this._fui.m_boxList.visible = false;
                         //this._fui.m_boxList_left.visible = false;
                         this._fui.m_Btn_MoreGameLeft.visible = false;
                         this._fui.m_Btn_MoreGameRight.visible = false;
+                    }
+                    if (PfuSdk.IsTestModel()) {
+                        this._fui.m_boxList.visible = false;
                     }
                 }
             };
             MoreGameWindow.prototype.Refresh = function () {
                 var type = this._isShowType;
                 this._fui.m_boxList.visible = true;
-                //this._fui.m_boxList_left.visible = true;
                 this._fui.m_Btn_MoreGameRight.visible = true;
                 this._fui.m_Btn_MoreGameLeft.visible = true;
                 if (!type || type == PfuSdk.SHOW_TYPE_ALL) {
@@ -119853,9 +120101,16 @@ var PFU;
             MoreGameWindow.prototype.CreateMoreGameList = function () {
                 var list = PFU.PfuBoxList.GetInstance().GetMoreGameListData();
                 var count = list.length;
+                //没有数据则不显示
                 if (count > 0) {
                     this._fui.m_list_moregamebg.visible = true;
                     this._fui.m_list_moregameStr.visible = true;
+                    this._fui.m_list_moregame.visible = true;
+                }
+                else {
+                    this._fui.m_list_moregamebg.visible = false;
+                    this._fui.m_list_moregameStr.visible = false;
+                    this._fui.m_list_moregame.visible = false;
                 }
                 for (var i = 0; i < count; i++) {
                     var boxListData = list[i];
@@ -119890,6 +120145,9 @@ var PFU;
                 var list = PFU.PfuBoxList.GetInstance().GetMoreGameListData();
                 var count = list.length;
                 if (count > 0) {
+                }
+                else {
+                    this._fui.m_boxList_left.visible = false;
                 }
                 for (var i = 0; i < count; i++) {
                     var boxListData = list[i];
@@ -120008,8 +120266,8 @@ var PFU;
                 var _this = _super !== null && _super.apply(this, arguments) || this;
                 //是否显示图标
                 _this._isShowRedpacket = false;
+                _this.awradPackageType = 0;
                 return _this;
-                //#endregion----------------
             }
             RedPacketWindow.prototype.InitWindow = function (fui) {
                 this._fui = fui;
@@ -120034,7 +120292,8 @@ var PFU;
                 });
                 this._fui.m_com_awradredpackage.m_btn_close.onClick(this, function () {
                     _this._fui.m_com_awradredpackage.visible = false;
-                    PFU.PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.SUCCESS);
+                    if (_this.awradPackageType == 1)
+                        PFU.PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.SUCCESS);
                 });
                 //打开红包
                 this._fui.m_com_openredpackage.m_btn_close.onClick(this, function () {
@@ -120042,6 +120301,14 @@ var PFU;
                     PFU.PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.FAIL);
                 });
                 this._fui.m_com_openredpackage.m_btn_red_open.onClick(this, this.OnRedPacketGiftAward);
+                if (PFU.PfuRedPacketManager.OPEN_RED_ACTION_VIDEO) {
+                    this._fui.m_com_openredpackage.m_voidStr.text = "看视频领取";
+                    this._fui.m_com_openredpackage.m_openredtip2.text = "看视频有几率翻倍！";
+                }
+                else {
+                    this._fui.m_com_openredpackage.m_voidStr.text = "分享领取";
+                    this._fui.m_com_openredpackage.m_openredtip2.text = "分享有几率翻倍！";
+                }
             };
             RedPacketWindow.prototype.OnUpdate = function () {
                 if (PfuSdk.GetParamComplete && !this._isShowRedpacket) {
@@ -120129,8 +120396,11 @@ var PFU;
                 this.EverydayAward(false);
             };
             RedPacketWindow.prototype.EverydayAward = function (isDouble) {
-                PFU.PfuRedPacketManager.GetInstance().AwardEveryDay(isDouble);
+                var num = PFU.PfuRedPacketManager.GetInstance().AwardEveryDay(isDouble);
                 this.UpdateIconMoney();
+                this.awradPackageType = 0;
+                //打开余额界面
+                this.OpenAwardRadPacket(num);
             };
             RedPacketWindow.prototype.OnEveryDoubleAward = function () {
                 var _this = this;
@@ -120165,24 +120435,44 @@ var PFU;
                     this.RedPacketGiftAward();
                     return;
                 }
-                PfuSdk.Video(this, function (type) {
-                    if (type == PfuSdk.SUCCESS) {
-                        _this.RedPacketGiftAward();
-                    }
-                    else {
-                    }
-                });
+                if (PFU.PfuRedPacketManager.OPEN_RED_ACTION_VIDEO) {
+                    PfuSdk.Video(this, function (type) {
+                        if (type == PfuSdk.SUCCESS) {
+                            _this.RedPacketGiftAward();
+                        }
+                        else {
+                        }
+                    });
+                }
+                else {
+                    PfuSdk.ShareAward(this, function (type) {
+                        if (type == PfuSdk.SUCCESS) {
+                            _this.RedPacketGiftAward();
+                        }
+                        else {
+                        }
+                    });
+                }
             };
             RedPacketWindow.prototype.RedPacketGiftAward = function () {
                 this._fui.m_com_openredpackage.visible = false;
                 var award = PFU.PfuRedPacketManager.GetInstance().AwardGift();
+                this.awradPackageType = 1;
                 this.OpenAwardRadPacket(award);
                 this.UpdateIconMoney();
             };
             RedPacketWindow.prototype.OpenAwardRadPacket = function (award) {
                 this._fui.m_com_awradredpackage.visible = true;
                 this._fui.m_com_awradredpackage.m_allMoney.text = "" + (PFU.PfuRedPacketManager.GetInstance().GetMoney());
-                this._fui.m_com_awradredpackage.m_moneyNum.text = "" + award;
+                this._fui.m_com_awradredpackage.m_moneyNum.text = "" + award.toFixed(2); //  Math.floor(award * 100) / 100;
+            };
+            //#endregion----------------
+            RedPacketWindow.prototype.ForceCloseRedPacketUI = function () {
+                if (this._fui.m_com_openredpackage.visible)
+                    this._fui.m_com_openredpackage.visible = false;
+                if (this._fui.m_com_awradredpackage.visible) {
+                    this._fui.m_com_awradredpackage.visible = false;
+                }
             };
             return RedPacketWindow;
         }(UI.WindowBase));
@@ -120282,6 +120572,7 @@ var PFU;
             __extends(RedPacketUI, _super);
             function RedPacketUI() {
                 var _this = _super.call(this) || this;
+                _this.awradPackageType = 0;
                 Laya.timer.frameLoop(1, _this, _this.OnUpdate);
                 _this.InitIconEvent();
                 _this.bg_loader.loadImage(PFU.PfuGlobal.SDK_RES_CDN_PATH + "redgift/hb_di.png");
@@ -120300,7 +120591,8 @@ var PFU;
                 });
                 _this.btn_close_award.on(Laya.Event.CLICK, _this, function () {
                     _this.com_awradredpackage.visible = false;
-                    PFU.PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.SUCCESS);
+                    if (_this.awradPackageType == 1)
+                        PFU.PfuRedPacketManager.GetInstance().AwardRedpacketAction(PfuSdk.SUCCESS);
                 });
                 _this.btn_close.on(Laya.Event.CLICK, _this, function () {
                     _this.com_openredpackage.visible = false;
@@ -120309,6 +120601,14 @@ var PFU;
                 _this.btn_red_open.on(Laya.Event.CLICK, _this, _this.OnRedPacketGiftAward);
                 _this.zOrder = PfuSdk.UI_ORDER_OTHER;
                 Laya.stage.updateZOrder();
+                if (PFU.PfuRedPacketManager.OPEN_RED_ACTION_VIDEO) {
+                    _this.openredactiontip.text = "看视频领取";
+                    _this.openredTip2.text = "看视频有几率翻倍！";
+                }
+                else {
+                    _this.openredactiontip.text = "分享领取";
+                    _this.openredTip2.text = "分享有几率翻倍！";
+                }
                 return _this;
             }
             RedPacketUI.prototype.OnUpdate = function () {
@@ -120380,8 +120680,10 @@ var PFU;
                 this.EverydayAward(false);
             };
             RedPacketUI.prototype.EverydayAward = function (isDouble) {
-                PFU.PfuRedPacketManager.GetInstance().AwardEveryDay(isDouble);
+                var award = PFU.PfuRedPacketManager.GetInstance().AwardEveryDay(isDouble);
                 this.UpdateIconMoney();
+                this.awradPackageType = 0;
+                this.OpenAwardRadPacket(award);
             };
             RedPacketUI.prototype.OnEveryDoubleAward = function () {
                 var _this = this;
@@ -120416,24 +120718,45 @@ var PFU;
                     this.RedPacketGiftAward();
                     return;
                 }
-                PfuSdk.Video(this, function (type) {
-                    if (type == PfuSdk.SUCCESS) {
-                        _this.RedPacketGiftAward();
-                    }
-                    else {
-                    }
-                });
+                if (PFU.PfuRedPacketManager.OPEN_RED_ACTION_VIDEO) {
+                    PfuSdk.Video(this, function (type) {
+                        if (type == PfuSdk.SUCCESS) {
+                            _this.RedPacketGiftAward();
+                        }
+                        else {
+                        }
+                    });
+                }
+                else {
+                    PfuSdk.ShareAward(this, function (type) {
+                        if (type == PfuSdk.SUCCESS) {
+                            _this.RedPacketGiftAward();
+                        }
+                        else {
+                        }
+                    });
+                }
             };
             RedPacketUI.prototype.RedPacketGiftAward = function () {
                 this.com_openredpackage.visible = false;
                 var award = PFU.PfuRedPacketManager.GetInstance().AwardGift();
+                this.awradPackageType = 1;
                 this.OpenAwardRadPacket(award);
                 this.UpdateIconMoney();
             };
             RedPacketUI.prototype.OpenAwardRadPacket = function (award) {
                 this.com_awradredpackage.visible = true;
                 this.allMoney_award.text = "" + (PFU.PfuRedPacketManager.GetInstance().GetMoney());
-                this.moneyNum_award.text = "" + award;
+                this.moneyNum_award.text = "" + award.toFixed(2); // Math.floor(award * 100) / 100;
+            };
+            //#endregion----------------
+            RedPacketUI.prototype.ForceCloseRedPacketUI = function () {
+                if (this.com_openredpackage.visible) {
+                    this.com_openredpackage.visible = false;
+                }
+                if (this.com_awradredpackage.visible) {
+                    this.com_awradredpackage.visible = false;
+                }
             };
             return RedPacketUI;
         }(ui.RedPacketUIUI));
@@ -120474,34 +120797,50 @@ var LayaAir3D = (function () {
         //Laya.LocalStorage.clear();
         //PfuSdk.SetSdkResPath("https://txpk.jfydgame.com/pfulayasdk/test/");
         //SDK初始化
+        PfuSdk.OpenCDNRes();
         PfuSdk.SetBannerWidth(Laya.Browser.width * 0.28);
         PfuSdk.SetBannerMaxHeight(Laya.Browser.height * 0.287);
         PfuSdk.InitConfig(this, function () {
             //FairyGUI创建
-            //PFU.UI.PfuSdkFairyUI.CreateUI();
+            PFU.UI.PfuSdkFairyUI.CreateUI(function () { });
             //LayaGUI创建
-            PFU.UI.PfuSdkLayaUI.CreateUI();
+            //PFU.UI.PfuSdkLayaUI.CreateUI();
             // for (let i = 0; i < 10; i++) {
             //     Laya.timer.once(1000 + (i * 1000), this, () => {
             //         //PFU.UI.PfuSdkFairyUI.OnAddDialog("显示Dialog把@@@");
             //         PFU.PfuGlobal.ShowDialog("显示Dia");
             //     });
             // }
-            PfuSdk.ShowPopupListGame();
+            //PfuSdk.ShowPopupListGame();
             PfuSdk.ShowRedPacketBtn();
             //PfuSdk.HideRedPacketBtn();
             Laya.timer.once(2000, _this, function () {
                 PfuSdk.ShowBanner();
+                //显示更多游戏列表
+                PfuSdk.ShowMoreGameList();
                 Laya.timer.once(2000, _this, function () {
-                    PfuSdk.ShowClickBannnerRevive(_this, function (type) {
-                        if (type == PfuSdk.SUCCESS) {
-                            console.log("ShowClickBannnerRevive success");
+                    // PfuSdk.ShowClickBannnerRevive(this, (type) => {
+                    //     if (type == PfuSdk.SUCCESS)  {
+                    //         console.log("ShowClickBannnerRevive success");
+                    //     }
+                    //     else  {
+                    //         console.log("ShowClickBannnerRevive fait");
+                    //     }
+                    //     PfuSdk.ShowBanner();
+                    // });
+                    PfuSdk.ShareAward(_this, function (type, desc) {
+                        if (PfuSdk.SUCCESS == type) {
                         }
                         else {
-                            console.log("ShowClickBannnerRevive fait");
+                            //错误描述
+                            console.log(desc);
                         }
-                        PfuSdk.ShowBanner();
                     });
+                    // PfuSdk.PopupRedPacket(this, (type) => {
+                    // });
+                    // Laya.timer.once(2000, this, () => {
+                    //     PfuSdk.ForceCloseRedPacketUI();
+                    // });
                 });
                 // PfuSdk.ShowClickBannnerRevive(this,(type)=>{
                 // });
@@ -120530,8 +120869,6 @@ var LayaAir3D = (function () {
         //监听切换到后台
         PfuSdk.OnHide(function () {
         });
-        //显示更多游戏列表
-        //PfuSdk.ShowMoreGameList();
         Laya.timer.once(4000, this, function () {
             //PfuSdk.HideMoreGameList();
             //显示Banner

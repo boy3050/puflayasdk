@@ -16,9 +16,9 @@ var pfusdkui;
         };
         UI_redpackage_icon.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n31 = (this.getChildAt(0));
-            this.m_n32 = (this.getChildAt(1));
-            this.m_moneyNumStr = (this.getChildAt(2));
+            this.m_n31 = (this.getChild("n31"));
+            this.m_n32 = (this.getChild("n32"));
+            this.m_moneyNumStr = (this.getChild("moneyNumStr"));
         };
         return UI_redpackage_icon;
     }(fairygui.GComponent));

@@ -16,9 +16,9 @@ var pfusdkui;
         };
         UI_List_GameChild_left.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_icon = (this.getChildAt(0));
-            this.m_n1 = (this.getChildAt(1));
-            this.m_n2 = (this.getChildAt(2));
+            this.m_icon = (this.getChild("icon"));
+            this.m_n1 = (this.getChild("n1"));
+            this.m_n2 = (this.getChild("n2"));
         };
         return UI_List_GameChild_left;
     }(fairygui.GComponent));

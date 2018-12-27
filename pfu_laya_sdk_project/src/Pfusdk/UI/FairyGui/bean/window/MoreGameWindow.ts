@@ -43,12 +43,25 @@ namespace PFU.UI {
         }
 
         public ShowLeft() {
-            if (PfuConfig.Config.ui_crossGameListType != -1){
+
+            if (PfuSdk.IsTestModel()) {
+                return;
+            }
+            if (PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                return;
+            }
+            if (PfuConfig.Config.ui_crossGameListType != -1) {
                 this._fui.m_boxList_left.visible = true;
             }
         }
-        public HideLeft()  {
-            if (PfuConfig.Config.ui_crossGameListType != -1)  {
+        public HideLeft() {
+            if (PfuSdk.IsTestModel()) {
+                return;
+            }
+            if (PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                return;
+            }
+            if (PfuConfig.Config.ui_crossGameListType != -1) {
                 this._fui.m_boxList_left.visible = false;
             }
         }
@@ -111,14 +124,18 @@ namespace PFU.UI {
                     this._fui.m_Btn_MoreGameLeft.visible = false;
                     this._fui.m_Btn_MoreGameRight.visible = false;
                 }
+
+                if (PfuSdk.IsTestModel()) {
+                    this._fui.m_boxList.visible = false;
+                }
             }
         }
 
         private Refresh() {
             let type = this._isShowType;
-     
+
             this._fui.m_boxList.visible = true;
- 
+
             this._fui.m_Btn_MoreGameRight.visible = true;
             this._fui.m_Btn_MoreGameLeft.visible = true;
             if (!type || type == PfuSdk.SHOW_TYPE_ALL) {
@@ -178,8 +195,7 @@ namespace PFU.UI {
                 this._fui.m_list_moregameStr.visible = true;
                 this._fui.m_list_moregame.visible = true;
             }
-            else
-            {
+            else {
                 this._fui.m_list_moregamebg.visible = false;
                 this._fui.m_list_moregameStr.visible = false;
                 this._fui.m_list_moregame.visible = false;
@@ -214,12 +230,15 @@ namespace PFU.UI {
 
         private isLockLeftBtn = false;
         private isLeftOpen = false;
-        private CreateMoreGameListLeft()  {
+        private CreateMoreGameListLeft() {
             let list: Array<PfuBoxListData> = PfuBoxList.GetInstance().GetMoreGameListData();
 
             let count = list.length;
             if (count > 0) {
                 //this._fui.m_boxList_left.visible = true;
+            }
+            else {
+                this._fui.m_boxList_left.visible = false;
             }
             for (let i = 0; i < count; i++) {
                 let boxListData = list[i];
@@ -229,17 +248,17 @@ namespace PFU.UI {
             }
 
             this._fui.m_btn_left_click.onClick(this, () => {
-                if (this.isLockLeftBtn)  {
+                if (this.isLockLeftBtn) {
                     return;
                 }
                 this.isLockLeftBtn = true;
-                if (!this.isLeftOpen)  {
+                if (!this.isLeftOpen) {
                     this._fui.m_showLift.play(Laya.Handler.create(this, () => {
                         this.isLockLeftBtn = false;
                         this.isLeftOpen = true;
                     }));
                 }
-                else  {
+                else {
                     this._fui.m_hideLift.play(Laya.Handler.create(this, () => {
                         this.isLockLeftBtn = false;
                         this.isLeftOpen = false;

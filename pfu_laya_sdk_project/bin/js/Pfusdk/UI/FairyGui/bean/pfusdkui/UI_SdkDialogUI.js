@@ -16,7 +16,7 @@ var pfusdkui;
         };
         UI_SdkDialogUI.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n0 = (this.getChildAt(0));
+            this.m_com = (this.getChild("com"));
         };
         return UI_SdkDialogUI;
     }(fairygui.GComponent));

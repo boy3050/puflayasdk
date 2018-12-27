@@ -16,12 +16,12 @@ var pfusdkui;
         };
         UI_BtnEnter.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_button = this.getControllerAt(0);
-            this.m_anniu_1 = (this.getChildAt(0));
-            this.m_title = (this.getChildAt(1));
-            this.m_toSmall = this.getTransitionAt(0);
-            this.m_toNormal = this.getTransitionAt(1);
-            this.m_tishi = this.getTransitionAt(2);
+            this.m_button = this.getController("button");
+            this.m_anniu_1 = (this.getChild("anniu_1"));
+            this.m_title = (this.getChild("title"));
+            this.m_toSmall = this.getTransition("toSmall");
+            this.m_toNormal = this.getTransition("toNormal");
+            this.m_tishi = this.getTransition("tishi");
         };
         return UI_BtnEnter;
     }(fairygui.GButton));

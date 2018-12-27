@@ -19,7 +19,7 @@ module pfusdkui {
 		protected constructFromXML(xml: any): void {
 			super.constructFromXML(xml);
 
-			this.m_loader = <fairygui.GLoader><any>(this.getChildAt(0));
+			this.m_loader = <fairygui.GLoader><any>(this.getChild("loader"));
 		}
 	}
 }

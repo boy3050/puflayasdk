@@ -16,7 +16,7 @@ var pfusdkui;
         };
         UI_red_everyday_double_btn.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n25 = (this.getChildAt(0));
+            this.m_n25 = (this.getChild("n25"));
         };
         return UI_red_everyday_double_btn;
     }(fairygui.GComponent));

@@ -95,6 +95,8 @@
                         param.pfuSdkVideoShare = PfuSwitch.OFF;
                         param.pfuSdkRed = PfuSwitch.OFF;
                         param.pfuSdkBannerRelive = 0;
+                        param.pfuSdkMoreShare = PfuSwitch.OFF;
+                        param.pfuSdkSorV = PfuSwitch.OFF;
                     }
 
                     if (param.pfuSdkTestMode == PfuSwitch.OFF && param.pfuSdkShowOpenAds == PfuSwitch.ON) {

@@ -29,12 +29,13 @@ var PFU;
             }
             this._redpacketData.moneyNum = money;
         };
-        PfuRedPacketManager.prototype.SetRedpacketHandle = function (handle, visibleCallback, showGiftCallback, showEveryDayCallBack, setIconposCallBack) {
+        PfuRedPacketManager.prototype.SetRedpacketHandle = function (handle, visibleCallback, showGiftCallback, showEveryDayCallBack, setIconposCallBack, redpacketForceCloseRedPacketCallback) {
             this._redpacketHandle = handle;
             this._redpacketVisibeCallback = visibleCallback;
             this._redpacketShowGiftCallback = showGiftCallback;
             this._redpacketShowEveryDayCallback = showEveryDayCallBack;
             this._setIconPosCallBack = setIconposCallBack;
+            this._redpacketForceCloseRedPacketCallback = redpacketForceCloseRedPacketCallback;
         };
         PfuRedPacketManager.prototype.CheckAction = function () {
             if (PfuSdk.GetBoxListComplete && PfuSdk.GetParamComplete && PFU.PfuMoreGameUpdate.GetInstance()._isCreateWindow) {
@@ -125,6 +126,12 @@ var PFU;
                 return;
             }
             this._redpacketShowEveryDayCallback.call(this._redpacketHandle);
+        };
+        PfuRedPacketManager.prototype.ForceCloseRedPacketUI = function () {
+            if (this._redpacketHandle == null) {
+                return;
+            }
+            this._redpacketForceCloseRedPacketCallback.call(this._redpacketHandle);
         };
         /**
          * 可以领取每日奖励

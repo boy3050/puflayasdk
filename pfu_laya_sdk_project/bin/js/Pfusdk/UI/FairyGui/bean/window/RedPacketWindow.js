@@ -15,7 +15,6 @@ var PFU;
                 _this._isShowRedpacket = false;
                 _this.awradPackageType = 0;
                 return _this;
-                //#endregion----------------
             }
             RedPacketWindow.prototype.InitWindow = function (fui) {
                 this._fui = fui;
@@ -213,6 +212,14 @@ var PFU;
                 this._fui.m_com_awradredpackage.visible = true;
                 this._fui.m_com_awradredpackage.m_allMoney.text = "" + (PFU.PfuRedPacketManager.GetInstance().GetMoney());
                 this._fui.m_com_awradredpackage.m_moneyNum.text = "" + award.toFixed(2); //  Math.floor(award * 100) / 100;
+            };
+            //#endregion----------------
+            RedPacketWindow.prototype.ForceCloseRedPacketUI = function () {
+                if (this._fui.m_com_openredpackage.visible)
+                    this._fui.m_com_openredpackage.visible = false;
+                if (this._fui.m_com_awradredpackage.visible) {
+                    this._fui.m_com_awradredpackage.visible = false;
+                }
             };
             return RedPacketWindow;
         }(UI.WindowBase));

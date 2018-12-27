@@ -71,6 +71,8 @@ var PFU;
                     redpacketWindow.OpenEverydayGift();
                 }, function(vx, vy) {
                     redpacketWindow.SetIconBtnPos(vx, vy);
+                }, function() {
+                    redpacketWindow.ForceCloseRedPacketUI();
                 });
                 PFU.PfuMoreGameUpdate.GetInstance().SetCtrlMoreGameUI(this, function(isShow, type) {
                     if (isShow) {
@@ -193,7 +195,7 @@ var pfusdkui;
         };
         UI_BannerImg.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_icon = this.getChildAt(0);
+            this.m_icon = this.getChild("icon");
         };
         return UI_BannerImg;
     }(fairygui.GComponent);
@@ -222,13 +224,13 @@ var pfusdkui;
         };
         UI_BoxListUI.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n10 = this.getChildAt(0);
-            this.m_n2 = this.getChildAt(1);
-            this.m_n1 = this.getChildAt(2);
-            this.m_n3 = this.getChildAt(3);
-            this.m_List_game = this.getChildAt(4);
-            this.m_Btn_close = this.getChildAt(5);
-            this.m_Img_banner = this.getChildAt(6);
+            this.m_n10 = this.getChild("n10");
+            this.m_n2 = this.getChild("n2");
+            this.m_n1 = this.getChild("n1");
+            this.m_n3 = this.getChild("n3");
+            this.m_List_game = this.getChild("List_game");
+            this.m_Btn_close = this.getChild("Btn_close");
+            this.m_Img_banner = this.getChild("Img_banner");
         };
         return UI_BoxListUI;
     }(fairygui.GComponent);
@@ -257,11 +259,11 @@ var pfusdkui;
         };
         UI_BtnClose.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_button = this.getControllerAt(0);
-            this.m_anniu_1 = this.getChildAt(0);
-            this.m_toSmall = this.getTransitionAt(0);
-            this.m_toNormal = this.getTransitionAt(1);
-            this.m_tishi = this.getTransitionAt(2);
+            this.m_button = this.getController("button");
+            this.m_anniu_1 = this.getChild("anniu_1");
+            this.m_toSmall = this.getTransition("toSmall");
+            this.m_toNormal = this.getTransition("toNormal");
+            this.m_tishi = this.getTransition("tishi");
         };
         return UI_BtnClose;
     }(fairygui.GButton);
@@ -290,12 +292,12 @@ var pfusdkui;
         };
         UI_BtnEnter.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_button = this.getControllerAt(0);
-            this.m_anniu_1 = this.getChildAt(0);
-            this.m_title = this.getChildAt(1);
-            this.m_toSmall = this.getTransitionAt(0);
-            this.m_toNormal = this.getTransitionAt(1);
-            this.m_tishi = this.getTransitionAt(2);
+            this.m_button = this.getController("button");
+            this.m_anniu_1 = this.getChild("anniu_1");
+            this.m_title = this.getChild("title");
+            this.m_toSmall = this.getTransition("toSmall");
+            this.m_toNormal = this.getTransition("toNormal");
+            this.m_tishi = this.getTransition("tishi");
         };
         return UI_BtnEnter;
     }(fairygui.GButton);
@@ -324,10 +326,10 @@ var pfusdkui;
         };
         UI_BtnMoregame.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_button = this.getControllerAt(0);
-            this.m_icon = this.getChildAt(0);
-            this.m_toSmall = this.getTransitionAt(0);
-            this.m_toNormal = this.getTransitionAt(1);
+            this.m_button = this.getController("button");
+            this.m_icon = this.getChild("icon");
+            this.m_toSmall = this.getTransition("toSmall");
+            this.m_toNormal = this.getTransition("toNormal");
         };
         return UI_BtnMoregame;
     }(fairygui.GButton);
@@ -356,14 +358,14 @@ var pfusdkui;
         };
         UI_List_Child.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n0 = this.getChildAt(0);
-            this.m_n7 = this.getChildAt(1);
-            this.m_Text_name = this.getChildAt(2);
-            this.m_Text_message = this.getChildAt(3);
-            this.m_icon = this.getChildAt(4);
-            this.m_1 = this.getChildAt(5);
-            this.m_Text_name2 = this.getChildAt(6);
-            this.m_btn_start = this.getChildAt(7);
+            this.m_n0 = this.getChild("n0");
+            this.m_n7 = this.getChild("n7");
+            this.m_Text_name = this.getChild("Text_name");
+            this.m_Text_message = this.getChild("Text_message");
+            this.m_icon = this.getChild("icon");
+            this.m_1 = this.getChild("1");
+            this.m_Text_name2 = this.getChild("Text_name2");
+            this.m_btn_start = this.getChild("btn_start");
         };
         return UI_List_Child;
     }(fairygui.GComponent);
@@ -392,9 +394,9 @@ var pfusdkui;
         };
         UI_List_GameChild.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_icon = this.getChildAt(0);
-            this.m_n1 = this.getChildAt(1);
-            this.m_n2 = this.getChildAt(2);
+            this.m_icon = this.getChild("icon");
+            this.m_n1 = this.getChild("n1");
+            this.m_n2 = this.getChild("n2");
         };
         return UI_List_GameChild;
     }(fairygui.GComponent);
@@ -423,19 +425,19 @@ var pfusdkui;
         };
         UI_MoreGameUI.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_list_moregamebg = this.getChildAt(0);
-            this.m_list_moregame = this.getChildAt(1);
-            this.m_list_moregameStr = this.getChildAt(2);
-            this.m_boxList = this.getChildAt(3);
-            this.m_Btn_MoreGameLeft = this.getChildAt(4);
-            this.m_Btn_MoreGameRight = this.getChildAt(5);
-            this.m_n10 = this.getChildAt(6);
-            this.m_btn_left_click = this.getChildAt(7);
-            this.m_list_moregame_left = this.getChildAt(8);
-            this.m_n13 = this.getChildAt(9);
-            this.m_boxList_left = this.getChildAt(10);
-            this.m_showLift = this.getTransitionAt(0);
-            this.m_hideLift = this.getTransitionAt(1);
+            this.m_list_moregamebg = this.getChild("list_moregamebg");
+            this.m_list_moregame = this.getChild("list_moregame");
+            this.m_list_moregameStr = this.getChild("list_moregameStr");
+            this.m_boxList = this.getChild("boxList");
+            this.m_Btn_MoreGameLeft = this.getChild("Btn_MoreGameLeft");
+            this.m_Btn_MoreGameRight = this.getChild("Btn_MoreGameRight");
+            this.m_n10 = this.getChild("n10");
+            this.m_btn_left_click = this.getChild("btn_left_click");
+            this.m_list_moregame_left = this.getChild("list_moregame_left");
+            this.m_n13 = this.getChild("n13");
+            this.m_boxList_left = this.getChild("boxList_left");
+            this.m_showLift = this.getTransition("showLift");
+            this.m_hideLift = this.getTransition("hideLift");
         };
         return UI_MoreGameUI;
     }(fairygui.GComponent);
@@ -464,8 +466,8 @@ var pfusdkui;
         };
         UI_DialogCom.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n4 = this.getChildAt(0);
-            this.m_tiptext = this.getChildAt(1);
+            this.m_n4 = this.getChild("n4");
+            this.m_tiptext = this.getChild("tiptext");
         };
         return UI_DialogCom;
     }(fairygui.GComponent);
@@ -494,7 +496,7 @@ var pfusdkui;
         };
         UI_PfuBannerUI.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_loader = this.getChildAt(0);
+            this.m_loader = this.getChild("loader");
         };
         return UI_PfuBannerUI;
     }(fairygui.GComponent);
@@ -523,18 +525,18 @@ var pfusdkui;
         };
         UI_AwardRedPackage_com.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n8 = this.getChildAt(0);
-            this.m_bg_loader = this.getChildAt(1);
-            this.m_btn_close = this.getChildAt(2);
-            this.m_n15 = this.getChildAt(3);
-            this.m_moneyNum = this.getChildAt(4);
-            this.m_n19 = this.getChildAt(5);
-            this.m_n20 = this.getChildAt(6);
-            this.m_btn_tixian = this.getChildAt(7);
-            this.m_n23 = this.getChildAt(8);
-            this.m_allMoney = this.getChildAt(9);
-            this.m_n25 = this.getChildAt(10);
-            this.m_n26 = this.getChildAt(11);
+            this.m_n8 = this.getChild("n8");
+            this.m_bg_loader = this.getChild("bg_loader");
+            this.m_btn_close = this.getChild("btn_close");
+            this.m_n15 = this.getChild("n15");
+            this.m_moneyNum = this.getChild("moneyNum");
+            this.m_n19 = this.getChild("n19");
+            this.m_n20 = this.getChild("n20");
+            this.m_btn_tixian = this.getChild("btn_tixian");
+            this.m_n23 = this.getChild("n23");
+            this.m_allMoney = this.getChild("allMoney");
+            this.m_n25 = this.getChild("n25");
+            this.m_n26 = this.getChild("n26");
         };
         return UI_AwardRedPackage_com;
     }(fairygui.GComponent);
@@ -563,7 +565,7 @@ var pfusdkui;
         };
         UI_boxlist_left_btn.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n9 = this.getChildAt(0);
+            this.m_n9 = this.getChild("n9");
         };
         return UI_boxlist_left_btn;
     }(fairygui.GComponent);
@@ -592,7 +594,7 @@ var pfusdkui;
         };
         UI_btn_red_open.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n2 = this.getChildAt(0);
+            this.m_n2 = this.getChild("n2");
         };
         return UI_btn_red_open;
     }(fairygui.GComponent);
@@ -621,9 +623,9 @@ var pfusdkui;
         };
         UI_ClickBannerUI.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n1 = this.getChildAt(0);
-            this.m_loader = this.getChildAt(1);
-            this.m_cancel = this.getChildAt(2);
+            this.m_n1 = this.getChild("n1");
+            this.m_loader = this.getChild("loader");
+            this.m_cancel = this.getChild("cancel");
         };
         return UI_ClickBannerUI;
     }(fairygui.GComponent);
@@ -652,7 +654,7 @@ var pfusdkui;
         };
         UI_clickSkip.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n9 = this.getChildAt(0);
+            this.m_n9 = this.getChild("n9");
         };
         return UI_clickSkip;
     }(fairygui.GComponent);
@@ -681,13 +683,13 @@ var pfusdkui;
         };
         UI_everyday_redpackage_com.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n22 = this.getChildAt(0);
-            this.m_bg_loader = this.getChildAt(1);
-            this.m_n24 = this.getChildAt(2);
-            this.m_btn_double_btn = this.getChildAt(3);
-            this.m_btn_red_everyday_skip = this.getChildAt(4);
-            this.m_list_sex = this.getChildAt(5);
-            this.m_seven = this.getChildAt(6);
+            this.m_n22 = this.getChild("n22");
+            this.m_bg_loader = this.getChild("bg_loader");
+            this.m_n24 = this.getChild("n24");
+            this.m_btn_double_btn = this.getChild("btn_double_btn");
+            this.m_btn_red_everyday_skip = this.getChild("btn_red_everyday_skip");
+            this.m_list_sex = this.getChild("list_sex");
+            this.m_seven = this.getChild("seven");
         };
         return UI_everyday_redpackage_com;
     }(fairygui.GComponent);
@@ -716,9 +718,9 @@ var pfusdkui;
         };
         UI_List_GameChild_left.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_icon = this.getChildAt(0);
-            this.m_n1 = this.getChildAt(1);
-            this.m_n2 = this.getChildAt(2);
+            this.m_icon = this.getChild("icon");
+            this.m_n1 = this.getChild("n1");
+            this.m_n2 = this.getChild("n2");
         };
         return UI_List_GameChild_left;
     }(fairygui.GComponent);
@@ -747,15 +749,15 @@ var pfusdkui;
         };
         UI_OpenRedPackage_com.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n0 = this.getChildAt(0);
-            this.m_bg_loader = this.getChildAt(1);
-            this.m_btn_red_open = this.getChildAt(2);
-            this.m_n3 = this.getChildAt(3);
-            this.m_n4 = this.getChildAt(4);
-            this.m_voidStr = this.getChildAt(5);
-            this.m_openredtip2 = this.getChildAt(6);
-            this.m_n7 = this.getChildAt(7);
-            this.m_btn_close = this.getChildAt(8);
+            this.m_n0 = this.getChild("n0");
+            this.m_bg_loader = this.getChild("bg_loader");
+            this.m_btn_red_open = this.getChild("btn_red_open");
+            this.m_n3 = this.getChild("n3");
+            this.m_n4 = this.getChild("n4");
+            this.m_voidStr = this.getChild("voidStr");
+            this.m_openredtip2 = this.getChild("openredtip2");
+            this.m_n7 = this.getChild("n7");
+            this.m_btn_close = this.getChild("btn_close");
         };
         return UI_OpenRedPackage_com;
     }(fairygui.GComponent);
@@ -784,9 +786,9 @@ var pfusdkui;
         };
         UI_red_everyday_child_com.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n27 = this.getChildAt(0);
-            this.m_n28 = this.getChildAt(1);
-            this.m_text = this.getChildAt(2);
+            this.m_n27 = this.getChild("n27");
+            this.m_n28 = this.getChild("n28");
+            this.m_text = this.getChild("text");
         };
         return UI_red_everyday_child_com;
     }(fairygui.GComponent);
@@ -815,7 +817,7 @@ var pfusdkui;
         };
         UI_red_everyday_double_btn.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n25 = this.getChildAt(0);
+            this.m_n25 = this.getChild("n25");
         };
         return UI_red_everyday_double_btn;
     }(fairygui.GComponent);
@@ -844,7 +846,7 @@ var pfusdkui;
         };
         UI_red_everyday_skip.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n26 = this.getChildAt(0);
+            this.m_n26 = this.getChild("n26");
         };
         return UI_red_everyday_skip;
     }(fairygui.GComponent);
@@ -873,7 +875,7 @@ var pfusdkui;
         };
         UI_red_TiXian.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n21 = this.getChildAt(0);
+            this.m_n21 = this.getChild("n21");
         };
         return UI_red_TiXian;
     }(fairygui.GComponent);
@@ -902,9 +904,9 @@ var pfusdkui;
         };
         UI_redpackage_icon.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n31 = this.getChildAt(0);
-            this.m_n32 = this.getChildAt(1);
-            this.m_moneyNumStr = this.getChildAt(2);
+            this.m_n31 = this.getChild("n31");
+            this.m_n32 = this.getChild("n32");
+            this.m_moneyNumStr = this.getChild("moneyNumStr");
         };
         return UI_redpackage_icon;
     }(fairygui.GComponent);
@@ -933,9 +935,9 @@ var pfusdkui;
         };
         UI_redpackageClose.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_button = this.getControllerAt(0);
-            this.m_n1 = this.getChildAt(0);
-            this.m_n2 = this.getChildAt(1);
+            this.m_button = this.getController("button");
+            this.m_n1 = this.getChild("n1");
+            this.m_n2 = this.getChild("n2");
         };
         return UI_redpackageClose;
     }(fairygui.GButton);
@@ -964,11 +966,11 @@ var pfusdkui;
         };
         UI_RedPacketUI.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_btn_redpackageicon = this.getChildAt(0);
-            this.m_com_openredpackage = this.getChildAt(1);
-            this.m_com_tixianredpackage = this.getChildAt(2);
-            this.m_com_everyday = this.getChildAt(3);
-            this.m_com_awradredpackage = this.getChildAt(4);
+            this.m_btn_redpackageicon = this.getChild("btn_redpackageicon");
+            this.m_com_openredpackage = this.getChild("com_openredpackage");
+            this.m_com_tixianredpackage = this.getChild("com_tixianredpackage");
+            this.m_com_everyday = this.getChild("com_everyday");
+            this.m_com_awradredpackage = this.getChild("com_awradredpackage");
         };
         return UI_RedPacketUI;
     }(fairygui.GComponent);
@@ -997,16 +999,16 @@ var pfusdkui;
         };
         UI_TiXianRedPackage_com.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n8 = this.getChildAt(0);
-            this.m_bg_loader = this.getChildAt(1);
-            this.m_btn_close = this.getChildAt(2);
-            this.m_n15 = this.getChildAt(3);
-            this.m_n16 = this.getChildAt(4);
-            this.m_moneyNum = this.getChildAt(5);
-            this.m_n18 = this.getChildAt(6);
-            this.m_n19 = this.getChildAt(7);
-            this.m_n20 = this.getChildAt(8);
-            this.m_btn_tixian = this.getChildAt(9);
+            this.m_n8 = this.getChild("n8");
+            this.m_bg_loader = this.getChild("bg_loader");
+            this.m_btn_close = this.getChild("btn_close");
+            this.m_n15 = this.getChild("n15");
+            this.m_n16 = this.getChild("n16");
+            this.m_moneyNum = this.getChild("moneyNum");
+            this.m_n18 = this.getChild("n18");
+            this.m_n19 = this.getChild("n19");
+            this.m_n20 = this.getChild("n20");
+            this.m_btn_tixian = this.getChild("btn_tixian");
         };
         return UI_TiXianRedPackage_com;
     }(fairygui.GComponent);
@@ -1035,7 +1037,7 @@ var pfusdkui;
         };
         UI_SdkDialogUI.prototype.constructFromXML = function(xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n0 = this.getChildAt(0);
+            this.m_com = this.getChild("com");
         };
         return UI_SdkDialogUI;
     }(fairygui.GComponent);
@@ -1332,6 +1334,12 @@ var PFU;
                 this._fui.m_com_awradredpackage.m_allMoney.text = "" + PFU.PfuRedPacketManager.GetInstance().GetMoney();
                 this._fui.m_com_awradredpackage.m_moneyNum.text = "" + award.toFixed(2);
             };
+            RedPacketWindow.prototype.ForceCloseRedPacketUI = function() {
+                if (this._fui.m_com_openredpackage.visible) this._fui.m_com_openredpackage.visible = false;
+                if (this._fui.m_com_awradredpackage.visible) {
+                    this._fui.m_com_awradredpackage.visible = false;
+                }
+            };
             return RedPacketWindow;
         }(UI.WindowBase);
         UI.RedPacketWindow = RedPacketWindow;
@@ -1391,11 +1399,23 @@ var PFU;
                 }
             };
             MoreGameWindow.prototype.ShowLeft = function() {
+                if (PfuSdk.IsTestModel()) {
+                    return;
+                }
+                if (PFU.PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                    return;
+                }
                 if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
                     this._fui.m_boxList_left.visible = true;
                 }
             };
             MoreGameWindow.prototype.HideLeft = function() {
+                if (PfuSdk.IsTestModel()) {
+                    return;
+                }
+                if (PFU.PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                    return;
+                }
                 if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
                     this._fui.m_boxList_left.visible = false;
                 }
@@ -1427,6 +1447,9 @@ var PFU;
                     if (PFU.PfuGlobal.GetOLParam().pfuSdkMoreGame == PFU.PfuSwitch.OFF || PFU.PfuConfig.Config.ui_moreGameType == -1) {
                         this._fui.m_Btn_MoreGameLeft.visible = false;
                         this._fui.m_Btn_MoreGameRight.visible = false;
+                    }
+                    if (PfuSdk.IsTestModel()) {
+                        this._fui.m_boxList.visible = false;
                     }
                 }
             };
@@ -1503,7 +1526,9 @@ var PFU;
                 var _this = this;
                 var list = PFU.PfuBoxList.GetInstance().GetMoreGameListData();
                 var count = list.length;
-                if (count > 0) {}
+                if (count > 0) {} else {
+                    this._fui.m_boxList_left.visible = false;
+                }
                 for (var i = 0; i < count; i++) {
                     var boxListData = list[i];
                     var vo = this._fui.m_list_moregame_left.addItemFromPool(pfusdkui.UI_List_GameChild_left.URL);

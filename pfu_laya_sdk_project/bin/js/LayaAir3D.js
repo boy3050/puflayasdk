@@ -28,10 +28,10 @@ var LayaAir3D = (function () {
         var material = new Laya.StandardMaterial();
         material.diffuseTexture = Laya.Texture2D.load("res/layabox.png");
         box.meshRender.material = material;
-        //Laya.LocalStorage.clear();
+        Laya.LocalStorage.clear();
         //PfuSdk.SetSdkResPath("https://txpk.jfydgame.com/pfulayasdk/test/");
         //SDK初始化
-        PfuSdk.OpenCDNRes();
+        //PfuSdk.OpenCDNRes();
         PfuSdk.SetBannerWidth(Laya.Browser.width * 0.28);
         PfuSdk.SetBannerMaxHeight(Laya.Browser.height * 0.287);
         PfuSdk.InitConfig(this, function () {
@@ -62,7 +62,20 @@ var LayaAir3D = (function () {
                     //     }
                     //     PfuSdk.ShowBanner();
                     // });
+                    // PfuSdk.ShareAward(this, (type, desc) => {
+                    //     if (PfuSdk.SUCCESS == type) {
+                    //         //给予奖励
+                    //     }
+                    //     else {
+                    //         //错误描述
+                    //         console.log(desc);
+                    //     }
+                    // });
+                    PfuSdk.SetOLParamInt("pfuSdkDailyTime", 0);
+                    PfuSdk.SetOLParamInt("pfuSdkPlayTime", 0);
                     PfuSdk.PopupRedPacket(_this, function (type) {
+                        PfuSdk.VideoRevive(_this, function () {
+                        });
                     });
                 });
                 // PfuSdk.ShowClickBannnerRevive(this,(type)=>{

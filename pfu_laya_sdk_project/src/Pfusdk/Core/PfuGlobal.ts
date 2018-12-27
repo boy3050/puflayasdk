@@ -29,6 +29,15 @@
             // }
         }
 
+        public static ShowShareFailDialog(desc: string, enter?: Function,cannel?:Function)
+        {
+            PFU.WeChatUtils.GetInstance().ShowDoubleModal("提示", desc,"继续分享","等下再说", () => {
+                enter();
+            },()=>{
+                cannel();
+            });
+        }
+
         //轮播闪屏广告
         public static ShowNextSplashAd() {
             PfuManager.GetInstance().ShowNextSplashAd();

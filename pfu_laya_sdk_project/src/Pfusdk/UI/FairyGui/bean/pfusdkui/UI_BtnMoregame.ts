@@ -22,10 +22,10 @@ module pfusdkui {
 		protected constructFromXML(xml: any): void {
 			super.constructFromXML(xml);
 
-			this.m_button = this.getControllerAt(0);
-			this.m_icon = <fairygui.GLoader><any>(this.getChildAt(0));
-			this.m_toSmall = this.getTransitionAt(0);
-			this.m_toNormal = this.getTransitionAt(1);
+			this.m_button = this.getController("button");
+			this.m_icon = <fairygui.GLoader><any>(this.getChild("icon"));
+			this.m_toSmall = this.getTransition("toSmall");
+			this.m_toNormal = this.getTransition("toNormal");
 		}
 	}
 }

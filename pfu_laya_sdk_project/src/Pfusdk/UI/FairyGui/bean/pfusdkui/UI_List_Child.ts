@@ -26,14 +26,14 @@ module pfusdkui {
 		protected constructFromXML(xml: any): void {
 			super.constructFromXML(xml);
 
-			this.m_n0 = <fairygui.GImage><any>(this.getChildAt(0));
-			this.m_n7 = <fairygui.GImage><any>(this.getChildAt(1));
-			this.m_Text_name = <fairygui.GTextField><any>(this.getChildAt(2));
-			this.m_Text_message = <fairygui.GTextField><any>(this.getChildAt(3));
-			this.m_icon = <fairygui.GLoader><any>(this.getChildAt(4));
-			this.m_1 = <fairygui.GTextField><any>(this.getChildAt(5));
-			this.m_Text_name2 = <fairygui.GTextField><any>(this.getChildAt(6));
-			this.m_btn_start = <UI_BtnEnter><any>(this.getChildAt(7));
+			this.m_n0 = <fairygui.GImage><any>(this.getChild("n0"));
+			this.m_n7 = <fairygui.GImage><any>(this.getChild("n7"));
+			this.m_Text_name = <fairygui.GTextField><any>(this.getChild("Text_name"));
+			this.m_Text_message = <fairygui.GTextField><any>(this.getChild("Text_message"));
+			this.m_icon = <fairygui.GLoader><any>(this.getChild("icon"));
+			this.m_1 = <fairygui.GTextField><any>(this.getChild("1"));
+			this.m_Text_name2 = <fairygui.GTextField><any>(this.getChild("Text_name2"));
+			this.m_btn_start = <UI_BtnEnter><any>(this.getChild("btn_start"));
 		}
 	}
 }

@@ -18,6 +18,13 @@ var PFU;
             //     this._addDialogCallback.call(this._addDialogHandle, desc);
             // }
         };
+        PfuGlobal.ShowShareFailDialog = function (desc, enter, cannel) {
+            PFU.WeChatUtils.GetInstance().ShowDoubleModal("提示", desc, "继续分享", "等下再说", function () {
+                enter();
+            }, function () {
+                cannel();
+            });
+        };
         //轮播闪屏广告
         PfuGlobal.ShowNextSplashAd = function () {
             PFU.PfuManager.GetInstance().ShowNextSplashAd();

@@ -16,7 +16,7 @@ var pfusdkui;
         };
         UI_BannerImg.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_icon = (this.getChildAt(0));
+            this.m_icon = (this.getChild("icon"));
         };
         return UI_BannerImg;
     }(fairygui.GComponent));

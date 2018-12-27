@@ -248,6 +248,14 @@ namespace PFU.UI {
 
         //#endregion----------------
 
+        public ForceCloseRedPacketUI() {
+            if (this._fui.m_com_openredpackage.visible)
+                this._fui.m_com_openredpackage.visible = false;
+
+            if (this._fui.m_com_awradredpackage.visible)  {
+                this._fui.m_com_awradredpackage.visible = false;
+            }
+        }
 
     }
 }

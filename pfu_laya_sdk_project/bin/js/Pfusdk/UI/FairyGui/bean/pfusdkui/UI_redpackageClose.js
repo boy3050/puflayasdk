@@ -16,9 +16,9 @@ var pfusdkui;
         };
         UI_redpackageClose.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_button = this.getControllerAt(0);
-            this.m_n1 = (this.getChildAt(0));
-            this.m_n2 = (this.getChildAt(1));
+            this.m_button = this.getController("button");
+            this.m_n1 = (this.getChild("n1"));
+            this.m_n2 = (this.getChild("n2"));
         };
         return UI_redpackageClose;
     }(fairygui.GButton));

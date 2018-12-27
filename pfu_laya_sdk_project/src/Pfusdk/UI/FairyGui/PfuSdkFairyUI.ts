@@ -86,6 +86,8 @@ namespace PFU.UI {
                 redpacketWindow.OpenEverydayGift();
             },(vx:number,vy:number)=>{
                 redpacketWindow.SetIconBtnPos(vx,vy);
+            },()=>{
+                redpacketWindow.ForceCloseRedPacketUI();
             });
 
 

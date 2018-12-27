@@ -20,6 +20,8 @@ namespace PFU {
 
         private _redpacketShowEveryDayCallback: Function;
 
+        private _redpacketForceCloseRedPacketCallback:Function;
+
         private _setIconPosCallBack: Function; //vx vy
 
         private _awardRedpacketActionHandle: any;
@@ -60,12 +62,13 @@ namespace PFU {
             this._redpacketData.moneyNum = money;
         }
 
-        public SetRedpacketHandle(handle: any, visibleCallback: Function, showGiftCallback: Function, showEveryDayCallBack: Function, setIconposCallBack: Function) {
+        public SetRedpacketHandle(handle: any, visibleCallback: Function, showGiftCallback: Function, showEveryDayCallBack: Function, setIconposCallBack: Function,redpacketForceCloseRedPacketCallback:Function) {
             this._redpacketHandle = handle;
             this._redpacketVisibeCallback = visibleCallback;
             this._redpacketShowGiftCallback = showGiftCallback;
             this._redpacketShowEveryDayCallback = showEveryDayCallBack;
             this._setIconPosCallBack = setIconposCallBack;
+            this._redpacketForceCloseRedPacketCallback = redpacketForceCloseRedPacketCallback;
         }
 
         public CheckAction()  {
@@ -165,6 +168,14 @@ namespace PFU {
                 return;
             }
             this._redpacketShowEveryDayCallback.call(this._redpacketHandle);
+        }
+
+        public ForceCloseRedPacketUI()
+        {
+            if (this._redpacketHandle == null) {
+                return;
+            }
+            this._redpacketForceCloseRedPacketCallback.call(this._redpacketHandle);
         }
 
         /**

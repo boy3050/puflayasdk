@@ -16,9 +16,9 @@ var pfusdkui;
         };
         UI_red_everyday_child_com.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n27 = (this.getChildAt(0));
-            this.m_n28 = (this.getChildAt(1));
-            this.m_text = (this.getChildAt(2));
+            this.m_n27 = (this.getChild("n27"));
+            this.m_n28 = (this.getChild("n28"));
+            this.m_text = (this.getChild("text"));
         };
         return UI_red_everyday_child_com;
     }(fairygui.GComponent));

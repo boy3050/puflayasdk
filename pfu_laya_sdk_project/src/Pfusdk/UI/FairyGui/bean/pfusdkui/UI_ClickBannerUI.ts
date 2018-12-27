@@ -21,9 +21,9 @@ module pfusdkui {
 		protected constructFromXML(xml: any): void {
 			super.constructFromXML(xml);
 
-			this.m_n1 = <fairygui.GGraph><any>(this.getChildAt(0));
-			this.m_loader = <fairygui.GLoader><any>(this.getChildAt(1));
-			this.m_cancel = <UI_clickSkip><any>(this.getChildAt(2));
+			this.m_n1 = <fairygui.GGraph><any>(this.getChild("n1"));
+			this.m_loader = <fairygui.GLoader><any>(this.getChild("loader"));
+			this.m_cancel = <UI_clickSkip><any>(this.getChild("cancel"));
 		}
 	}
 }

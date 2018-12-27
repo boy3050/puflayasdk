@@ -16,8 +16,8 @@ var pfusdkui;
         };
         UI_DialogCom.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n4 = (this.getChildAt(0));
-            this.m_tiptext = (this.getChildAt(1));
+            this.m_n4 = (this.getChild("n4"));
+            this.m_tiptext = (this.getChild("tiptext"));
         };
         return UI_DialogCom;
     }(fairygui.GComponent));

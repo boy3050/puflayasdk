@@ -25,13 +25,13 @@ module pfusdkui {
 		protected constructFromXML(xml: any): void {
 			super.constructFromXML(xml);
 
-			this.m_n10 = <fairygui.GGraph><any>(this.getChildAt(0));
-			this.m_n2 = <fairygui.GImage><any>(this.getChildAt(1));
-			this.m_n1 = <fairygui.GImage><any>(this.getChildAt(2));
-			this.m_n3 = <fairygui.GTextField><any>(this.getChildAt(3));
-			this.m_List_game = <fairygui.GList><any>(this.getChildAt(4));
-			this.m_Btn_close = <UI_BtnClose><any>(this.getChildAt(5));
-			this.m_Img_banner = <fairygui.GList><any>(this.getChildAt(6));
+			this.m_n10 = <fairygui.GGraph><any>(this.getChild("n10"));
+			this.m_n2 = <fairygui.GImage><any>(this.getChild("n2"));
+			this.m_n1 = <fairygui.GImage><any>(this.getChild("n1"));
+			this.m_n3 = <fairygui.GTextField><any>(this.getChild("n3"));
+			this.m_List_game = <fairygui.GList><any>(this.getChild("List_game"));
+			this.m_Btn_close = <UI_BtnClose><any>(this.getChild("Btn_close"));
+			this.m_Img_banner = <fairygui.GList><any>(this.getChild("Img_banner"));
 		}
 	}
 }

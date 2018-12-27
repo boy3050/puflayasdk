@@ -72,6 +72,8 @@ var PFU;
                     redpacketWindow.OpenEverydayGift();
                 }, function (vx, vy) {
                     redpacketWindow.SetIconBtnPos(vx, vy);
+                }, function () {
+                    redpacketWindow.ForceCloseRedPacketUI();
                 });
                 //设置更多游戏显示开关 createWindow true
                 PFU.PfuMoreGameUpdate.GetInstance().SetCtrlMoreGameUI(this, function (isShow, type) {

@@ -16,7 +16,7 @@ var pfusdkui;
         };
         UI_PfuBannerUI.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_loader = (this.getChildAt(0));
+            this.m_loader = (this.getChild("loader"));
         };
         return UI_PfuBannerUI;
     }(fairygui.GComponent));

@@ -16,10 +16,10 @@ var pfusdkui;
         };
         UI_BtnMoregame.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_button = this.getControllerAt(0);
-            this.m_icon = (this.getChildAt(0));
-            this.m_toSmall = this.getTransitionAt(0);
-            this.m_toNormal = this.getTransitionAt(1);
+            this.m_button = this.getController("button");
+            this.m_icon = (this.getChild("icon"));
+            this.m_toSmall = this.getTransition("toSmall");
+            this.m_toNormal = this.getTransition("toNormal");
         };
         return UI_BtnMoregame;
     }(fairygui.GButton));

@@ -109,6 +109,8 @@ var PFU;
                     _this.redPacketUI.OpenEverydayGift();
                 }, function(vx, vy) {
                     _this.moregameUI.SetIconBtnPos(vx, vy);
+                }, function() {
+                    _this.redPacketUI.ForceCloseRedPacketUI();
                 });
                 PFU.PfuMoreGameUpdate.GetInstance().SetPopupListVisible(this, function(isShow) {
                     if (isShow) {
@@ -1573,6 +1575,9 @@ var PFU;
                     this.btn_left.visible = false;
                     this.btn_right.visible = false;
                 }
+                if (PfuSdk.IsTestModel()) {
+                    this.box.visible = false;
+                }
             };
             MoreGameUI.prototype.CreateSideMoreGameBtn = function() {
                 var _this = this;
@@ -1628,11 +1633,23 @@ var PFU;
                 }
             };
             MoreGameUI.prototype.ShowLeft = function() {
+                if (PfuSdk.IsTestModel()) {
+                    return;
+                }
+                if (PFU.PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                    return;
+                }
                 if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
                     this.boxList_left.visible = true;
                 }
             };
             MoreGameUI.prototype.HideLeft = function() {
+                if (PfuSdk.IsTestModel()) {
+                    return;
+                }
+                if (PFU.PfuBoxList.GetInstance().GetMoreGameListData().length < 1) {
+                    return;
+                }
                 if (PFU.PfuConfig.Config.ui_crossGameListType != -1) {
                     this.boxList_left.visible = false;
                 }
@@ -1973,6 +1990,14 @@ var PFU;
                 this.com_awradredpackage.visible = true;
                 this.allMoney_award.text = "" + PFU.PfuRedPacketManager.GetInstance().GetMoney();
                 this.moneyNum_award.text = "" + award.toFixed(2);
+            };
+            RedPacketUI.prototype.ForceCloseRedPacketUI = function() {
+                if (this.com_openredpackage.visible) {
+                    this.com_openredpackage.visible = false;
+                }
+                if (this.com_awradredpackage.visible) {
+                    this.com_awradredpackage.visible = false;
+                }
             };
             return RedPacketUI;
         }(ui.RedPacketUIUI);

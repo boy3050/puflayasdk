@@ -175,19 +175,17 @@
             }
         }
 
-        public OnExitApp(complete:Function)
-        {
-            if(this.IsWeGame())
-            {
+        public OnExitApp(complete: Function)  {
+            if (this.IsWeGame())  {
                 wx.exitMiniProgram(
                     {
-                        success: function(){
+                        success: function () {
 
                         },
-                        fail: function(){
+                        fail: function () {
 
                         },
-                        complete: function(){
+                        complete: function () {
                             complete();
                         }
                     }
@@ -331,7 +329,7 @@
 
 
         public ShowSingleModal(title: string, content: string, fun: Function) {
-            if (this.IsWeGame())  {
+            if (this.IsWeGame()) {
                 wx.showModal({
                     title: title,
                     content: content,
@@ -341,12 +339,35 @@
                     }
                 });
             }
-            else
-            {
+            else  {
                 fun();
             }
         }
 
+        public ShowDoubleModal(title: string, content: string, enterStr: string, cancelStr: string, enter: Function, cancel: Function) {
+            if (this.IsWeGame()) {
+                wx.showModal({
+                    title: title,
+                    content: content,
+                    confirmText: enterStr,
+                    cancelText: cancelStr,
+                    showCancel: true,
+                    success: function (res) {
+                        if (res.confirm) {
+                            enter();
+                        } else if (res.cancel) {
+                            cancel();
+                        }
+                    },
+                    fail: function () {
+                        cancel();
+                    }
+                });
+            }
+            else  {
+                enter();
+            }
+        }
 
         public SetUpdateApp() {
             if (!this.IsWeGame()) {

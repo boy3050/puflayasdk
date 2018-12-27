@@ -19,7 +19,7 @@ module pfusdkui {
 		protected constructFromXML(xml: any): void {
 			super.constructFromXML(xml);
 
-			this.m_n2 = <fairygui.GImage><any>(this.getChildAt(0));
+			this.m_n2 = <fairygui.GImage><any>(this.getChild("n2"));
 		}
 	}
 }

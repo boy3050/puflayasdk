@@ -16,9 +16,9 @@ var pfusdkui;
         };
         UI_ClickBannerUI.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n1 = (this.getChildAt(0));
-            this.m_loader = (this.getChildAt(1));
-            this.m_cancel = (this.getChildAt(2));
+            this.m_n1 = (this.getChild("n1"));
+            this.m_loader = (this.getChild("loader"));
+            this.m_cancel = (this.getChild("cancel"));
         };
         return UI_ClickBannerUI;
     }(fairygui.GComponent));

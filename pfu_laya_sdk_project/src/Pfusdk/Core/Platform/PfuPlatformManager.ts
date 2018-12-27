@@ -66,11 +66,11 @@ namespace PFU {
                 }
             }
 
-            PFU.WeChatUtils.GetInstance().OnExitApp(
-                () => {
-                    this.OnHide();
-                }
-            );
+            // PFU.WeChatUtils.GetInstance().OnExitApp(
+            //     () => {
+            //         this.OnHide();
+            //     }
+            // );
 
             Laya.timer.once(2000, this, () => {
                 this.SetPlayTime();
@@ -89,7 +89,7 @@ namespace PFU {
 
         private SAVE_USERPLAY_KEY = "userplayTime";
 
-        private _playtime:number = 0;
+        private _playtime: number = 0;
 
         private Load() {
             let dic = LocalSaveUtils.GetJsonObject(this.SAVE_KEY);
@@ -117,50 +117,54 @@ namespace PFU {
                 }
             }
             let value = LocalSaveUtils.GetItem(this.SAVE_USERPLAY_KEY);
-            if(value)
-            {
+            if (value) {
                 try {
-                   this._playtime = parseInt("" + value);
+                    this._playtime = parseInt("" + value);
                 }
                 catch (e) {
-                   this._playtime = this._platformUserData.userPlayTime;
+                    this._playtime = this._platformUserData.userPlayTime;
                 }
             }
-            else
-            {
-                this._playtime = this._platformUserData.userPlayTime;
+            else {
+                let time = 0;
+                if (this._platformUserData.userPlayTime)  {
+                    time = this._platformUserData.userPlayTime;
+                }
+                this._playtime = time;
                 this.SavePlaytime();
             }
         }
 
-        private SavePlaytime()
-        {
-            LocalSaveUtils.SaveItem(this.SAVE_USERPLAY_KEY,this._playtime.toString());
+        private SavePlaytime() {
+            LocalSaveUtils.SaveItem(this.SAVE_USERPLAY_KEY, this._playtime.toString());
         }
-            
-   
+
+
 
         private _lastTime = 0;
 
-
+        private _todayLasttime = 0;
         public OnShow(args: any) {
             PFU.PfuPlatformManager.GetInstance().SetOnShowWxAdId(args);
             PFU.PfuManager.GetInstance().UpdateNewDay();
             this._lastTime = Date.now();
+            this._todayLasttime = Date.now();
         }
 
         public OnHide() {
-            if (this._lastTime > 0) {
+            if (this._todayLasttime > 0) {
                 //取秒
-                let time = (Date.now() - this._lastTime) / 1000;
+                let time = (Date.now() - this._todayLasttime) / 1000;
                 PFU.PfuManager.GetInstance().AddPlayTimeCount(Math.floor(time));
+                this._todayLasttime = Date.now();
+            }
+            if (this._lastTime > 0) {
                 this.SetPlayTime();
-                console.log("用户总游戏时长/秒:" + this._platformUserData.userPlayTime);
-                this._lastTime = Date.now();
+                console.log("用户总游戏时长/秒:" + this._playtime);
             }
         }
 
-        private SetPlayTime()  {
+        private SetPlayTime() {
             //取秒
             let time = (Date.now() - this._lastTime) / 1000;
             this._playtime += Math.floor(time);
@@ -173,16 +177,16 @@ namespace PFU {
             LocalSaveUtils.SaveJsonObject(this.SAVE_KEY, this._platformUserData);
         }
 
-        public GetUserPlayTime()  {
-            if (this._platformUserData && this._platformUserData.userPlayTime)  {
+        public GetUserPlayTime() {
+            if (this._playtime) {
                 let time = (Date.now() - this._lastTime) / 1000;
-                return this._platformUserData.userPlayTime + Math.floor(time);
+                return this._playtime + Math.floor(time);
             }
             return 0;
         }
 
-        public GetRunTime(): number  {
-            let time = (Date.now() - this._lastTime) / 1000;
+        public GetRunTime(): number {
+            let time = (Date.now() - this._todayLasttime) / 1000;
             return Math.floor(time);
         }
 
@@ -447,9 +451,9 @@ namespace PFU {
             //Debug.Log("srcId=" + srcid);
             request.srcid = srcid;
             request.selfid = appId;
-            request.inviteUid = rinviteUid;
+            request.rinviteUid = rinviteUid;
             try {
-                request.onlineTime = Math.floor(this._platformUserData.userPlayTime);
+                request.onlineTime = Math.floor(this._playtime);
             }
             catch (e) {
                 request.onlineTime = 0;

@@ -98,6 +98,18 @@ var PfuSdk = (function () {
         return PFU.PfuManager.GetInstance().IsVideoForceShare();
     };
     /**
+     * 是否弹出诱导分享
+     */
+    PfuSdk.IsPfuSdkMoreShare = function () {
+        return PFU.PfuManager.GetInstance().OLParam.pfuSdkMoreShare == PFU.PfuSwitch.ON;
+    };
+    /**
+     * 视频或者分享
+     */
+    PfuSdk.IsPfuSdkSorV = function () {
+        return PFU.PfuManager.GetInstance().OLParam.pfuSdkSorV == PFU.PfuSwitch.ON;
+    };
+    /**
      * 分享 无回调
      * @param handle
      * @param qureyPos 分享参数  1
@@ -112,16 +124,25 @@ var PfuSdk = (function () {
      * @param qureyPos
      */
     PfuSdk.ShareAward = function (handle, fun, qureyPos, addQurey) {
+        var _this = this;
         PFU.PfuGlobal.PfuShareGroupNext(handle, function (type, desc) {
             if (type == PfuSdk.SUCCESS) {
                 fun.call(handle, type, desc);
             }
             else {
-                PFU.PfuGlobal.ShowDialog(desc, function () {
-                    fun.call(handle, type, desc);
-                });
+                //是否继续分享？
+                _this._shareCancelDialog(desc, handle, fun, qureyPos, addQurey);
             }
         }, true, qureyPos, addQurey);
+    };
+    PfuSdk._shareCancelDialog = function (desc, handle, fun, qureyPos, addQurey) {
+        PFU.PfuGlobal.ShowShareFailDialog(desc, function () {
+            PFU.PfuGlobal.PfuShareGroupNext(handle, function (type, desc) {
+                fun.call(handle, type, desc);
+            }, true, qureyPos, addQurey);
+        }, function () {
+            fun.call(handle, PfuSdk.FAIL, desc);
+        });
     };
     /**
      * 视频游戏复活功能
@@ -419,6 +440,12 @@ var PfuSdk = (function () {
     PfuSdk.PopupRedPacketEverydayWindow = function () {
         PFU.PfuRedPacketManager.GetInstance().PopupRedPacketEverydayWindow();
     };
+    /**
+     * 强制关闭红包相关弹出UI
+     */
+    PfuSdk.ForceCloseRedPacketUI = function () {
+        PFU.PfuRedPacketManager.GetInstance().ForceCloseRedPacketUI();
+    };
     return PfuSdk;
 }());
 PfuSdk.SUCCESS = 0; //success
@@ -427,7 +454,7 @@ PfuSdk.VIDEO_SHOW_FAIL = 2;
 PfuSdk.UI_ORDER_MOREGAME = 90000;
 PfuSdk.UI_FIRST_SCENEBOX = 10000000000;
 PfuSdk.UI_ORDER_OTHER = 1000000000;
-PfuSdk.sdk_ver = "0.0.7.6";
+PfuSdk.sdk_ver = "0.0.7.9";
 PfuSdk.sdk_res_ver = "v7";
 PfuSdk.SHOW_TYPE_ALL = 0; //更多游戏，BosList都显示
 PfuSdk.SHOW_TYPE_MOREGAME = 1; //只显示更多游戏

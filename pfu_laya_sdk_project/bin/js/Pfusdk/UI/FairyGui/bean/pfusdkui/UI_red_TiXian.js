@@ -16,7 +16,7 @@ var pfusdkui;
         };
         UI_red_TiXian.prototype.constructFromXML = function (xml) {
             _super.prototype.constructFromXML.call(this, xml);
-            this.m_n21 = (this.getChildAt(0));
+            this.m_n21 = (this.getChild("n21"));
         };
         return UI_red_TiXian;
     }(fairygui.GComponent));
