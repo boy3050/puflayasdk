@@ -19,9 +19,9 @@
        此处只能留10个ID， 将sdk中pfusdkconfig文件里的navigateToMiniProgramAppIdList 内容copy过来，优先删除自己的。
        接着从底部开始删除(保留10个)。 最后自己游戏的sdk配置文件可跳转列表与这个10个保持一致。
 
-## 红包使用
+## 福袋使用
 
-[点击查看红包调用规则](https://github.com/boy3050/puflayasdk/blob/master/pfu_laya_sdk_project/%E7%BA%A2%E5%8C%85%E4%BD%BF%E7%94%A8.md)
+[点击查看福袋调用规则](https://github.com/boy3050/puflayasdk/blob/master/pfu_laya_sdk_project/%E7%BA%A2%E5%8C%85%E4%BD%BF%E7%94%A8.md)
 
 
 
